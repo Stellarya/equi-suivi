@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Entity\User;
+use App\Entity\AppUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -31,7 +31,7 @@ class CreateAdminCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $user = new User();
+        $user = new AppUser();
         $user->setEmail('admin@test.com');
         $user->setRoles(['ROLE_ADMIN']);
 
