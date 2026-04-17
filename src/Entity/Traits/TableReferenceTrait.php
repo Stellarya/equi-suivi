@@ -5,7 +5,7 @@ namespace App\Entity\Traits;
 use Doctrine\ORM\Mapping as ORM;
 
 trait TableReferenceTrait {
-    #[ORM\Column(type:'string', lenght: 50, options: ['default' => '-'])]
+    #[ORM\Column(type:'string', length: 50, options: ['default' => '-'])]
     private string $mnemonique = "-";
 
     #[ORM\Column(name: 'est_actif', type: 'boolean', nullable: false, options: ['default' => true])]
