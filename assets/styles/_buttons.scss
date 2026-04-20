@@ -1,0 +1,47 @@
+@import '../../assets/styles/variables.scss';
+
+.btn {
+    font-size: 1em;
+    border-radius: $border-radius;
+    border: none;
+
+    //btn for add, save and confirm
+    &.btn-primary {
+        background-color: $primary-50;
+        color: $white;
+
+        &.hover {
+            background-color: $primary-60;
+        }
+    }
+    //btn for details, navigate and non critical actions
+    &.btn-secondary {
+        background-color: $secondary-50;
+        color: $white;
+
+        &.hover {
+            background-color: $secondary-60;
+        }
+    }
+    //btn for tabs
+    &.btn-tertiary {
+        background-color: $tertiary-50;
+        color: $white;
+
+        &.hover {
+            background-color: $tertiary-60;
+        }
+    }
+    //btn for delete and reset
+    &.btn-error {
+        background-color: transparent;
+        border:$border-size $error-50 solid;
+        color: $error-50;
+
+        &.hover {
+            background-color: $error-50;
+            $color: $white;
+            border: none
+        }
+    }
+}
