@@ -1,0 +1,27 @@
+@use './variables' as *;
+
+.nav-tabs {
+    border: none;
+    flex-wrap: nowrap;
+
+    .nav-item {
+        margin-bottom: 0;
+        white-space: nowrap;
+        flex: 1;
+        text-align: center;
+
+        .nav-link {
+            font-size: $button;
+            background-color: $primary-20;
+            border: $border-size solid transparent;
+            border-top-left-radius: $border-radius;
+            border-top-right-radius: $border-radius;
+            margin-right: 2px;
+
+            &.active, &:hover {
+                background-color: $tertiary-50;
+                color: $white;
+            }
+        }
+    }
+}

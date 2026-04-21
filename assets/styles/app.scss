@@ -1,3 +1,8 @@
-body {
-    background-color: red;
+/* Variables and components*/
+@use 'general/variables';
+@use 'general/navTabs';
+@use 'login';
+
+* {
+    font-family: 'Inter', sans-serif;    
 }

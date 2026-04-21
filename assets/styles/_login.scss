@@ -1,0 +1,15 @@
+@use './general/variables' as *;
+
+.login {
+    height: 100vh;
+    .text-side {
+        background-color: $neutral-10;
+        width: 50%;
+
+        .box {
+            background-color: $white;
+            border-radius: $border-radius;
+            padding: 50px
+        }
+    }
+}
