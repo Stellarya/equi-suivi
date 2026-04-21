@@ -1,8 +1,12 @@
 /* Variables and components*/
 @use 'general/variables';
+@use 'general/buttons';
 @use 'general/navTabs';
 @use 'login';
 
 * {
     font-family: 'Inter', sans-serif;    
+    body {
+        margin: 0;
+    }
 }

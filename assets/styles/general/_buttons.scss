@@ -1,8 +1,9 @@
 @use './variables' as *;
 
 .btn {
-    font-size: 1em;
+    font-size: $button;
     border-radius: $border-radius;
+    padding: 10px;
     border: none;
 
     //btn for add, save and confirm

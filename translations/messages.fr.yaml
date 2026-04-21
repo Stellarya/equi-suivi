@@ -1,0 +1,20 @@
+general:
+    equi_suivi: "Equi-Suivi"
+    login:
+        title: "Se connecter"
+        subtitle: "Entrez votre email et votre mot de passe pour vous connecter."
+        email: "Email"
+        password: "Mot de passe"
+        connection_button: "Se connecter"
+    sign-in:
+        title: "S'inscrire"
+        subtitle: "Créer un compte Equi-Suivi"
+        email: "Email"
+        username: "Username"
+        password: "Mot de passe"
+        terms: "J'accepte les termes et conditions du subtitle"
+        sign-in_button: "S'inscrire"
+    error:
+        title: "Erreur 404"
+        subtitle: "Il semblerait que vous soyez perdu !"
+        error_button: "Retour à l'accueil"
