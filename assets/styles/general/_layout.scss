@@ -1,0 +1,79 @@
+@use './variables' as *;
+
+.page {
+    height: 100%;
+    overflow: hidden;
+
+    #sidebar {
+        background-color: $sidebar;
+        width: 210px;
+        transition: all 0.2s;
+        position: relative;
+        z-index: 2;
+
+        .sticky {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        }
+
+        img {
+            width: 180px;
+            padding-left: 9px;
+        }
+
+        .nav-title {
+            width: 210px;
+            overflow: hidden;
+            padding: 10px;
+            
+        }
+
+        .side-menu {
+        overflow: hidden;
+
+        &.side-menu-bottom {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .nav-item {
+            width: 231px;
+            
+            a {
+                color: $white;
+                padding: 8px 10px 8px 22px;
+                display: flex;
+               
+
+                i {
+                    width: 23px;
+                    margin-right: 10px;
+
+                    font-size: 23px;
+
+                    &::before {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    }
+                }
+            }
+
+            span {
+                font-size: 1em;
+                visibility: hidden;
+            }
+
+            &:hover,
+            &.active {
+                background: $secondary-20;
+                cursor: pointer;
+            }
+        }
+
+        }
+
+    }
+ }

@@ -24,6 +24,26 @@
 		{% endif %}
 	</head>
 	<body>
-		{% block body %}{% endblock %}
+		<div class="page d-flex">
+			<div id="sidebar">
+				<div class="sticky">
+					{% include "sidebar.html.twig" %}
+				</div>
+			</div>
+			<div id="content">
+
+				{% for label, messages in app.flashes %}
+					{% for message in messages %}
+						<div class="alert alert-{{ label }}">
+							{{ message }}
+						</div>
+					{% endfor %}
+
+				{% endfor %}
+				{% block body %}{% endblock %}
+			</div>
+
+		</div>
+
 	</body>
 </html>
