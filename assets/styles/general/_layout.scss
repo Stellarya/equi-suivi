@@ -11,6 +11,10 @@
         position: relative;
         z-index: 2;
 
+        hr {
+            border-color: $neutral-20;
+        }
+
         .sticky {
         position: sticky;
         top: 0;
@@ -39,19 +43,18 @@
         }
 
         .nav-item {
-            width: 231px;
-            
+         
             a {
                 color: $white;
                 padding: 8px 10px 8px 22px;
                 display: flex;
-               
+                 text-decoration: none;
+                 align-items: center;
 
                 i {
-                    width: 23px;
+                    width: 30px;
                     margin-right: 10px;
-
-                    font-size: 23px;
+                    font-size: $icons;
 
                     &::before {
                     display: flex;
@@ -63,13 +66,16 @@
 
             span {
                 font-size: 1em;
-                visibility: hidden;
             }
 
             &:hover,
             &.active {
                 background: $secondary-20;
                 cursor: pointer;
+
+                a {
+                    color: $sidebar;
+                }
             }
         }
 

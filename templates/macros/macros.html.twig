@@ -1,55 +1,51 @@
-{# Tabs #}
+{# left sidebar #}
+{% macro navItem(icon, label, role, link, params = {}, idItem = null ) %}
+	{% if is_granted(role) %}
+		<div class="nav-item " title="{{ label }}" data-value="{{ label }}" {% if idItem != null %} id="{{ idItem }}" {% endif %}>
 
+			<a {% if link != null %} href="{{ path(link, params) }}" {% endif %}>
+				<i class="{{ icon }}"></i>
+				<span>{{ label | trans}}</span>
+			</a>
+		</div>
+	{% endif %}
+
+{% endmacro %}
+{# Tabs #}
 {% macro navItemTabs(icon, label, link, active, params = {}) %}
-    <li class="nav-item text-truncate">
-        <a class="nav-link {{ active }} text-truncate" 
-            data-toggle="tab"
-            href="#{{ link }}"
-            title="{{ label }}">
-            <i class="{{ icon }}"></i>
-            <span class="d-none d-lg-inline text-truncate">{{ label }}</span>
-        </a>
-    </li>
+	<li class="nav-item text-truncate">
+		<a class="nav-link {{ active }} text-truncate" data-toggle="tab" href="#{{ link }}" title="{{ label }}">
+			<i class="{{ icon }}"></i>
+			<span class="d-none d-lg-inline text-truncate">{{ label }}</span>
+		</a>
+	</li>
 {% endmacro %}
 
 {# Buttons #}
 {% macro button(datavalue, label, class, icon) %}
-    <div data-value="{{ datavalue }}"
-         class="btn {{ class }}">
-        <i class="{{ icon }}"></i>
-        {{ label }}
-    </div>
+	<div data-value="{{ datavalue }}" class="btn {{ class }}">
+		<i class="{{ icon }}"></i>
+		{{ label }}
+	</div>
 {% endmacro %}
 
 {% macro addButton(id, options = '') %}
-    <button class="btn btn-primary px-0 btn-round d-none d-sm-block"
-            id={{ id }}
-            title="Ajouter {{ options }}">
-        <i class="fa fa-plus"></i>
-    </button>
+	<button class="btn btn-primary px-0 btn-round d-none d-sm-block" id={{ id }} title="Ajouter {{ options }}">
+		<i class="fa fa-plus"></i>
+	</button>
 {% endmacro %}
 {% macro addButton(id, options = '') %}
-    <button class="btn btn-primary px-0 btn-round d-none d-sm-block"
-            id={{ id }}
-            title="Ajouter {{ options }}">
-        <i class="fa fa-plus"></i>
-    </button>
+	<button class="btn btn-primary px-0 btn-round d-none d-sm-block" id={{ id }} title="Ajouter {{ options }}">
+		<i class="fa fa-plus"></i>
+	</button>
 {% endmacro %}
 {% macro deleteButton(id, options = '') %}
-    <a id="{{ button }}"
-       class="btn btn-danger"
-       data-value="{{ id }}"
-       title="Supprimer {{ options }}"
-       role=button>
-        <i class="fas fa-trash"></i>
-    </a>
+	<a id="{{ button }}" class="btn btn-danger" data-value="{{ id }}" title="Supprimer {{ options }}" role="button">
+		<i class="fas fa-trash"></i>
+	</a>
 {% endmacro %}
 {% macro updateButton(id) %}
-    <a id="{{ id }}"
-        data-value="{{ id }}"
-        title="Modifier"
-        role=button
-        aria-expanded="false">
-        <i class"fas fa-pencil"></i>
-    </a>
+	<a id="{{ id }}" data-value="{{ id }}" title="Modifier" role="button" aria-expanded="false">
+		<i class"fas fa-pencil"></i>
+	</a>
 {% endmacro %}
