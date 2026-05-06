@@ -18,6 +18,10 @@ general:
         title: "Erreur 404"
         subtitle: "Il semblerait que vous soyez perdu !"
         error_button: "Retour à l'accueil"
+    roles:
+        admin: "Admin"
+        ranch: "Ecurie"
+        rider: "Cavalier"
     sidebar:
         administration: "Administration"
         logout: "Déconnexion"

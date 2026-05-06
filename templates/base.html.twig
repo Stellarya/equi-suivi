@@ -27,20 +27,23 @@
 		<div class="page d-flex">
 			<div id="sidebar">
 				<div class="sticky">
-					{% include "sidebar.html.twig" %}
+					{% include "partials/sidebar.html.twig" %}
 				</div>
 			</div>
 			<div id="content">
+				{% include "partials/topbar.html.twig" %}
 
-				{% for label, messages in app.flashes %}
-					{% for message in messages %}
-						<div class="alert alert-{{ label }}">
-							{{ message }}
-						</div>
+				<div class="content-inner">
+					{% for label, messages in app.flashes %}
+						{% for message in messages %}
+							<div class="alert alert-{{ label }}">
+								{{ message }}
+							</div>
+						{% endfor %}
+
 					{% endfor %}
-
-				{% endfor %}
-				{% block body %}{% endblock %}
+					{% block body %}{% endblock %}
+				</div>
 			</div>
 
 		</div>

@@ -82,4 +82,108 @@
         }
 
     }
+
+    #content {
+        width: 100%;
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            min-height: 50px;
+            padding: 0 24px;
+            background-color: $white;
+            border-bottom: $neutral-20 1px solid;
+
+            &__actions {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
+
+            &__notification {
+                position: relative;
+                width: 36px;
+                height: 36px;
+                border: none;
+                border-radius: 50%;
+                background-color: transparent;
+                color: $primary-50;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: $primary-60;
+                    color: $white
+                }
+
+                i {
+                    font-size: $icons;
+                }
+            }
+
+            &__notification-badge {
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                min-width: 16px;
+                height: 16px;
+                padding: 0 4px;
+                border-radius: 999px;
+                background-color: $error-40;
+                background-color: $white;
+                font-size: $notifications;
+                font-weight: 700;
+                line-height: 16px;
+                text-align: center;
+            }
+
+            &__profile {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                border: none;
+                background-color: transparent;
+                cursor: pointer;
+                color: $neutral-80;
+            }
+
+            &__avatar {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                background-color: $tertiary-30;
+                color: $tertiary-60;
+
+                i {
+                    font-size: $icons;
+                }
+            }
+
+            &__identity {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                line-height: 1.2;
+            }
+
+            &__name {
+                font-size: $label;
+                font-weight: 600;
+                color: $neutral-60;
+            }
+
+            &__role {
+                margin-top: 2px;
+                font-size: $caption;
+                color: $neutral-50;
+            }
+
+            &__chevron {
+                font-size: $caption;
+                color: $neutral-50;
+            }
+        }
+    }
  }
