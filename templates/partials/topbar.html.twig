@@ -1,0 +1,36 @@
+{% set roleLabel  =  'Cavalier' %}
+
+{% if is_granted('ROLE_ADMIN') %}
+	{% set roleLabel = 'Admin' %}
+{% elseif is_granted('ROLE_ECURIE') %}
+	{% set roleLabel = 'Ecurie' %}
+{% elseif is_granted('ROLE_USER')%}
+	{% set roleLabel = 'Cavalier' %}
+{% endif %}
+
+<header class="topbar">
+	<div class="topbar__spacer"></div>
+
+	<div class="topbar__actions">
+		<button class="topbar__notification" type="button" aria-label="Notifications">
+			<i class="fa-solid fa-bell"></i>
+			<span class="topbar__notification-badge"></span>
+		</button>
+
+		<button class="topbar__profile" type="button" aria-label="Menu utilisateur">
+			<span class="topbar__avatar">
+				<i class="fa-solid fa-user"></i>
+			</span>
+			<span class="topbar__identity">
+				<span class="topbar__name">
+					{{app.user.email}}
+				</span>
+				<span class="topbar__role">
+					{{roleLabel}}
+				</span>
+			</span>
+
+			<i class="fa-solid fa-chevron-down topbar__chevron"></i>
+		</button>
+	</div>
+</header>

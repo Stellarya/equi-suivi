@@ -1,0 +1,36 @@
+general:
+    equi_suivi: "Equi-Suivi"
+    login:
+        title: "Se connecter"
+        subtitle: "Entrez votre email et votre mot de passe pour vous connecter."
+        email: "Email"
+        password: "Mot de passe"
+        connection_button: "Se connecter"
+    sign-in:
+        title: "S'inscrire"
+        subtitle: "Créer un compte Equi-Suivi"
+        email: "Email"
+        username: "Username"
+        password: "Mot de passe"
+        terms: "J'accepte les termes et conditions du subtitle"
+        sign-in_button: "S'inscrire"
+    error:
+        title: "Erreur 404"
+        subtitle: "Il semblerait que vous soyez perdu !"
+        error_button: "Retour à l'accueil"
+    roles:
+        admin: "Admin"
+        ranch: "Ecurie"
+        rider: "Cavalier"
+    sidebar:
+        administration: "Administration"
+        logout: "Déconnexion"
+        my_horses: "Mes chevaux"
+        horses: "Les chevaux"
+        my_stats: "Mes stats"
+        my_equipements: "Mes équipements"
+        my_competitions: "Mes compétitions"
+        my_care: "Mes soins"
+        care: "Les soins"
+        riders: "Les cavaliers"
+        dashboard: "Tableau de bord"

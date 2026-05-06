@@ -1,3 +1,14 @@
-body {
-    background-color: red;
+/* Variables and components*/
+@use 'general/variables';
+@use 'general/buttons';
+@use 'general/navTabs';
+@use 'general/layout';
+@use 'general/icons';
+@use 'login';
+
+* {
+    font-family: 'Inter', sans-serif;    
+    body {
+        margin: 0;
+    }
 }

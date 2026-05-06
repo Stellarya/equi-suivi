@@ -1,0 +1,189 @@
+@use './variables' as *;
+
+.page {
+    height: 100%;
+    overflow: hidden;
+
+    #sidebar {
+        background-color: $sidebar;
+        width: 210px;
+        transition: all 0.2s;
+        position: relative;
+        z-index: 2;
+
+        hr {
+            border-color: $neutral-20;
+        }
+
+        .sticky {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        }
+
+        img {
+            width: 180px;
+            padding-left: 9px;
+        }
+
+        .nav-title {
+            width: 210px;
+            overflow: hidden;
+            padding: 10px;
+            
+        }
+
+        .side-menu {
+        overflow: hidden;
+
+        &.side-menu-bottom {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .nav-item {
+         
+            a {
+                color: $white;
+                padding: 8px 10px 8px 22px;
+                display: flex;
+                 text-decoration: none;
+                 align-items: center;
+
+                i {
+                    width: 30px;
+                    margin-right: 10px;
+                    font-size: $icons;
+
+                    &::before {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    }
+                }
+            }
+
+            span {
+                font-size: 1em;
+            }
+
+            &:hover,
+            &.active {
+                background: $secondary-20;
+                cursor: pointer;
+
+                a {
+                    color: $sidebar;
+                }
+            }
+        }
+
+        }
+
+    }
+
+    #content {
+        width: 100%;
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            min-height: 50px;
+            padding: 0 24px;
+            background-color: $white;
+            border-bottom: $neutral-20 1px solid;
+
+            &__actions {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
+
+            &__notification {
+                position: relative;
+                width: 36px;
+                height: 36px;
+                border: none;
+                border-radius: 50%;
+                background-color: transparent;
+                color: $primary-50;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: $primary-60;
+                    color: $white
+                }
+
+                i {
+                    font-size: $icons;
+                }
+            }
+
+            &__notification-badge {
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                min-width: 16px;
+                height: 16px;
+                padding: 0 4px;
+                border-radius: 999px;
+                background-color: $error-40;
+                background-color: $white;
+                font-size: $notifications;
+                font-weight: 700;
+                line-height: 16px;
+                text-align: center;
+            }
+
+            &__profile {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                border: none;
+                background-color: transparent;
+                cursor: pointer;
+                color: $neutral-80;
+            }
+
+            &__avatar {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                background-color: $tertiary-30;
+                color: $tertiary-60;
+
+                i {
+                    font-size: $icons;
+                }
+            }
+
+            &__identity {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                line-height: 1.2;
+            }
+
+            &__name {
+                font-size: $label;
+                font-weight: 600;
+                color: $neutral-60;
+            }
+
+            &__role {
+                margin-top: 2px;
+                font-size: $caption;
+                color: $neutral-50;
+            }
+
+            &__chevron {
+                font-size: $caption;
+                color: $neutral-50;
+            }
+        }
+    }
+ }

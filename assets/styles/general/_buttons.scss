@@ -1,0 +1,98 @@
+@use './variables' as *;
+
+.btn {
+    font-size: $button;
+    border-radius: $border-radius;
+    padding: 10px;
+    border: none;
+
+    //btn for add, save and confirm
+    &.btn-primary {
+        background-color: $primary-50;
+        color: $white;
+
+        &.hover {
+            background-color: $primary-60;
+        }
+        &.disabled {
+            background-color: $neutral-20;
+            color: $neutral-50;
+        }
+    }
+    //btn for details, navigate and non critical actions
+    &.btn-secondary {
+        background-color: $secondary-50;
+        color: $white;
+
+        &.hover {
+            background-color: $secondary-60;
+        }
+        &.disabled {
+            background-color: $neutral-20;
+            color: $neutral-50;
+        }
+    }
+    //btn for tabs
+    &.btn-tertiary {
+        background-color: $tertiary-50;
+        color: $white;
+
+        &.hover {
+            background-color: $tertiary-60;
+        }
+        &.disabled {
+            background-color: $neutral-20;
+            color: $neutral-50;
+        }
+    }
+    //btn for delete and reset
+    &.btn-error {
+        background-color: transparent;
+        border:$border-size $error-50 solid;
+        color: $error-50;
+
+        &.hover {
+            background-color: $error-50;
+            color: $white;
+            border: none
+        }
+        &.disabled {
+            background-color: transparent;
+            border: $border-size solid $neutral-20;
+            color: $neutral-50;
+        }
+    }
+
+    //btn for cancel, go back and minor actions
+    &.btn-ghost {
+        background-color: transparent;
+        color: $secondary-50;
+
+        &.hover {
+            background-color: $neutral-10;
+            color: $primary-50;
+        }
+        &.disabled {
+            background-color: transparent;
+            color: $neutral-50;
+        }
+    }
+
+    // btn for filters, selection and alt actions
+    &.btn-outlined {
+        background-color: transparent;
+        border: $border-size $primary-50 solid;
+        color: $primary-50;
+
+        &.hover {
+            background-color: $primary-10;
+            color: $primary-50;
+        }
+        &.disabled {
+            background-color: transparent;
+            color: $neutral-50;
+            border: $border-size solid $neutral-20;
+
+        }
+    }
+}

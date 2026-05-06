@@ -1,0 +1,21 @@
+<div class="nav-title">
+	<a>
+		<img src="{{ asset('images/equi-suivi-logo.png') }}" alt="logo" class="logo">
+	</a>
+</div>
+<nav class="side-menu side-menu-top">
+	{% import "macros/macros.html.twig" as navItem %}
+	<div>
+
+		{{navItem.navItem('icon icon-horse', 'general.sidebar.my_horses', 'ROLE_USER', 'admin')}}
+		{{navItem.navItem('fas fa-award', 'general.sidebar.my_competitions', 'ROLE_USER', 'admin')}}
+		{{navItem.navItem('fas fa-chart-line', 'general.sidebar.my_stats', 'ROLE_USER', 'admin')}}
+		{{navItem.navItem('fas fa-briefcase-medical', 'general.sidebar.my_care', 'ROLE_USER', 'admin')}}
+
+		{% if is_granted ('ROLE_ADMIN') %}
+			<hr>
+			{{navItem.navItem('fas fa-cog', 'general.sidebar.administration', 'ROLE_ADMIN', 'admin')}}
+		{% endif %}
+	</div>
+	{{navItem.navItem('fas fa-sign-out-alt', "general.sidebar.logout", "ROLE_USER", "app_logout")}}
+</nav>
