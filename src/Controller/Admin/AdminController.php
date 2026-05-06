@@ -35,6 +35,7 @@ class AdminController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+        yield MenuItem::linkTo(GalopCrudController::class, 'Galop', 'fas fa-list');
         yield MenuItem::linkTo(BreedCrudController::class, 'Races', 'fas fa-list');
         yield MenuItem::linkTo(CoatCrudController::class, 'Robes', 'fas fa-list');
     }
