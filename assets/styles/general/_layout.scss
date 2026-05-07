@@ -129,11 +129,23 @@
                 padding: 0 4px;
                 border-radius: 999px;
                 background-color: $error-40;
-                background-color: $white;
+                color: $white;
                 font-size: $notifications;
                 font-weight: 700;
                 line-height: 16px;
                 text-align: center;
+            }
+            &__profile-wrapper {
+                position: relative;
+
+                &:hover {
+                    .topbar__dropdown {
+                        opacity: 1;
+                        visibility: visible;
+                        transform: translateY(0);
+                        pointer-events: auto;
+                    }
+                }
             }
 
             &__profile {
@@ -183,6 +195,55 @@
             &__chevron {
                 font-size: $caption;
                 color: $neutral-50;
+            }
+
+            &__dropdown {
+                position: absolute;
+                top: calc(100% + 10px);
+                right: 0;
+                z-index: 50;
+                min-width: 190px;
+                padding: 8px;
+                border: 1px solid $neutral-30;
+                border-radius: 12px;
+                background-color: $white;
+                box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-6px);
+                pointer-events: none;
+                transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+            }
+
+            &__dropdown-link {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 12px;
+                border-radius: 8px;
+                color: $primary-90;
+                font-size: 13px;
+                font-weight: 500;
+                text-decoration: none;
+
+                &:hover {
+                    background-color: $neutral-20;
+                    color: $primary-50;
+                }
+                i {
+                    width: 16px;
+                    font-size: $body;
+                }
+
+                &--danger {
+                    color: $error-50;
+
+                    &:hover {
+                        background-color: $error-20;
+                        color: $error-60;
+                    }
+                }
+
             }
         }
     }

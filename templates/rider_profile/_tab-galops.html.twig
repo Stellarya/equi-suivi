@@ -1,0 +1,38 @@
+<div class="rider-profile-panel__toolbar">
+	<h2>{{ 'rider.galop_history' | trans }}</h2>
+
+	<a href="#" class="rider-profile-panel__action">
+		{{ 'general.add' | trans }}
+		<i class="fa-solid fa-plus"></i>
+	</a>
+</div>
+
+<div class="rider-profile-table-wrapper">
+	<table class="rider-profile-table">
+		<thead>
+			<tr>
+				<th>{{ 'rider.galop' | trans }}</th>
+				<th>{{ 'rider.obtentionYear' | trans }}</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for riderGalop in galopHistory %}
+				<tr>
+					<td>{{ riderGalop.galop.libelle }}</td>
+					<td>
+						{% if riderGalop.obtainedYear %}
+							{{ riderGalop.obtainedYear }}
+						{% else %}
+							{{ 'rider.no_info' | trans }}
+						{% endif %}
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="2">{{ 'rider.no_info' | trans }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>

@@ -1,0 +1,51 @@
+<aside class="rider-info-card">
+	<div class="rider-info-card__avatar">
+		<i class="fa-solid fa-user"></i>
+	</div>
+
+	<div class="rider-info-card__identity">
+		<h2>{{ rider.fullName }}</h2>
+		<p>{{ 'rider.rider' | trans }}</p>
+	</div>
+
+	<dl class="rider-info-card__details">
+		<div>
+			<dt>{{ 'rider.firstName' | trans }}</dt>
+			<dd>{{ rider.firstName }}</dd>
+		</div>
+
+		<div>
+			<dt>{{ 'rider.lastName' | trans }}</dt>
+			<dd>{{ rider.lastName }}</dd>
+		</div>
+
+		<div>
+			<dt>{{ 'rider.email' | trans }}</dt>
+			<dd>{{ app.user.email }}</dd>
+		</div>
+
+		<div class="rider-info-card__separator"></div>
+
+		<div>
+			<dt>{{ 'rider.lastGalop' | trans }}</dt>
+			<dd>
+				{% if lastGalop %}
+					{{ lastGalop.galop.libelle }}
+				{% else %}
+					{{ 'rider.no_info' | trans }}
+				{% endif %}
+			</dd>
+		</div>
+
+		<div>
+			<dt>{{ 'rider.obtentionYear' | trans }}</dt>
+			<dd>
+				{% if lastGalop and lastGalop.obtainedYear %}
+					{{ lastGalop.obtainedYear }}
+				{% else %}
+					{{ 'rider.no_info' | trans }}
+				{% endif %}
+			</dd>
+		</div>
+	</dl>
+</aside>

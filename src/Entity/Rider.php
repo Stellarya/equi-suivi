@@ -21,7 +21,7 @@ class Rider
     #[ORM\Column(length: 100)]
     private ?string $lastName = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'rider')]
     #[ORM\JoinColumn(nullable: false)]
     private ?AppUser $appUser = null;
 
