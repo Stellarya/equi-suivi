@@ -8,7 +8,7 @@
 </div>
 
 <div class="rider-profile-table-wrapper">
-	<table class="rider-profile-table">
+	<table id="rider-galops-table" class="rider-profile-table">
 		<thead>
 			<tr>
 				<th>{{ 'rider.galop' | trans }}</th>
@@ -27,10 +27,6 @@
 							{{ 'rider.no_info' | trans }}
 						{% endif %}
 					</td>
-				</tr>
-			{% else %}
-				<tr>
-					<td colspan="2">{{ 'rider.no_info' | trans }}</td>
 				</tr>
 			{% endfor %}
 		</tbody>
