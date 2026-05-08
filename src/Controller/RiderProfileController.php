@@ -66,7 +66,9 @@ final class RiderProfileController extends AppController
 
         $profileData = $this->riderProfileService->buildProfileViewData($rider);
         $profileData['form'] = $form->createView();
+        $profileData['riderGalopForm'] = $this->createRiderGalopFormView($rider);
         $profileData['isProfileModalOpen'] = true;
+        $profileData['isRiderGalopModalOpen'] = false;
 
         return $this->render('rider_profile/index.html.twig', $profileData);
     }
