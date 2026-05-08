@@ -2,12 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\AppUser;
 use App\Entity\Rider;
 use App\Form\RiderGalopType;
 use App\Form\RiderType;
 use App\Service\RiderGalopService;
 use App\Service\RiderProfileService;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -96,11 +96,24 @@ final class RiderProfileController extends AppController
     /**
      * @return array<int, FormView>
      */
-    private function createRiderGalopEditFormViews(Rider $rider): array
-    {
+    private function createRiderGalopEditFormViews(
+        Rider $rider,
+        ?int $invalidFormRiderGalopId = null,
+        ?FormInterface $invalidForm = null
+    ): array {
         $forms = [];
 
         foreach ($this->riderProfileService->getSortedGalopHistory($rider) as $riderGalop) {
+            if ($riderGalop->getId() === null) {
+                continue;
+            }
+
+            if ($invalidFormRiderGalopId === $riderGalop->getId() && $invalidForm !== null) {
+                $forms[$riderGalop->getId()] = $invalidForm->createView();
+
+                continue;
+            }
+
             $forms[$riderGalop->getId()] = $this->createForm(RiderGalopType::class, $riderGalop, [
                 'action' => $this->generateUrl('app_rider_galop_edit', [
                     'id' => $riderGalop->getId(),

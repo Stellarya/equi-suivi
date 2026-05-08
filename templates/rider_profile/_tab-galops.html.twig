@@ -39,9 +39,9 @@
 	</table>
 	{% for riderGalop in galopHistory %}
 		{% include "rider_galop/_edit-rider-galop-modal.html.twig" with {
-        riderGalop: riderGalop,
-        riderGalopEditForm: riderGalopEditForms[riderGalop.id],
-        isRiderGalopEditModalOpen: openRiderGalopEditModalId|default(null) == riderGalop.id
-    } %}
+			riderGalop: riderGalop,
+			riderGalopEditForm: riderGalopEditForms[riderGalop.id],
+			isRiderGalopEditModalOpen: openRiderGalopEditModalId|default(null) == riderGalop.id
+		} %}
 	{% endfor %}
 </div>

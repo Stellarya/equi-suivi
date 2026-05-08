@@ -59,10 +59,13 @@ final class RiderGalopController extends AppController
        $profileData['riderGalopForm'] = $form->createView();
        $profileData['isProfileModalOpen'] = false;
        $profileData['isRiderGalopModalOpen'] = true;
+       $profileData['riderGalopEditForms'] = $this->createRiderGalopEditFormViews($rider);
+       $profileData['openRiderGalopEditModalId'] = null;
 
        return $this->render('rider_profile/index.html.twig', $profileData);
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/{id}/edit', name:'_edit', methods: ['POST'])]
     public function edit(RiderGalop $riderGalop, Request $request): Response {
         $user = $this->getCurrentAppUser();
@@ -126,6 +129,10 @@ final class RiderGalopController extends AppController
         $forms = [];
 
         foreach ($this->riderProfileService->getSortedGalopHistory($rider) as $riderGalop) {
+            if ($riderGalop->getId() === null) {
+                continue;
+            }
+
             if ($invalidFormRiderGalopId === $riderGalop->getId() && $invalidForm !== null) {
                 $forms[$riderGalop->getId()] = $invalidForm->createView();
 
