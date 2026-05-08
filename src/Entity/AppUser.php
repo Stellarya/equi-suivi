@@ -32,6 +32,9 @@ class AppUser implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[ORM\OneToOne(mappedBy: 'appUser', cascade: ['persist', 'remove'])]
+    private ?Rider $rider=null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,6 +95,20 @@ class AppUser implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getRider(): ?Rider {
+        return $this->rider;
+    }
+
+    public function setRider(?Rider $rider): static {
+        if($rider !== null && $rider->getAppUser() !== $this) {
+            $rider->setAppUser($this);
+        }
+
+        $this->rider = $rider;
 
         return $this;
     }

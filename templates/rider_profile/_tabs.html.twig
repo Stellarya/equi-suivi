@@ -1,0 +1,22 @@
+{% import "macros/macros.html.twig" as macros %}
+
+<nav class="rider-profile-tabs" aria-label="Navigation du profil cavalier">
+	{{ macros.riderTab(
+        'fa-solid fa-medal',
+        'rider.galop_history',
+        'tab-galops',
+        true
+    ) }}
+
+	{{ macros.riderTab(
+        'fa-solid fa-trophy',
+        'rider.competitions',
+        'tab-competitions'
+    ) }}
+
+	{{ macros.riderTab(
+        'fa-solid fa-horse',
+        'rider.horses',
+        'tab-horses'
+    ) }}
+</nav>

@@ -1,51 +1,72 @@
 {# left sidebar #}
-{% macro navItem(icon, label, role, link, params = {}, idItem = null ) %}
+{% macro navItem(icon, label, role, link, params = {}, idItem = null) %}
 	{% if is_granted(role) %}
-		<div class="nav-item " title="{{ label }}" data-value="{{ label }}" {% if idItem != null %} id="{{ idItem }}" {% endif %}>
-
-			<a {% if link != null %} href="{{ path(link, params) }}" {% endif %}>
+		<div class="nav-item" title="{{ label | trans }}" data-value="{{ label }}" {% if idItem is not null %} id="{{ idItem }}" {% endif %}>
+			<a {% if link is not null %} href="{{ path(link, params) }}" {% endif %}>
 				<i class="{{ icon }}"></i>
-				<span>{{ label | trans}}</span>
+				<span>{{ label | trans }}</span>
 			</a>
 		</div>
 	{% endif %}
-
 {% endmacro %}
-{# Tabs #}
-{% macro navItemTabs(icon, label, link, active, params = {}) %}
+
+{# Tabs génériques Bootstrap-like #}
+{% macro navItemTabs(icon, label, link, active = false) %}
 	<li class="nav-item text-truncate">
-		<a class="nav-link {{ active }} text-truncate" data-toggle="tab" href="#{{ link }}" title="{{ label }}">
+		<a class="nav-link {% if active %}active{% endif %} text-truncate" data-toggle="tab" href="#{{ link }}" title="{{ label | trans }}">
 			<i class="{{ icon }}"></i>
-			<span class="d-none d-lg-inline text-truncate">{{ label }}</span>
+			<span class="d-none d-lg-inline text-truncate">{{ label | trans }}</span>
 		</a>
 	</li>
+{% endmacro %}
+
+{# Tabs profil rider #}
+{% macro riderTab(icon, label, target, active = false) %}
+	<button class="rider-profile-tabs__item {% if active %}rider-profile-tabs__item--active{% endif %}" type="button" data-tab-target="{{ target }}">
+		<i class="{{ icon }}"></i>
+		{{ label | trans }}
+	</button>
 {% endmacro %}
 
 {# Buttons #}
 {% macro button(datavalue, label, class, icon) %}
 	<div data-value="{{ datavalue }}" class="btn {{ class }}">
 		<i class="{{ icon }}"></i>
-		{{ label }}
+		{{ label | trans }}
 	</div>
 {% endmacro %}
 
-{% macro addButton(id, options = '') %}
-	<button class="btn btn-primary px-0 btn-round d-none d-sm-block" id={{ id }} title="Ajouter {{ options }}">
-		<i class="fa fa-plus"></i>
+{% macro addButton(id, label = 'actions.add', class = 'btn btn-primary') %}
+	<button type="button" class="{{ class }}" id="{{ id }}" title="{{ label | trans }}">
+		<i class="fa-solid fa-plus"></i>
+		<span>{{ label | trans }}</span>
 	</button>
 {% endmacro %}
-{% macro addButton(id, options = '') %}
-	<button class="btn btn-primary px-0 btn-round d-none d-sm-block" id={{ id }} title="Ajouter {{ options }}">
-		<i class="fa fa-plus"></i>
+
+{% macro actionLink(href, label, icon, class = '') %}
+	<a href="{{ href }}" class="{{ class }}">
+		<span>{{ label | trans }}</span>
+		<i class="{{ icon }}"></i>
+	</a>
+{% endmacro %}
+
+{% macro deleteButton(id, label = 'actions.delete', class = 'btn btn-danger') %}
+	<button type="button" id="{{ id }}" class="{{ class }}" data-value="{{ id }}" title="{{ label | trans }}">
+		<i class="fa-solid fa-trash"></i>
 	</button>
 {% endmacro %}
-{% macro deleteButton(id, options = '') %}
-	<a id="{{ button }}" class="btn btn-danger" data-value="{{ id }}" title="Supprimer {{ options }}" role="button">
-		<i class="fas fa-trash"></i>
-	</a>
+
+{% macro updateButton(id, label = 'actions.edit', class = '') %}
+	<button type="button" id="{{ id }}" class="{{ class }}" data-value="{{ id }}" title="{{ label | trans }}" aria-expanded="false">
+		<i class="fa-solid fa-pencil"></i>
+	</button>
 {% endmacro %}
-{% macro updateButton(id) %}
-	<a id="{{ id }}" data-value="{{ id }}" title="Modifier" role="button" aria-expanded="false">
-		<i class"fas fa-pencil"></i>
-	</a>
+
+{% macro modalButton(id, label, icon, modalTarget, class = '', showLabel = false) %}
+	<button type="button" id="{{ id }}" class="{{ class }}" title="{{ label | trans }}" aria-label="{{ label | trans }}" data-modal-open="{{ modalTarget }}">
+		{% if showLabel %}
+			<span>{{ label | trans }}</span>
+		{% endif %}
+		<i class="{{ icon }}"></i>
+	</button>
 {% endmacro %}

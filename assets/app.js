@@ -8,5 +8,34 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './styles/app.scss';
+import DataTable from 'datatables.net-dt';
+import 'datatables.net-dt/css/dataTables.dataTables.css'
+import { initTopbarDropdown } from './js/topbar-dropdown';
+import { initModals } from './js/modal';
 
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+document.addEventListener('DOMContentLoaded', () => {
+    //Topbar
+    initTopbarDropdown();
+
+    //Modals
+    initModals();
+
+    //Rider
+    const riderGalopsTable = document.querySelector('#rider-galops-table');
+
+    if(riderGalopsTable !== null) {
+        new DataTable(riderGalopsTable, {
+            searching: false,
+            paging: false,
+            info: false,
+            ordering: true,
+            language: {
+                emptyTable: 'Aucun galop renseigné pour le moment',
+                zeroRecords: 'Aucun résultat correspondant'
+            },
+            order: [[1, 'desc']]
+        })
+    }
+
+    
+});

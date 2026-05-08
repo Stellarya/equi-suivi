@@ -4,11 +4,15 @@
 @use 'general/navTabs';
 @use 'general/layout';
 @use 'general/icons';
+@use './rider';
 @use 'login';
 
 * {
     font-family: 'Inter', sans-serif;    
     body {
         margin: 0;
+        &.has-open-modal {
+            overflow: hidden;
+        }
     }
 }

@@ -1,0 +1,47 @@
+{% import "macros/macros.html.twig" as macros %}
+
+<div class="rider-profile-panel__toolbar">
+	<h2>{{ 'rider.galop_history' | trans }}</h2>
+
+	{{ macros.modalButton(
+        'add-rider-galop',
+        'actions.add',
+        'fa-solid fa-plus',
+        'rider-galop-add-modal',
+        'btn btn-primary rider-profile-panel__action',
+        true
+    ) }}
+</div>
+
+<div class="rider-profile-table-wrapper">
+	<table id="rider-galops-table" class="rider-profile-table">
+		<thead>
+			<tr>
+				<th>{{ 'rider.galop' | trans }}</th>
+				<th>{{ 'rider.obtentionYear' | trans }}</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for riderGalop in galopHistory %}
+				<tr class="rider-profile-table__row rider-profile-table__row--clickable" data-modal-open="rider-galop-edit-modal-{{ riderGalop.id }}" role="button" tabindex="0">
+					<td>{{ riderGalop.galop.libelle }}</td>
+					<td>
+						{% if riderGalop.obtainedYear %}
+							{{ riderGalop.obtainedYear }}
+						{% else %}
+							{{ 'rider.no_info' | trans }}
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% for riderGalop in galopHistory %}
+		{% include "rider_galop/_edit-rider-galop-modal.html.twig" with {
+			riderGalop: riderGalop,
+			riderGalopEditForm: riderGalopEditForms[riderGalop.id],
+			isRiderGalopEditModalOpen: openRiderGalopEditModalId|default(null) == riderGalop.id
+		} %}
+	{% endfor %}
+</div>

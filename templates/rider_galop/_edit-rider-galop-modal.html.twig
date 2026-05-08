@@ -1,0 +1,47 @@
+<div id="rider-galop-edit-modal-{{ riderGalop.id }}" class="rider-modal {% if isRiderGalopEditModalOpen %}is-open{% endif %}" aria-hidden="{{ isRiderGalopEditModalOpen ? 'false' : 'true' }}" data-modal>
+	<div class="rider-modal__overlay" data-modal-close></div>
+
+	<div class="rider-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="rider-galop-edit-modal-title-{{ riderGalop.id }}">
+		<div class="rider-modal__header">
+			<h2 id="rider-galop-edit-modal-title-{{ riderGalop.id }}">
+				{{ 'rider.edit_galop' | trans }}
+			</h2>
+
+			<button type="button" class="rider-modal__close" aria-label="Fermer" data-modal-close>
+				<i class="fa-solid fa-xmark"></i>
+			</button>
+		</div>
+
+		{{ form_start(riderGalopEditForm, {
+            attr: {
+                class: 'rider-modal__form'
+            }
+        }) }}
+
+		<div class="rider-modal__body">
+			<div class="rider-modal__field">
+				{{ form_label(riderGalopEditForm.galop) }}
+				{{ form_widget(riderGalopEditForm.galop) }}
+				{{ form_errors(riderGalopEditForm.galop) }}
+			</div>
+
+			<div class="rider-modal__field">
+				{{ form_label(riderGalopEditForm.obtainedYear) }}
+				{{ form_widget(riderGalopEditForm.obtainedYear) }}
+				{{ form_errors(riderGalopEditForm.obtainedYear) }}
+			</div>
+		</div>
+
+		<div class="rider-modal__footer">
+			<button type="button" class="rider-modal__button rider-modal__button--secondary" data-modal-close>
+				{{ 'actions.cancel' | trans }}
+			</button>
+
+			<button type="submit" class="rider-modal__button rider-modal__button--primary">
+				{{ 'actions.save' | trans }}
+			</button>
+		</div>
+
+		{{ form_end(riderGalopEditForm) }}
+	</div>
+</div>

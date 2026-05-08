@@ -1,36 +1,61 @@
-{% set roleLabel  =  'Cavalier' %}
+{% set roleLabel = null %}
+{% set rider = null %}
 
-{% if is_granted('ROLE_ADMIN') %}
-	{% set roleLabel = 'Admin' %}
-{% elseif is_granted('ROLE_ECURIE') %}
-	{% set roleLabel = 'Ecurie' %}
-{% elseif is_granted('ROLE_USER')%}
-	{% set roleLabel = 'Cavalier' %}
+{% if app.user %}
+	{% if is_granted('ROLE_ADMIN') %}
+		{% set roleLabel = 'Admin' %}
+	{% elseif is_granted('ROLE_ECURIE') %}
+		{% set roleLabel = 'Écurie' %}
+	{% elseif is_granted('ROLE_USER') %}
+		{% set roleLabel = 'Cavalier' %}
+	{% endif %}
+
+	{% set rider = app.user.rider ?? null %}
 {% endif %}
 
 <header class="topbar">
-	<div class="topbar__spacer"></div>
-
 	<div class="topbar__actions">
-		<button class="topbar__notification" type="button" aria-label="Notifications">
-			<i class="fa-solid fa-bell"></i>
-			<span class="topbar__notification-badge"></span>
-		</button>
+		{% if app.user %}
+			<button class="topbar__notification" type="button" aria-label="Notifications">
+				<i class="fa-solid fa-bell"></i>
+				<span class="topbar__notification-badge">6</span>
+			</button>
 
-		<button class="topbar__profile" type="button" aria-label="Menu utilisateur">
-			<span class="topbar__avatar">
-				<i class="fa-solid fa-user"></i>
-			</span>
-			<span class="topbar__identity">
-				<span class="topbar__name">
-					{{app.user.email}}
-				</span>
-				<span class="topbar__role">
-					{{roleLabel}}
-				</span>
-			</span>
+			<div class="topbar__profile-wrapper" data-dropdown="user-menu">
+				<button class="topbar__profile" type="button" aria-label="Menu utilisateur" aria-expanded="false" aria-controls="topbar-user-menu" data-dropdown-trigger>
+					<span class="topbar__avatar">
+						<i class="fa-solid fa-user"></i>
+					</span>
 
-			<i class="fa-solid fa-chevron-down topbar__chevron"></i>
-		</button>
+					<span class="topbar__identity">
+						<span class="topbar__name">
+							{% if rider %}
+								{{ rider.fullName }}
+							{% else %}
+								{{ app.user.email }}
+							{% endif %}
+						</span>
+
+						<span class="topbar__role">
+							{{ roleLabel }}
+						</span>
+					</span>
+
+					<i class="fa-solid fa-chevron-down topbar__chevron"></i>
+				</button>
+
+				<div id="topbar-user-menu" class="topbar__dropdown" data-dropdown-menu>
+					<a href="{{ path('app_rider_profile') }}" class="topbar__dropdown-link">
+						<i class="fa-solid fa-id-card"></i>
+						<span>{{ 'general.topbar.profile' | trans }}</span>
+					</a>
+
+					<a href="{{ path('app_logout') }}" class="topbar__dropdown-link topbar__dropdown-link--danger">
+						<i class="fa-solid fa-right-from-bracket"></i>
+						<span>{{ 'general.topbar.logout' | trans }}</span>
+					</a>
+				</div>
+			</div>
+		{% endif %}
 	</div>
 </header>
