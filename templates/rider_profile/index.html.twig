@@ -39,7 +39,9 @@
 					<div class="rider-profile-panel__content">
 						<div class="rider-profile-tab-content rider-profile-tab-content--active" id="tab-galops">
 							{% include "rider_profile/_tab-galops.html.twig" with {
-                                galopHistory: galopHistory
+                                galopHistory: galopHistory,
+								riderGalopEditForms: riderGalopEditForms,
+								openRiderGalopEditModalId: openRiderGalopEditModalId|default(null)
                             } %}
 						</div>
 					</div>

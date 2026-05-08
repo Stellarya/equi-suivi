@@ -37,6 +37,8 @@ final class RiderProfileController extends AppController
         if ($rider !== null) {
             $profileData['form'] = $this->createRiderProfileFormView($rider);
             $profileData['riderGalopForm'] = $this->createRiderGalopFormView($rider);
+            $profileData['riderGalopEditForms'] = $this->createRiderGalopEditFormViews($rider);
+            $profileData['openRiderGalopEditModalId'] = null;
         }
 
         return $this->render('rider_profile/index.html.twig', $profileData);
@@ -89,5 +91,24 @@ final class RiderProfileController extends AppController
             'action' => $this->generateUrl('app_rider_galop_add'),
             'method' => 'POST',
         ])->createView();
+    }
+
+    /**
+     * @return array<int, FormView>
+     */
+    private function createRiderGalopEditFormViews(Rider $rider): array
+    {
+        $forms = [];
+
+        foreach ($this->riderProfileService->getSortedGalopHistory($rider) as $riderGalop) {
+            $forms[$riderGalop->getId()] = $this->createForm(RiderGalopType::class, $riderGalop, [
+                'action' => $this->generateUrl('app_rider_galop_edit', [
+                    'id' => $riderGalop->getId(),
+                ]),
+                'method' => 'POST',
+            ])->createView();
+        }
+
+        return $forms;
     }
 }

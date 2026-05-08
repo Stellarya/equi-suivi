@@ -217,6 +217,19 @@
                 border-bottom: none;
             }
         }
+
+        .rider-profile-table__row--clickable {
+            cursor: pointer;
+
+            &:hover {
+                background-color: $neutral-10;
+            }
+
+            &:focus {
+                outline: none;
+                box-shadow: inset 0 0 0 2px $primary-50;
+            }
+        }
     }
     .dt-container {
         font-size: $label;

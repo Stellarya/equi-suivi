@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Rider;
 use App\Entity\RiderGalop;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class RiderGalopService {
 
@@ -18,6 +19,12 @@ class RiderGalopService {
         $riderGalop->setRider($rider);
 
         return $riderGalop;
+    }
+
+    public function assertBelongsToRider(RiderGalop $riderGalop, Rider $rider): void {
+        if ($riderGalop->getRider()?->getId() !== $rider->getId()) {
+            throw new AccessDeniedHttpException('Ce galop ne peut pas être modifié par cet utilisateur.');
+        }
     }
 
     public function save(RiderGalop $riderGalop): void {

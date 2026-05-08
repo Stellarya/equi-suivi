@@ -10,6 +10,15 @@ export function initModals() {
                 openModal(modal);
             }
         });
+
+        button.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') {
+            return;
+        }
+
+        event.preventDefault();
+        button.click();
+    });
     });
 
     document.querySelectorAll('[data-modal-close]').forEach((button) => {

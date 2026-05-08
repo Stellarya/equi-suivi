@@ -24,7 +24,7 @@
 
 		<tbody>
 			{% for riderGalop in galopHistory %}
-				<tr>
+				<tr class="rider-profile-table__row rider-profile-table__row--clickable" data-modal-open="rider-galop-edit-modal-{{ riderGalop.id }}" role="button" tabindex="0">
 					<td>{{ riderGalop.galop.libelle }}</td>
 					<td>
 						{% if riderGalop.obtainedYear %}
@@ -37,4 +37,11 @@
 			{% endfor %}
 		</tbody>
 	</table>
+	{% for riderGalop in galopHistory %}
+		{% include "rider_galop/_edit-rider-galop-modal.html.twig" with {
+        riderGalop: riderGalop,
+        riderGalopEditForm: riderGalopEditForms[riderGalop.id],
+        isRiderGalopEditModalOpen: openRiderGalopEditModalId|default(null) == riderGalop.id
+    } %}
+	{% endfor %}
 </div>
