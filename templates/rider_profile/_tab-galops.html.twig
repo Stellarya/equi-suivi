@@ -1,10 +1,11 @@
+{% import "macros/macros.html.twig" as macros %}
+
 <div class="rider-profile-panel__toolbar">
 	<h2>{{ 'rider.galop_history' | trans }}</h2>
 
-	<a href="#" class="rider-profile-panel__action">
-		{{ 'general.add' | trans }}
-		<i class="fa-solid fa-plus"></i>
-	</a>
+	{{ macros.addButton(
+        'add-rider-galop',
+    ) }}
 </div>
 
 <div class="rider-profile-table-wrapper">

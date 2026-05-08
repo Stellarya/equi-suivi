@@ -11,10 +11,14 @@ import './styles/app.scss';
 import DataTable from 'datatables.net-dt';
 import 'datatables.net-dt/css/dataTables.dataTables.css'
 import { initTopbarDropdown } from './js/topbar-dropdown';
+import { initModals } from './js/modal';
 
 document.addEventListener('DOMContentLoaded', () => {
     //Topbar
     initTopbarDropdown();
+
+    //Modals
+    initModals();
 
     //Rider
     const riderGalopsTable = document.querySelector('#rider-galops-table');

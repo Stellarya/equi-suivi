@@ -2,10 +2,27 @@
 
 namespace App\Service;
 
+use App\Entity\AppUser;
 use App\Entity\Rider;
 use App\Entity\RiderGalop;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RiderProfileService {
+
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager
+    ) {}
+
+    public function getRiderForUser(AppUser $user): Rider {
+        $rider = $user->getRider();
+
+        if($rider === null) {
+            throw new NotFoundHttpException('Aucun profil cavalier n\'est rattaché à ce compte');
+        }
+
+        return $rider;
+    }
 
     /**
      * @return RiderGalop[]
@@ -43,4 +60,8 @@ class RiderProfileService {
             'galopHistory' => $galopHistory
         ];
     }
+
+    public function saveProfile(): void {
+        $this->entityManager->flush();
+    }    
 }

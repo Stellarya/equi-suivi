@@ -4,15 +4,21 @@
 	{{ 'rider.profile' | trans }}
 {% endblock %}
 
+{% import "macros/macros.html.twig" as macros %}
+
 {% block body %}
 	<section id="rider" class="rider-profile">
 		<div class="rider-profile__header">
 			<h1>{{ 'rider.profile' | trans }}</h1>
 
 			{% if rider %}
-				<a href="#" class="rider-profile__edit-link" aria-label="Modifier mon profil">
-					<i class="fa-solid fa-pen"></i>
-				</a>
+				{{ macros.modalButton(
+					'edit-rider-profile',
+					'general.edit',
+					'fa-solid fa-pen',
+					'rider-profile-edit-modal',
+					'rider-profile__edit-link'
+				) }}
 			{% endif %}
 		</div>
 
@@ -39,6 +45,10 @@
 					</div>
 				</section>
 			</div>
+			{% include "rider_profile/_edit-profile-modal.html.twig" with {
+				form: form,
+				isProfileModalOpen: isProfileModalOpen|default(false)
+			} %}
 		{% endif %}
 
 	</section>

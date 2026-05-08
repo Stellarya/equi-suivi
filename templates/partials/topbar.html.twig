@@ -17,8 +17,8 @@
 			<span class="topbar__notification-badge">6</span>
 		</button>
 
-		<div class="topbar__profile-wrapper">
-			<button class="topbar__profile" type="button" aria-label="Menu utilisateur">
+		<div class="topbar__profile-wrapper" data-dropdown="user-menu">
+			<button class="topbar__profile" type="button" aria-label="Menu utilisateur" aria-expanded="false" aria-controls="topbar-user-menu" data-dropdown-trigger>
 				<span class="topbar__avatar">
 					<i class="fa-solid fa-user"></i>
 				</span>
@@ -40,15 +40,15 @@
 				<i class="fa-solid fa-chevron-down topbar__chevron"></i>
 			</button>
 
-			<div class="topbar__dropdown">
+			<div id="topbar-user-menu" class="topbar__dropdown" data-dropdown-menu>
 				<a href="{{ path('app_rider_profile') }}" class="topbar__dropdown-link">
 					<i class="fa-solid fa-id-card"></i>
-					<span>Mon profil</span>
+					<span>{{ 'general.topbar.profile' | trans }}</span>
 				</a>
 
 				<a href="{{ path('app_logout') }}" class="topbar__dropdown-link topbar__dropdown-link--danger">
 					<i class="fa-solid fa-right-from-bracket"></i>
-					<span>Se déconnecter</span>
+					<span>{{ 'general.topbar.logout' | trans }}</span>
 				</a>
 			</div>
 		</div>

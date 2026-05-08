@@ -1,7 +1,5 @@
-import { event } from "jquery";
-
 export function initTopbarDropdown() {
-    const dropdownWrapper = document.querySelectorAll('[data-dropdown="user-menu]');
+    const dropdownWrapper = document.querySelectorAll('[data-dropdown="user-menu"]');
 
     dropdownWrapper.forEach((dropdownWrapper) => {
         const trigger = dropdownWrapper.querySelector('[data-dropdown-trigger]');
