@@ -31,9 +31,16 @@ class Rider
     #[ORM\OneToMany(targetEntity: RiderGalop::class, mappedBy: 'rider', orphanRemoval: true)]
     private Collection $galopHistory;
 
+    /**
+     * @var Collection<int, Horse>
+     */
+    #[ORM\ManyToMany(targetEntity: Horse::class, mappedBy: 'rider')]
+    private Collection $horses;
+
     public function __construct()
     {
         $this->galopHistory = new ArrayCollection();
+        $this->horses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -106,6 +113,33 @@ class Rider
             if ($galopHistory->getRider() === $this) {
                 $galopHistory->setRider(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Horse>
+     */
+    public function getHorses(): Collection
+    {
+        return $this->horses;
+    }
+
+    public function addHorse(Horse $horse): static
+    {
+        if (!$this->horses->contains($horse)) {
+            $this->horses->add($horse);
+            $horse->addRider($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHorse(Horse $horse): static
+    {
+        if ($this->horses->removeElement($horse)) {
+            $horse->removeRider($this);
         }
 
         return $this;
