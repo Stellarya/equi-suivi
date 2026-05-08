@@ -3,8 +3,13 @@
 <div class="rider-profile-panel__toolbar">
 	<h2>{{ 'rider.galop_history' | trans }}</h2>
 
-	{{ macros.addButton(
+	{{ macros.modalButton(
         'add-rider-galop',
+        'actions.add',
+        'fa-solid fa-plus',
+        'rider-galop-add-modal',
+        'btn btn-primary rider-profile-panel__action',
+        true
     ) }}
 </div>
 

@@ -49,6 +49,11 @@
 				form: form,
 				isProfileModalOpen: isProfileModalOpen|default(false)
 			} %}
+
+			{% include "rider_galop/_add-rider-galop-modal.html.twig" with {
+				riderGalopForm: riderGalopForm,
+				isRiderGalopModalOpen: isRiderGalopModalOpen|default(false)
+			} %}
 		{% endif %}
 
 	</section>

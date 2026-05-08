@@ -3,19 +3,23 @@
 namespace App\Controller;
 
 use App\Entity\AppUser;
+use App\Entity\Rider;
+use App\Form\RiderGalopType;
 use App\Form\RiderType;
+use App\Service\RiderGalopService;
 use App\Service\RiderProfileService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/rider', name: 'app_rider')]
-final class RiderProfileController extends AbstractController
+final class RiderProfileController extends AppController
 {
     public function __construct(
         private readonly RiderProfileService $riderProfileService,
+        private readonly RiderGalopService $riderGalopService
     ) {
     }
 
@@ -27,12 +31,12 @@ final class RiderProfileController extends AbstractController
         $rider = $user->getRider();
 
         $profileData = $this->riderProfileService->buildProfileViewData($rider);
+        $profileData['isProfileModalOpen'] = false;
+        $profileData['isRiderGalopModalOpen'] = false;
 
         if ($rider !== null) {
-            $profileData['form'] = $this->createForm(RiderType::class, $rider, [
-                'action' => $this->generateUrl('app_rider_profile_edit'),
-                'method' => 'POST',
-            ])->createView();
+            $profileData['form'] = $this->createRiderProfileFormView($rider);
+            $profileData['riderGalopForm'] = $this->createRiderGalopFormView($rider);
         }
 
         return $this->render('rider_profile/index.html.twig', $profileData);
@@ -67,14 +71,21 @@ final class RiderProfileController extends AbstractController
         return $this->render('rider_profile/index.html.twig', $profileData);
     }
 
-    private function getCurrentAppUser(): AppUser
+    private function createRiderProfileFormView(Rider $rider): FormView
     {
-        $user = $this->getUser();
+        return $this->createForm(RiderType::class, $rider, [
+            'action' => $this->generateUrl('app_rider_profile_edit'),
+            'method' => 'POST',
+        ])->createView();
+    }
 
-        if (!$user instanceof AppUser) {
-            throw $this->createAccessDeniedException();
-        }
+    private function createRiderGalopFormView(Rider $rider): FormView
+    {
+        $riderGalop = $this->riderGalopService->createForRider($rider);
 
-        return $user;
+        return $this->createForm(RiderGalopType::class, $riderGalop, [
+            'action' => $this->generateUrl('app_rider_galop_add'),
+            'method' => 'POST',
+        ])->createView();
     }
 }

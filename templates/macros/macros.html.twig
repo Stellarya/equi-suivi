@@ -62,8 +62,11 @@
 	</button>
 {% endmacro %}
 
-{% macro modalButton(id, label, icon, modalTarget, class = '') %}
+{% macro modalButton(id, label, icon, modalTarget, class = '', showLabel = false) %}
 	<button type="button" id="{{ id }}" class="{{ class }}" title="{{ label | trans }}" aria-label="{{ label | trans }}" data-modal-open="{{ modalTarget }}">
+		{% if showLabel %}
+			<span>{{ label | trans }}</span>
+		{% endif %}
 		<i class="{{ icon }}"></i>
 	</button>
 {% endmacro %}
