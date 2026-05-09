@@ -1,0 +1,71 @@
+<div id="{{ modalId }}" class="app-modal {% if isOpen %}is-open{% endif %}" aria-hidden="{{ isOpen ? 'false' : 'true' }}" data-modal>
+	<div class="app-modal__overlay" data-modal-close></div>
+
+	<div class="app-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="{{ modalId }}-title">
+		<div class="app-modal__header">
+			<h2 id="{{ modalId }}-title">
+				{{ modalTitle | trans }}
+			</h2>
+
+			<button type="button" class="app-modal__close" aria-label="Fermer" data-modal-close>
+				<i class="fa-solid fa-xmark"></i>
+			</button>
+		</div>
+
+		{{ form_start(form, {
+            attr: {
+                class: 'app-modal__form'
+            }
+        }) }}
+
+		<div class="app-modal__body">
+			<div class="app-modal__field">
+				{{ form_label(form.name) }}
+				{{ form_widget(form.name) }}
+				{{ form_errors(form.name) }}
+			</div>
+
+			<div class="app-modal__field">
+				{{ form_label(form.affix) }}
+				{{ form_widget(form.affix) }}
+				{{ form_errors(form.affix) }}
+			</div>
+
+			<div class="app-modal__field">
+				{{ form_label(form.birthDate) }}
+				{{ form_widget(form.birthDate) }}
+				{{ form_errors(form.birthDate) }}
+			</div>
+
+			<div class="app-modal__field">
+				{{ form_label(form.sire) }}
+				{{ form_widget(form.sire) }}
+				{{ form_errors(form.sire) }}
+			</div>
+
+			<div class="app-modal__field">
+				{{ form_label(form.breed) }}
+				{{ form_widget(form.breed) }}
+				{{ form_errors(form.breed) }}
+			</div>
+
+			<div class="app-modal__field">
+				{{ form_label(form.coat) }}
+				{{ form_widget(form.coat) }}
+				{{ form_errors(form.coat) }}
+			</div>
+		</div>
+
+		<div class="app-modal__footer">
+			<button type="button" class="app-modal__button app-modal__button--secondary" data-modal-close>
+				{{ 'actions.cancel' | trans }}
+			</button>
+
+			<button type="submit" class="app-modal__button app-modal__button--primary">
+				{{ 'actions.save' | trans }}
+			</button>
+		</div>
+
+		{{ form_end(form) }}
+	</div>
+</div>

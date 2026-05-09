@@ -276,168 +276,20 @@
 
     //modals
     .rider-profile__edit-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border: none;
-    border-radius: 50%;
-    background-color: transparent;
-    color: $neutral-50;
-    cursor: pointer;
-
-    &:hover {
-        background-color: $tertiary-10;
-        color: $tertiary-60;
-    }
-}
-
-.rider-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-
-    &.is-open {
-        display: flex;
-    }
-
-    &__overlay {
-        position: absolute;
-        inset: 0;
-        background-color: rgba(15, 23, 42, 0.45);
-    }
-
-    &__dialog {
-        position: relative;
-        z-index: 1;
-        width: min(100%, 520px);
-        border-radius: $border-radius;
-        background-color: $white;
-        box-shadow: 0 24px 70px rgba(15, 23, 42, 0.25);
-        overflow: hidden;
-    }
-
-    &__header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        padding: 20px 24px;
-        border-bottom: $border-size solid $neutral-20;
-
-        h2 {
-            margin: 0;
-            font-size: $h3;
-            font-weight: 700;
-            color: $neutral-90;
-        }
-    }
-
-    &__close {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
+        width: 34px;
+        height: 34px;
         border: none;
         border-radius: 50%;
         background-color: transparent;
-        color: $neutral-60;
+        color: $neutral-50;
         cursor: pointer;
 
         &:hover {
-            background-color: $neutral-10;
-            color: $neutral-90;
+            background-color: $tertiary-10;
+            color: $tertiary-60;
         }
     }
-
-    &__body {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-        padding: 24px;
-    }
-
-    &__field {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-
-        label {
-            font-size: $label;
-            font-weight: 700;
-            color: $neutral-80;
-        }
-
-        input, select {
-            min-height: 42px;
-            padding: 0 12px;
-            border: $border-size solid $neutral-30;
-            border-radius: 8px;
-            color: $neutral-90;
-            font-size: $body;
-
-            &:focus {
-                outline: none;
-                border-color: $primary-50;
-                box-shadow: 0 0 0 3px $primary-10;
-            }
-        }
-
-        ul {
-            margin: 4px 0 0;
-            padding: 0;
-            list-style: none;
-            color: $error-50;
-            font-size: $small;
-        }
-    }
-
-    &__footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-        padding: 18px 24px;
-        border-top: $border-size solid $neutral-20;
-        background-color: $neutral-0;
-    }
-
-    &__button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 38px;
-        padding: 0 16px;
-        border-radius: 8px;
-        font-size: $button;
-        font-weight: 700;
-        cursor: pointer;
-
-        &--secondary {
-            border: $border-size solid $neutral-30;
-            background-color: $white;
-            color: $neutral-70;
-
-            &:hover {
-                background-color: $neutral-10;
-                color: $neutral-90;
-            }
-        }
-
-        &--primary {
-            border: none;
-            background-color: $primary-50;
-            color: $white;
-
-            &:hover {
-                background-color: $primary-60;
-            }
-        }
-    }
-}
 }

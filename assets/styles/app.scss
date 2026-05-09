@@ -1,18 +1,25 @@
 /* Variables and components*/
 @use 'general/variables';
-@use 'general/buttons';
-@use 'general/navTabs';
 @use 'general/layout';
-@use 'general/icons';
+
+@use 'components/buttons';
+@use 'components/navTabs';
+@use 'components/icons';
+@use 'components/modal';
+@use 'components/card';
+
 @use './rider';
+@use './horse';
 @use 'login';
 
 * {
-    font-family: 'Inter', sans-serif;    
-    body {
-        margin: 0;
-        &.has-open-modal {
-            overflow: hidden;
-        }
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    margin: 0;
+
+    &.has-open-modal {
+        overflow: hidden;
     }
 }

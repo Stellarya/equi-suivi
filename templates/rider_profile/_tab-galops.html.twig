@@ -38,10 +38,11 @@
 		</tbody>
 	</table>
 	{% for riderGalop in galopHistory %}
-		{% include "rider_galop/_edit-rider-galop-modal.html.twig" with {
-			riderGalop: riderGalop,
-			riderGalopEditForm: riderGalopEditForms[riderGalop.id],
-			isRiderGalopEditModalOpen: openRiderGalopEditModalId|default(null) == riderGalop.id
+		{% include "rider_galop/_rider-galop-modal.html.twig" with {
+			modalId: 'rider-galop-edit-modal-' ~ riderGalop.id,
+			modalTitle: 'rider.edit_galop',
+			form: riderGalopEditForms[riderGalop.id],
+			isOpen: openRiderGalopEditModalId|default(null) == riderGalop.id
 		} %}
 	{% endfor %}
 </div>

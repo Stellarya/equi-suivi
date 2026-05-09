@@ -1,10 +1,10 @@
-<div id="rider-profile-edit-modal" class="app-modal {% if isProfileModalOpen %}is-open{% endif %}" aria-hidden="{{ isProfileModalOpen ? 'false' : 'true' }}" data-modal>
+<div id="{{ modalId }}" class="app-modal {% if isOpen %}is-open{% endif %}" aria-hidden="{{ isOpen ? 'false' : 'true' }}" data-modal>
 	<div class="app-modal__overlay" data-modal-close></div>
 
-	<div class="app-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="rider-profile-edit-modal-title">
+	<div class="app-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="{{ modalId }}-title">
 		<div class="app-modal__header">
-			<h2 id="rider-profile-edit-modal-title">
-				{{ 'rider.edit_profile' | trans }}
+			<h2 id="{{ modalId }}-title">
+				{{ modalTitle | trans }}
 			</h2>
 
 			<button type="button" class="app-modal__close" aria-label="Fermer" data-modal-close>
@@ -20,25 +20,25 @@
 
 		<div class="app-modal__body">
 			<div class="app-modal__field">
-				{{ form_label(form.firstName) }}
-				{{ form_widget(form.firstName) }}
-				{{ form_errors(form.firstName) }}
+				{{ form_label(form.galop) }}
+				{{ form_widget(form.galop) }}
+				{{ form_errors(form.galop) }}
 			</div>
 
 			<div class="app-modal__field">
-				{{ form_label(form.lastName) }}
-				{{ form_widget(form.lastName) }}
-				{{ form_errors(form.lastName) }}
+				{{ form_label(form.obtainedYear) }}
+				{{ form_widget(form.obtainedYear) }}
+				{{ form_errors(form.obtainedYear) }}
 			</div>
 		</div>
 
 		<div class="app-modal__footer">
 			<button type="button" class="app-modal__button app-modal__button--secondary" data-modal-close>
-				Annuler
+				{{ 'actions.cancel' | trans }}
 			</button>
 
 			<button type="submit" class="app-modal__button app-modal__button--primary">
-				Enregistrer
+				{{ 'actions.save' | trans }}
 			</button>
 		</div>
 

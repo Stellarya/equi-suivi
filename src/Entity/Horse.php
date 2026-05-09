@@ -11,6 +11,11 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: HorseRepository::class)]
 class Horse
 {
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_RESTING = 'resting';
+    public const STATUS_RETIRED = 'retired';
+    public const STATUS_ARCHIVED = 'archived';
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy:'IDENTITY')]
     #[ORM\Column]
@@ -32,7 +37,7 @@ class Horse
      * @var Collection<int, Rider>
      */
     #[ORM\ManyToMany(targetEntity: Rider::class, inversedBy: 'horses')]
-    private Collection $rider;
+    private Collection $riders;
 
     #[ORM\ManyToOne(inversedBy: 'horses')]
     #[ORM\JoinColumn(nullable: false)]
@@ -46,9 +51,12 @@ class Horse
     #[ORM\JoinColumn(nullable: false)]
     private ?AppUser $owner = null;
 
+    #[ORM\Column(length: 30)]
+    private string $status = self::STATUS_ACTIVE;
+
     public function __construct()
     {
-        $this->rider = new ArrayCollection();
+        $this->riders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -107,15 +115,15 @@ class Horse
     /**
      * @return Collection<int, Rider>
      */
-    public function getRider(): Collection
+    public function getRiders(): Collection
     {
-        return $this->rider;
+        return $this->riders;
     }
 
     public function addRider(Rider $rider): static
     {
-        if (!$this->rider->contains($rider)) {
-            $this->rider->add($rider);
+        if (!$this->riders->contains($rider)) {
+            $this->riders->add($rider);
         }
 
         return $this;
@@ -123,7 +131,7 @@ class Horse
 
     public function removeRider(Rider $rider): static
     {
-        $this->rider->removeElement($rider);
+        $this->riders->removeElement($rider);
 
         return $this;
     }
@@ -162,6 +170,21 @@ class Horse
         $this->owner = $owner;
 
         return $this;
+    }
+
+    public function getStatus(): string {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static {
+        
+        $this->status = $status;
+    
+        return $this;
+    }
+
+    public function isActive(): bool {
+        return $this->status === self::STATUS_ACTIVE;
     }
 
     public function __toString(): string

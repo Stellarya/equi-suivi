@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\AppUser;
 use App\Entity\Horse;
+use App\Entity\Rider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,28 +18,24 @@ class HorseRepository extends ServiceEntityRepository
         parent::__construct($registry, Horse::class);
     }
 
-    //    /**
-    //     * @return Horse[] Returns an array of Horse objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('h')
-    //            ->andWhere('h.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('h.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findForRider(Rider $rider): array
+    {
+        return $this->createQueryBuilder('horse')
+            ->innerJoin('horse.riders', 'rider')
+            ->andWhere('rider = :rider')
+            ->setParameter('rider', $rider)
+            ->orderBy('horse.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Horse
-    //    {
-    //        return $this->createQueryBuilder('h')
-    //            ->andWhere('h.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findForOwner(AppUser $owner): array
+    {
+        return $this->createQueryBuilder('horse')
+            ->andWhere('horse.owner = :owner')
+            ->setParameter('owner', '$owner')
+            ->orderBy('horse.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
