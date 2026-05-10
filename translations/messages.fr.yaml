@@ -89,6 +89,8 @@ horse:
         resting: "Repos"
         sold: "Vendu"
         deceased: "Décédé"
+    set_resting: "Au repos"
+    set_retired: "En retraite"
     validation:
         name_not_blank: "Le nom du cheval est obligatoire."
         name_max_length: "Le nom du cheval ne peut pas dépasser 255 caractères."

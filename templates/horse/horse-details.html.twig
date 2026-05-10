@@ -6,7 +6,7 @@
 
 {% block body %}
 	<section id="horse" class="details-page">
-		<div class="details-page__header">
+		<div class="details-page__header d-flex">
 			<h1>
 				{% if horse %}
 					{{ horse.name }}
@@ -16,7 +16,7 @@
 			</h1>
 
 			{% if horse is defined and horse is not null and canEditHorse|default(false) %}
-				<div class="details-page__actions">
+				<div class="details-page__actions d-flex gap-3">
 					<form method="post" action="{{ path('app_horse_inactivate', { id: horse.id }) }}" data-horse-status-form="resting">
 						<input type="hidden" name="_token" value="{{ csrf_token('inactivate_horse_' ~ horse.id) }}">
 						<input type="hidden" name="status" value="{{ constant('App\\Entity\\Horse::STATUS_RESTING') }}">
