@@ -1,0 +1,47 @@
+@use './general/variables' as *;
+
+#horse-list {
+    padding: 20px;
+
+    &.horse-list {
+        width: 100%;
+    }
+
+    .horse-list__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+
+        h1 {
+            margin: 0;
+            font-size: $h1;
+            font-weight: 700;
+            color: $neutral-90;
+        }
+    }
+
+    .horse-list__add-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .horse-list__empty {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 28px;
+        border-radius: $border-radius;
+        background-color: $white;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+
+        p {
+            margin: 0;
+            color: $neutral-60;
+            font-size: $body;
+        }
+    }
+}

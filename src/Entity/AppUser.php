@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AppUserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -34,6 +36,17 @@ class AppUser implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: 'appUser', cascade: ['persist', 'remove'])]
     private ?Rider $rider=null;
+
+    /**
+     * @var Collection<int, Horse>
+     */
+    #[ORM\OneToMany(targetEntity: Horse::class, mappedBy: 'owner')]
+    private Collection $ownedHorses;
+
+    public function __construct()
+    {
+        $this->ownedHorses = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -128,5 +141,35 @@ class AppUser implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // @deprecated, to be removed when upgrading to Symfony 8
+    }
+
+    /**
+     * @return Collection<int, Horse>
+     */
+    public function getOwnedHorses(): Collection
+    {
+        return $this->ownedHorses;
+    }
+
+    public function addOwnedHorse(Horse $ownedHorse): static
+    {
+        if (!$this->ownedHorses->contains($ownedHorse)) {
+            $this->ownedHorses->add($ownedHorse);
+            $ownedHorse->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOwnedHorse(Horse $ownedHorse): static
+    {
+        if ($this->ownedHorses->removeElement($ownedHorse)) {
+            // set the owning side to null (unless already changed)
+            if ($ownedHorse->getOwner() === $this) {
+                $ownedHorse->setOwner(null);
+            }
+        }
+
+        return $this;
     }
 }

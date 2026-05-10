@@ -52,9 +52,11 @@
 				isProfileModalOpen: isProfileModalOpen|default(false)
 			} %}
 
-			{% include "rider_galop/_add-rider-galop-modal.html.twig" with {
-				riderGalopForm: riderGalopForm,
-				isRiderGalopModalOpen: isRiderGalopModalOpen|default(false)
+			{% include "rider_galop/_rider-galop-modal.html.twig" with {
+				modalId: 'rider-galop-add-modal',
+				modalTitle: 'rider.add_galop',
+				form: riderGalopForm,
+				isOpen: isRiderGalopModalOpen|default(false)
 			} %}
 		{% endif %}
 

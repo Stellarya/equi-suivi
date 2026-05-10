@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\AppUser;
 use App\Entity\Rider;
 use App\Entity\RiderGalop;
 use App\Form\RiderGalopType;
@@ -21,81 +20,110 @@ final class RiderGalopController extends AppController
 {
     public function __construct(
         private readonly RiderProfileService $riderProfileService,
-        private readonly RiderGalopService $riderGalopService
-    )
-    {}
+        private readonly RiderGalopService $riderGalopService,
+    ) {
+    }
 
     #[IsGranted('ROLE_USER')]
     #[Route('/add', name: '_add', methods: ['POST'])]
     public function add(Request $request): Response
     {
-       $user = $this->getCurrentAppUser();
-       $rider = $this->riderProfileService->getRiderForUser($user);
+        $user = $this->getCurrentAppUser();
+        $rider = $this->riderProfileService->getRiderForUser($user);
+        $riderGalop = $this->riderGalopService->createForRider($rider);
 
-       $riderGalop = $this->riderGalopService->createForRider($rider);
-
-       $form = $this->createForm(RiderGalopType::class, $riderGalop, [
-        'action' => $this->generateUrl('app_rider_galop_add'),
-        'method' => 'POST'
-       ]);
-
-       $form->handleRequest($request);
-
-       if($form->isSubmitted() && $form->isValid()) {
-        $this->riderGalopService->save($riderGalop);
-
-        $this->addFlash('success', 'Galop ajouté avec succès.');
-
-        return $this->redirectToRoute('app_rider_profile');
-       }
-
-       $profileData = $this->riderProfileService->buildProfileViewData($rider);
-
-       $profileData['form'] = $this->createForm(RiderType::class, $rider, [
-        'action' => $this->generateUrl('app_rider_profile_edit'),
-        'method' => 'POST'
-       ])->createView();
-
-       $profileData['riderGalopForm'] = $form->createView();
-       $profileData['isProfileModalOpen'] = false;
-       $profileData['isRiderGalopModalOpen'] = true;
-       $profileData['riderGalopEditForms'] = $this->createRiderGalopEditFormViews($rider);
-       $profileData['openRiderGalopEditModalId'] = null;
-
-       return $this->render('rider_profile/index.html.twig', $profileData);
+        return $this->handleRiderGalopForm(
+            request: $request,
+            rider: $rider,
+            riderGalop: $riderGalop,
+            routeName: 'app_rider_galop_add',
+            routeParameters: [],
+            successMessage: 'Galop ajouté avec succès.',
+            openAddModalOnError: true,
+        );
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/{id}/edit', name:'_edit', methods: ['POST'])]
-    public function edit(RiderGalop $riderGalop, Request $request): Response {
+    #[Route('/{id}/edit', name: '_edit', methods: ['POST'])]
+    public function edit(RiderGalop $riderGalop, Request $request): Response
+    {
         $user = $this->getCurrentAppUser();
         $rider = $this->riderProfileService->getRiderForUser($user);
 
         $this->riderGalopService->assertBelongsToRider($riderGalop, $rider);
 
+        return $this->handleRiderGalopForm(
+            request: $request,
+            rider: $rider,
+            riderGalop: $riderGalop,
+            routeName: 'app_rider_galop_edit',
+            routeParameters: [
+                'id' => $riderGalop->getId(),
+            ],
+            successMessage: 'Galop modifié avec succès.',
+            openAddModalOnError: false,
+        );
+    }
+
+    private function handleRiderGalopForm(
+        Request $request,
+        Rider $rider,
+        RiderGalop $riderGalop,
+        string $routeName,
+        array $routeParameters,
+        string $successMessage,
+        bool $openAddModalOnError,
+    ): Response {
         $form = $this->createForm(RiderGalopType::class, $riderGalop, [
-            'action' => $this->generateUrl('app_rider_galop_edit', [
-                'id' => $riderGalop->getId()
-            ]),
-            'method' => 'POST'
+            'action' => $this->generateUrl($routeName, $routeParameters),
+            'method' => 'POST',
         ]);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->riderGalopService->save($riderGalop);
-            $this->addFlash('success', 'Galop modifié avec succès.');
+
+            $this->addFlash('success', $successMessage);
+
             return $this->redirectToRoute('app_rider_profile');
         }
 
+        return $this->renderProfileWithGalopFormError(
+            rider: $rider,
+            invalidForm: $form,
+            invalidRiderGalop: $riderGalop,
+            openAddModal: $openAddModalOnError,
+        );
+    }
+
+    private function renderProfileWithGalopFormError(
+        Rider $rider,
+        FormInterface $invalidForm,
+        RiderGalop $invalidRiderGalop,
+        bool $openAddModal,
+    ): Response {
         $profileData = $this->riderProfileService->buildProfileViewData($rider);
 
         $profileData['form'] = $this->createRiderProfileFormView($rider);
-        $profileData['riderGalopForm'] = $this->createRiderGalopFormView($rider);
-        $profileData['riderGalopEditForms'] = $this->createRiderGalopEditFormViews($rider, $riderGalop->getId(), $form);
+
+        if ($openAddModal) {
+            $profileData['riderGalopForm'] = $invalidForm->createView();
+            $profileData['riderGalopEditForms'] = $this->createRiderGalopEditFormViews($rider);
+            $profileData['isRiderGalopModalOpen'] = true;
+            $profileData['openRiderGalopEditModalId'] = null;
+        } else {
+            $profileData['riderGalopForm'] = $this->createRiderGalopFormView($rider);
+            $profileData['riderGalopEditForms'] = $this->createRiderGalopEditFormViews(
+                rider: $rider,
+                invalidFormRiderGalopId: $invalidRiderGalop->getId(),
+                invalidForm: $invalidForm,
+            );
+            $profileData['isRiderGalopModalOpen'] = false;
+            $profileData['openRiderGalopEditModalId'] = $invalidRiderGalop->getId();
+        }
+
         $profileData['isProfileModalOpen'] = false;
-        $profileData['isRiderGalopModalOpen'] = false;
-        $profileData['openRiderGalopEditModalId'] = $riderGalop->getId();
 
         return $this->render('rider_profile/index.html.twig', $profileData);
     }
@@ -124,7 +152,7 @@ final class RiderGalopController extends AppController
     private function createRiderGalopEditFormViews(
         Rider $rider,
         ?int $invalidFormRiderGalopId = null,
-        ?FormInterface $invalidForm = null
+        ?FormInterface $invalidForm = null,
     ): array {
         $forms = [];
 
@@ -149,5 +177,4 @@ final class RiderGalopController extends AppController
 
         return $forms;
     }
-
 }

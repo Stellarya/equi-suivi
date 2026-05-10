@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% import "macros/macros.html.twig" as macros %}
+
+{% block title %}
+	{{ 'horse.my_horses' | trans}}
+{% endblock %}
+
+{% block body %}
+	<section id="horse-list" class="horse-list">
+		<div class="horse-list__header">
+			<h1>{{ 'horse.my_horses' | trans }}</h1>
+
+			{{ macros.modalButton(
+                'add-horse',
+                'horse.add',
+                'fa-solid fa-plus',
+                'horse-add-modal',
+                'btn btn-primary horse-list__add-button',
+                true
+            )}}
+		</div>
+
+		{% if horses is empty %}
+			<div class="horse-list__empty">
+				<p>{{ 'horse.no_horse' | trans}}</p>
+			</div>
+		{% else %}
+			<div class="row g-4">
+				{% for horse in horses %}
+					<div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+						<article class="app-card">
+							<div class="app-card__image-wrapper">
+								{% if horse.status is defined and horse.status != constant('App\\Entity\\Horse::STATUS_ACTIVE') %}
+									<span class="app-card__status">
+										{{ ('horse.status.' ~ horse.status) | trans }}
+									</span>
+								{% endif %}
+
+								{% if horse.photoFilename %}
+									<img class="app-card__image" src="{{ asset('uploads/horses/' ~ horse.photoFilename) }}" alt="{{ horse.name }}">
+								{% else %}
+									<div class="app-card__image-placeholder">
+										<i class="fa-solid fa-horse-head"></i>
+									</div>
+								{% endif %}
+							</div>
+							<div class="app-card__content">
+								<div class="app-card__main">
+									<div class="app-card__identity">
+										<h2 class="app-card__title">
+											<span class="app-card__name">{{ horse.name }}</span>
+
+											{% if horse.affix %}
+												<span class="app-card__affix">{{ horse.affix }}</span>
+											{% endif %}
+										</h2>
+
+										<p class="app-card__subtitle">
+											{% if horse.breed %}
+												{{ horse.breed.libelle }}
+											{% else %}
+												{{ 'horse.unknown_breed' | trans }}
+											{% endif %}
+										</p>
+									</div>
+
+									<span class="app-card__meta">
+										{% if horse.birthDate %}
+											{{ date().diff(horse.birthDate).y }}
+											{{ 'horse.years_old' | trans }}
+										{% else %}
+											-
+										{% endif %}
+									</span>
+								</div>
+								<a href="{{ path('app_horse_show', { id: horse.id }) }}" class="btn btn-secondary app-card__link">
+									{{ 'horse.view_horse' | trans }}
+								</a>
+							</div>
+						</article>
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+		{% include "horse/_horse-modal.html.twig" with {
+            modalId: 'horse-add-modal',
+            modalTitle: 'horse.add',
+            form: horseForm,
+            isOpen: isHorseModalOpen|default(false)
+        } %}
+	</section>
+{% endblock %}
