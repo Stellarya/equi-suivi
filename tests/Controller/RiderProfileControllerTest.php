@@ -23,8 +23,8 @@ final class RiderProfileControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
         self::assertSelectorExists('#rider');
-        self::assertAnySelectorTextContains('.rider-info-card', 'Marie');
-        self::assertAnySelectorTextContains('.rider-info-card', 'Test');
+        self::assertAnySelectorTextContains('.app-info-card', 'Marie');
+        self::assertAnySelectorTextContains('.app-info-card', 'Test');
     }
 
     public function testEditProfileUpdatesConnectedRider(): void

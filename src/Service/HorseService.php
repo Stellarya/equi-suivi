@@ -53,11 +53,13 @@ class HorseService
             return;
         }
 
-        if($user->getRider() !== null && $horse->getRiders() === $user->getRider()) {
-            return;
-        }
+        $rider = $user->getRider();
 
-        throw new AccessDeniedHttpException('Vous ne pouvez pas gérer ce cheval.');
+    if ($rider !== null && $horse->getRiders()->contains($rider)) {
+        return;
+    }
+
+    throw new AccessDeniedHttpException('Vous ne pouvez pas gérer ce cheval.');
     }
 
     public function save(Horse $horse): void

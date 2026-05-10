@@ -160,28 +160,6 @@ final class HorseController extends AppController
         return $this->redirectToRoute('app_horse_index');
     }
 
-    private function handleForm(Request $request, Horse $horse, string $successMessage): Response
-    {
-        $form = $this->createForm(HorseType::class, $horse);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->horseService->save($horse);
-
-            $this->addFlash('success', $successMessage);
-
-            return $this->redirectToRoute('app_horse_show', [
-                'id' => $horse->getId(),
-            ]);
-        }
-
-        return $this->render('horse/form.html.twig', [
-            'horse' => $horse,
-            'form' => $form,
-            'isEdit' => $horse->getId() !== null,
-        ]);
-    }
-
     private function createHorseFormView(
         Horse $horse,
         string $routeName,

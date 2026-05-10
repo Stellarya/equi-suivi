@@ -14,9 +14,31 @@
 					{{ 'horse.details' | trans }}
 				{% endif %}
 			</h1>
+
+			{% if horse is defined and horse is not null %}
+				<div class="details-page__actions">
+					<form method="post" action="{{ path('app_horse_inactivate', { id: horse.id }) }}" data-horse-status-form="resting">
+						<input type="hidden" name="_token" value="{{ csrf_token('inactivate_horse_' ~ horse.id) }}">
+						<input type="hidden" name="status" value="{{ constant('App\\Entity\\Horse::STATUS_RESTING') }}">
+
+						<button type="submit" class="btn btn-secondary">
+							{{ 'horse.set_resting' | trans }}
+						</button>
+					</form>
+
+					<form method="post" action="{{ path('app_horse_inactivate', { id: horse.id }) }}" data-horse-status-form="retired">
+						<input type="hidden" name="_token" value="{{ csrf_token('inactivate_horse_' ~ horse.id) }}">
+						<input type="hidden" name="status" value="{{ constant('App\\Entity\\Horse::STATUS_RETIRED') }}">
+
+						<button type="submit" class="btn btn-secondary">
+							{{ 'horse.set_retired' | trans }}
+						</button>
+					</form>
+				</div>
+			{% endif %}
 		</div>
 
-		{% if horse is null or horse is not defined %}
+		{% if horse is not defined or horse is null %}
 			<div class="details-page__empty">
 				{{ 'horse.no_horse' | trans }}
 			</div>
