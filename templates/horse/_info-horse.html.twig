@@ -1,6 +1,10 @@
 {% import "macros/macros.html.twig" as macros %}
 
 <aside class="app-info-card details-info-card">
+
+	<span class="horse-status-badge horse-status-badge--{{ horse.status|default('active') }}">
+		{{ ('horse.status.' ~ horse.status|default('active')) | trans }}
+	</span>
 	{{ macros.modalButton(
 		'edit-horse-details',
 		'general.edit',

@@ -19,49 +19,60 @@
         }) }}
 
 		<div class="app-modal__body">
-			<div class="app-modal__field">
-				{{ form_label(form.name) }}
-				{{ form_widget(form.name) }}
-				{{ form_errors(form.name) }}
-			</div>
+			<div class="d-flex row">
+				<div class="app-modal__field col-6">
+					{{ form_label(form.name) }}
+					{{ form_widget(form.name) }}
+					{{ form_errors(form.name) }}
+				</div>
 
-			<div class="app-modal__field">
-				{{ form_label(form.affix) }}
-				{{ form_widget(form.affix) }}
-				{{ form_errors(form.affix) }}
-			</div>
 
-			<div class="app-modal__field">
-				{{ form_label(form.birthDate) }}
-				{{ form_widget(form.birthDate) }}
-				{{ form_errors(form.birthDate) }}
+				<div class="app-modal__field col-6">
+					{{ form_label(form.affix) }}
+					{{ form_widget(form.affix) }}
+					{{ form_errors(form.affix) }}
+				</div>
 			</div>
+			<div class="d-flex row">
+				<div class="app-modal__field col-6">
+					{{ form_label(form.birthDate) }}
+					{{ form_widget(form.birthDate) }}
+					{{ form_errors(form.birthDate) }}
+				</div>
 
-			<div class="app-modal__field">
-				{{ form_label(form.sire) }}
-				{{ form_widget(form.sire) }}
-				{{ form_errors(form.sire) }}
+				<div class="app-modal__field col-6">
+					{{ form_label(form.sire) }}
+					{{ form_widget(form.sire) }}
+					{{ form_errors(form.sire) }}
+				</div>
 			</div>
+			<div class="d-flex row">
+				<div class="app-modal__field col-6">
+					{{ form_label(form.breed) }}
+					{{ form_widget(form.breed) }}
+					{{ form_errors(form.breed) }}
+				</div>
 
-			<div class="app-modal__field">
-				{{ form_label(form.breed) }}
-				{{ form_widget(form.breed) }}
-				{{ form_errors(form.breed) }}
+				<div class="app-modal__field col-6">
+					{{ form_label(form.coat) }}
+					{{ form_widget(form.coat) }}
+					{{ form_errors(form.coat) }}
+				</div>
 			</div>
+			<div class="d-flex row">
+				<div class="app-modal__field col-6">
+					{{ form_label(form.photo) }}
+					{{ form_widget(form.photo) }}
+					{{ form_errors(form.photo) }}
+				</div>
 
-			<div class="app-modal__field">
-				{{ form_label(form.coat) }}
-				{{ form_widget(form.coat) }}
-				{{ form_errors(form.coat) }}
-			</div>
-
-			<div class="app-modal__field">
-				{{ form_label(form.photo) }}
-				{{ form_widget(form.photo) }}
-				{{ form_errors(form.photo) }}
+				<div class="app-modal__field col-6">
+					{{ form_label(form.status) }}
+					{{ form_widget(form.status) }}
+					{{ form_errors(form.status) }}
+				</div>
 			</div>
 		</div>
-
 		<div class="app-modal__footer">
 			<button type="button" class="app-modal__button app-modal__button--secondary" data-modal-close>
 				{{ 'actions.cancel' | trans }}

@@ -85,9 +85,10 @@ horse:
     status_label: "Statut"
     status:
         active: "Actif"
-        resting: "Au repos"
         retired: "Retraité"
-        archived: "Archivé"
+        resting: "Repos"
+        sold: "Vendu"
+        deceased: "Décédé"
     validation:
         name_not_blank: "Le nom du cheval est obligatoire."
         name_max_length: "Le nom du cheval ne peut pas dépasser 255 caractères."

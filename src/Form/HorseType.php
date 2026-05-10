@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -74,6 +75,16 @@ class HorseType extends AbstractType
                         ],
                         mimeTypesMessage: 'Veuillez importer une image valide : JPG, PNG ou WEBP.',
                     )
+                ]
+            ])
+            ->add('status', ChoiceType::class, [
+                'label' => 'horse.status',
+                'choices' => [
+                    'horse.status.active' => Horse::STATUS_ACTIVE,
+                    'horse.status.retired' => Horse::STATUS_RETIRED,
+                    'horse.status.resting' => Horse::STATUS_RESTING,
+                    'horse.status.sold' => Horse::STATUS_SOLD,
+                    'horse.status.deceased' => Horse::STATUS_DECEASED,
                 ]
             ])
         ;

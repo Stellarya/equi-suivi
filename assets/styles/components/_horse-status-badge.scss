@@ -1,0 +1,39 @@
+@use '../general/variables' as *;
+
+.horse-status-badge {
+    position: absolute;
+    z-index: 2;
+    top: 12px;
+    left: 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    padding: 0 10px;
+    border-radius: 999px;
+    color: $white;
+    font-size: $label;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+}
+
+.horse-status-badge--active {
+    background-color: $success-50;
+}
+
+.horse-status-badge--retired {
+    background-color: $info-50;
+}
+
+.horse-status-badge--deceased {
+    background-color: $neutral-70;
+}
+
+.horse-status-badge--sold {
+    background-color: $warning-50;
+}
+
+.horse-status-badge--resting {
+    background-color: $neutral-50;
+}
