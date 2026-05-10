@@ -169,4 +169,15 @@ body.has-open-modal {
             }
         }
     }
+
+    &__message {
+        margin: 0;
+        color: $neutral-70;
+        font-size: $body;
+        line-height: 1.5;
+    }
+
+    &__confirm-form {
+        margin: 0;
+    }
 }

@@ -27,9 +27,9 @@ final class HorseController extends AppController
         $horse = $this->horseService->createForUser($user);
 
         return $this->render('horse/list.html.twig', [
-            'horses' => $this->horseService->getVisibleHorsesForUser($user),
+            'horses' => $this->horseService->getVisibleHorsesForUser($user, false),
             'horseForm' => $this->createHorseFormView($horse, 'app_horse_new'),
-            'isHorseModalOpen' => false
+            'isHorseModalOpen' => false,
         ]);
     }
 
@@ -144,12 +144,29 @@ final class HorseController extends AppController
         ]);
     }
 
+    #[Route('/{id}/archive', name: 'archive', methods: ['POST'])]
+    public function archive(Request $request, Horse $horse): Response {
+        $user = $this->getCurrentAppUser();
+
+        $this->horseService->assertCanEditHorse($horse, $user);
+
+        if (!$this->isCsrfTokenValid('archive_horse_' . $horse->getId(), $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $this->horseService->archive($horse);
+
+        $this->addFlash('success', 'Cheval archivé avec succès.');
+
+        return $this->redirectToRoute('app_horse_index');
+    }
+
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Horse $horse): Response
     {
         $user = $this->getCurrentAppUser();
 
-        $this->horseService->assertCanManageHorse($horse, $user);
+        $this->horseService->assertCanEditHorse($horse, $user);
 
         if (!$this->isCsrfTokenValid('delete_horse_' . $horse->getId(), $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();

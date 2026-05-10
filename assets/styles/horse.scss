@@ -12,7 +12,7 @@
         justify-content: space-between;
         align-items: center;
         gap: 16px;
-        margin-bottom: 24px;
+        margin-bottom: 10px;
 
         h1 {
             margin: 0;
@@ -43,5 +43,14 @@
             color: $neutral-60;
             font-size: $body;
         }
+    }
+    .horse-list__actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .horse-list__filter {
+        margin: 0;
     }
 }

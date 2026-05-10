@@ -1,46 +1,57 @@
 {% import "macros/macros.html.twig" as macros %}
 
 <aside class="app-info-card details-info-card">
+	<div class="details-info-card__media">
+		<span class="horse-status-badge horse-status-badge--{{ horse.status|default('active') }}">
+			{{ ('horse.status.' ~ horse.status|default('active')) | trans }}
+		</span>
 
-	<span class="horse-status-badge horse-status-badge--{{ horse.status|default('active') }}">
-		{{ ('horse.status.' ~ horse.status|default('active')) | trans }}
-	</span>
-	{% if canEditHorse|default(false) %}
+		{% if canEditHorse|default(false) %}
+			<div class="details-info-card__actions">
+				{{ macros.modalButton(
+					'edit-horse-details',
+					'general.edit',
+					'fa-solid fa-pen',
+					'horse-details-edit-modal',
+					'details-info-card__action'
+				) }}
 
-		{{ macros.modalButton(
-			'edit-horse-details',
-			'general.edit',
-			'fa-solid fa-pen',
-			'horse-details-edit-modal',
-			'details-info-card__edit-link'
-		) }}
-	{% endif %}
+				{{ macros.modalButton(
+					'archive-horse-details',
+					'horse.archive',
+					'fa-solid fa-box-archive',
+					'horse-archive-confirm-modal',
+					'details-info-card__action'
+				) }}
 
-	{% if horse.photoFilename %}
-		<img class="details-info-card__image" src="{{ asset('uploads/horses/' ~ horse.photoFilename) }}" alt="{{ horse.name }}">
-	{% else %}
-		<div class="app-info-card__avatar">
-			<i class="fa-solid fa-horse" aria-hidden="true"></i>
-		</div>
-	{% endif %}
-
-	<div class="app-info-card__identity">
-		<h2>{{ horse.name }}</h2>
-	</div>
-
-	<dl class="app-info-card__details">
-		<div>
-			<dt>{{ 'horse.name' | trans }}</dt>
-			<dd>{{ horse.name }}</dd>
-		</div>
-
-		{% if horse.affix %}
-			<div>
-				<dt>{{ 'horse.affix' | trans }}</dt>
-				<dd>{{ horse.affix }}</dd>
+				{{ macros.modalButton(
+					'delete-horse-details',
+					'horse.delete',
+					'fa-solid fa-trash',
+					'horse-delete-confirm-modal',
+					'details-info-card__action details-info-card__action--danger'
+				) }}
 			</div>
 		{% endif %}
 
+		{% if horse.photoFilename %}
+			<img class="details-info-card__image" src="{{ asset('uploads/horses/' ~ horse.photoFilename) }}" alt="{{ horse.name }}">
+		{% else %}
+			<div class="details-info-card__placeholder">
+				<i class="fa-solid fa-horse" aria-hidden="true"></i>
+			</div>
+		{% endif %}
+	</div>
+
+	<div class="app-info-card__identity">
+		<h2>{{ horse.name }}</h2>
+
+		{% if horse.affix %}
+			<p>{{ horse.affix }}</p>
+		{% endif %}
+	</div>
+
+	<dl class="app-info-card__details">
 		<div>
 			<dt>{{ 'horse.age' | trans }}</dt>
 			<dd>
@@ -63,6 +74,62 @@
 			<dd>{{ horse.coat.libelle }}</dd>
 		</div>
 
+		{% if horse.sire %}
+			<div>
+				<dt>{{ 'horse.sire' | trans }}</dt>
+				<dd>{{ horse.sire }}</dd>
+			</div>
+		{% endif %}
+
 		<div class="app-info-card__separator"></div>
+
+		<div>
+			<dt>{{ 'horse.owner' | trans }}</dt>
+			<dd>
+				{% if horse.owner.rider is defined and horse.owner.rider %}
+					{{ horse.owner.rider.fullName }}
+				{% else %}
+					{{ horse.owner.email }}
+				{% endif %}
+			</dd>
+		</div>
+
+		<div class="app-info-card__details-row--stacked">
+			<dt>{{ 'horse.riders' | trans }}</dt>
+			<dd>
+				{% if horse.riders is not empty %}
+					<ul class="app-info-card__list">
+						{% for rider in horse.riders %}
+							<li>{{ rider.fullName }}</li>
+						{% endfor %}
+					</ul>
+				{% else %}
+					{{ 'horse.no_rider' | trans }}
+				{% endif %}
+			</dd>
+
+		</div>
 	</dl>
+
+	{% if canEditHorse|default(false) %}
+		{% include "components/_confirm-action-modal.html.twig" with {
+			modalId: 'horse-archive-confirm-modal',
+			title: 'horse.archive_confirm_title',
+			message: 'horse.archive_confirm_message',
+			action: path('app_horse_archive', { id: horse.id }),
+			csrfToken: csrf_token('archive_horse_' ~ horse.id),
+			confirmLabel: 'horse.archive_confirm',
+			danger: false
+		} %}
+
+		{% include "components/_confirm-action-modal.html.twig" with {
+			modalId: 'horse-delete-confirm-modal',
+			title: 'horse.delete_confirm_title',
+			message: 'horse.delete_confirm_message',
+			action: path('app_horse_delete', { id: horse.id }),
+			csrfToken: csrf_token('delete_horse_' ~ horse.id),
+			confirmLabel: 'horse.delete_confirm',
+			danger: true
+		} %}
+	{% endif %}
 </aside>

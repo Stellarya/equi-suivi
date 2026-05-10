@@ -17,6 +17,7 @@ class Horse
     public const STATUS_RETIRED = 'retired';
     public const STATUS_SOLD = 'sold';
     public const STATUS_DECEASED = 'deceased';
+    public const STATUS_ARCHIVED = 'archived';
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy:'IDENTITY')]
@@ -229,6 +230,7 @@ class Horse
         self::STATUS_RETIRED,
         self::STATUS_RESTING,
         self::STATUS_SOLD,
-        self::STATUS_DECEASED
+        self::STATUS_DECEASED,
+        self::STATUS_ARCHIVED
     ];
 }

@@ -110,6 +110,74 @@
 .details-info-card {
     position: relative;
     overflow: hidden;
+
+    &__media {
+        position: relative;
+        height: 250px;
+        background-color: $tertiary-10;
+    }
+
+    &__image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    &__placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        color: $tertiary-50;
+
+        i {
+            font-size: 62px;
+        }
+    }
+
+    &__actions {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        form {
+            margin: 0;
+        }
+    }
+
+    &__action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border: none;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.92);
+        color: $neutral-60;
+        cursor: pointer;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+
+        &:hover {
+            background-color: $tertiary-10;
+            color: $tertiary-60;
+        }
+
+        &--danger {
+            &:hover {
+                background-color: $error-10;
+                color: $error-50;
+            }
+        }
+    }
 }
 
 .details-info-card__image,

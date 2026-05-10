@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Twig\Node\Expression\Test\TrueTest;
 
 final class HorseServiceTest extends TestCase
 {
@@ -55,7 +56,7 @@ final class HorseServiceTest extends TestCase
         $horseRepository
             ->expects(self::once())
             ->method('findForRider')
-            ->with($rider)
+            ->with($rider, true)
             ->willReturn($expectedHorses);
 
         $horseRepository
@@ -91,7 +92,7 @@ final class HorseServiceTest extends TestCase
         $horseRepository
             ->expects(self::once())
             ->method('findForOwner')
-            ->with($user)
+            ->with($user, true)
             ->willReturn($expectedHorses);
 
         $service = new HorseService(
@@ -317,5 +318,56 @@ final class HorseServiceTest extends TestCase
         $user->setRider($rider);
 
         return $rider;
+    }
+
+    public function testGetVisibleHorsesForUserCanIncludeInactiveHorses(): void
+    {
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $slugger = $this->createMock(SluggerInterface::class);
+        $horseRepository = $this->createMock(HorseRepository::class);
+
+        $user = new AppUser();
+        $rider = $this->createRiderForUser($user);
+
+        $expectedHorses = [
+            new Horse(),
+        ];
+
+        $horseRepository
+            ->expects(self::once())
+            ->method('findForRider')
+            ->with($rider, false)
+            ->willReturn($expectedHorses);
+
+        $horseRepository
+            ->expects(self::never())
+            ->method('findForOwner');
+
+        $service = new HorseService(
+            entityManager: $entityManager,
+            horseRepository: $horseRepository,
+            slugger: $slugger,
+            horsePhotosDirectory: '/tmp'
+        );
+
+        self::assertSame($expectedHorses, $service->getVisibleHorsesForUser($user, false));
+    }
+
+    public function testArchiveUpdatesStatusAndFlushes(): void
+    {
+        $horse = new Horse();
+        $horse->setStatus(Horse::STATUS_ACTIVE);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+
+        $entityManager
+            ->expects(self::once())
+            ->method('flush');
+
+        $service = $this->createService($entityManager);
+
+        $service->archive($horse);
+
+        self::assertSame(Horse::STATUS_ARCHIVED, $horse->getStatus());
     }
 }

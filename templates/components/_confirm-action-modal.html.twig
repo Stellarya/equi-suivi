@@ -1,0 +1,35 @@
+<div id="{{ modalId }}" class="app-modal" aria-hidden="true" data-modal>
+	<div class="app-modal__overlay" data-modal-close></div>
+
+	<div class="app-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="{{ modalId }}-title">
+		<div class="app-modal__header">
+			<h2 id="{{ modalId }}-title">
+				{{ title | trans }}
+			</h2>
+
+			<button type="button" class="app-modal__close" aria-label="{{ 'actions.close' | trans }}" data-modal-close>
+				<i class="fa-solid fa-xmark"></i>
+			</button>
+		</div>
+
+		<div class="app-modal__body">
+			<p class="app-modal__message">
+				{{ message | trans }}
+			</p>
+		</div>
+
+		<div class="app-modal__footer">
+			<button type="button" class="app-modal__button app-modal__button--secondary" data-modal-close>
+				{{ 'actions.cancel' | trans }}
+			</button>
+
+			<form method="post" action="{{ action }}" class="app-modal__confirm-form">
+				<input type="hidden" name="_token" value="{{ csrfToken }}">
+
+				<button type="submit" class="app-modal__button {{ danger|default(false) ? 'app-modal__button--danger' : 'app-modal__button--primary' }}">
+					{{ confirmLabel | trans }}
+				</button>
+			</form>
+		</div>
+	</div>
+</div>
