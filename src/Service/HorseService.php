@@ -82,6 +82,13 @@ class HorseService
         $this->entityManager->flush();
     }
 
+    public function archive(Horse $horse): void {
+        $horse->setStatus(Horse::STATUS_ARCHIVED);
+
+        $this->entityManager->flush();
+        
+    }
+
     public function delete(Horse $horse): void
     {
         $this->entityManager->remove($horse);

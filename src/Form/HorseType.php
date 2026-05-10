@@ -78,7 +78,7 @@ class HorseType extends AbstractType
                 ]
             ])
             ->add('status', ChoiceType::class, [
-                'label' => 'horse.status',
+                'label' => 'horse.statut',
                 'choices' => [
                     'horse.status.active' => Horse::STATUS_ACTIVE,
                     'horse.status.retired' => Horse::STATUS_RETIRED,

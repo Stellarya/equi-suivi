@@ -83,12 +83,16 @@ horse:
     owner: "Propriétaire"
     riders: "Cavaliers"
     status_label: "Statut"
+    archive: "Archiver le cheval"
+    delete: "Supprimer le cheval"
+    statut: "Status"
     status:
         active: "Actif"
         retired: "Retraité"
         resting: "Repos"
         sold: "Vendu"
         deceased: "Décédé"
+        archived: "Archivé"
     set_resting: "Au repos"
     set_retired: "En retraite"
     validation:
@@ -98,3 +102,10 @@ horse:
         coat_not_null: "La robe du cheval est obligatoire."
         sire_max_length: "Le numéro SIRE ne peut pas dépasser 20 caractères."
         affix_max_length: "L'affixe ne peut pas dépasser 255 caractères."
+    archive_confirm_title: Archiver ce cheval ?
+    archive_confirm_message: Ce cheval sera retiré de la liste principale, mais ses données seront conservées.
+    archive_confirm: Archiver
+
+    delete_confirm_title: Supprimer ce cheval ?
+    delete_confirm_message: Cette action supprimera définitivement le cheval. Cette opération est irréversible.
+    delete_confirm: Supprimer définitivement
