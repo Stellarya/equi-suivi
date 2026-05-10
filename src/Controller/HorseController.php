@@ -69,14 +69,15 @@ final class HorseController extends AppController
     {
         $user = $this->getCurrentAppUser();
 
-        $this->horseService->assertCanManageHorse($horse, $user);
+        $this->horseService->assertCanViewHorse($horse, $user);
 
-        return $this->render('horse/horse-details.html.twig', [
+         return $this->render('horse/horse-details.html.twig', [
             'horse' => $horse,
             'horseForm' => $this->createHorseFormView($horse, 'app_horse_edit', [
                 'id' => $horse->getId(),
             ]),
             'isHorseModalOpen' => false,
+            'canEditHorse' => $horse->getOwner() === $user,
         ]);
     }
 
@@ -85,7 +86,7 @@ final class HorseController extends AppController
     {
         $user = $this->getCurrentAppUser();
 
-        $this->horseService->assertCanManageHorse($horse, $user);
+        $this->horseService->assertCanEditHorse($horse, $user);
 
         $form = $this->createForm(HorseType::class, $horse, [
             'action' => $this->generateUrl('app_horse_edit', [
@@ -111,6 +112,7 @@ final class HorseController extends AppController
             'horse' => $horse,
             'horseForm' => $form->createView(),
             'isHorseModalOpen' => true,
+            'canEditHorse' => true,
         ]);
     }
 
@@ -119,7 +121,7 @@ final class HorseController extends AppController
     {
         $user = $this->getCurrentAppUser();
 
-        $this->horseService->assertCanManageHorse($horse, $user);
+        $this->horseService->assertCanEditHorse($horse, $user);
 
         if (!$this->isCsrfTokenValid('inactivate_horse_' . $horse->getId(), $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();

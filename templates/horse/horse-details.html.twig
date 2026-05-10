@@ -15,7 +15,7 @@
 				{% endif %}
 			</h1>
 
-			{% if horse is defined and horse is not null %}
+			{% if horse is defined and horse is not null and canEditHorse|default(false) %}
 				<div class="details-page__actions">
 					<form method="post" action="{{ path('app_horse_inactivate', { id: horse.id }) }}" data-horse-status-form="resting">
 						<input type="hidden" name="_token" value="{{ csrf_token('inactivate_horse_' ~ horse.id) }}">
@@ -45,7 +45,8 @@
 		{% else %}
 			<div class="details-page__layout">
 				{% include "horse/_info-horse.html.twig" with {
-					horse: horse
+					horse: horse,
+					canEditHorse: canEditHorse|default(false)
 				} %}
 
 				<section class="details-panel">

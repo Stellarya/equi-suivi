@@ -32,13 +32,7 @@ final class HorseServiceTest extends TestCase
         $service = $this->createService();
 
         $user = new AppUser();
-
-        $rider = new Rider();
-        $rider->setFirstName('Marie');
-        $rider->setLastName('Test');
-        $rider->setAppUser($user);
-
-        $user->setRider($rider);
+        $rider = $this->createRiderForUser($user);
 
         $horse = $service->createForUser($user);
 
@@ -49,17 +43,10 @@ final class HorseServiceTest extends TestCase
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $slugger = $this->createMock(SluggerInterface::class);
-
         $horseRepository = $this->createMock(HorseRepository::class);
 
         $user = new AppUser();
-
-        $rider = new Rider();
-        $rider->setFirstName('Marie');
-        $rider->setLastName('Test');
-        $rider->setAppUser($user);
-
-        $user->setRider($rider);
+        $rider = $this->createRiderForUser($user);
 
         $expectedHorses = [
             new Horse(),
@@ -89,7 +76,6 @@ final class HorseServiceTest extends TestCase
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $slugger = $this->createMock(SluggerInterface::class);
-
         $horseRepository = $this->createMock(HorseRepository::class);
 
         $user = new AppUser();
@@ -118,56 +104,96 @@ final class HorseServiceTest extends TestCase
         self::assertSame($expectedHorses, $service->getVisibleHorsesForUser($user));
     }
 
-    public function testAssertCanManageHorseAllowsOwner(): void
+    public function testAssertCanViewHorseAllowsOwner(): void
     {
         $service = $this->createService();
 
-        $user = new AppUser();
+        $owner = new AppUser();
 
         $horse = new Horse();
-        $horse->setOwner($user);
+        $horse->setOwner($owner);
 
-        $service->assertCanManageHorse($horse, $user);
+        $service->assertCanViewHorse($horse, $owner);
 
         self::assertTrue(true);
     }
 
-    public function testAssertCanManageHorseAllowsAttachedRider(): void
+    public function testAssertCanViewHorseAllowsAttachedRider(): void
     {
         $service = $this->createService();
 
         $owner = new AppUser();
         $user = new AppUser();
-
-        $rider = new Rider();
-        $rider->setFirstName('Marie');
-        $rider->setLastName('Test');
-        $rider->setAppUser($user);
-
-        $user->setRider($rider);
+        $rider = $this->createRiderForUser($user);
 
         $horse = new Horse();
         $horse->setOwner($owner);
         $horse->addRider($rider);
 
-        $service->assertCanManageHorse($horse, $user);
+        $service->assertCanViewHorse($horse, $user);
 
         self::assertTrue(true);
     }
 
-    public function testAssertCanManageHorseThrowsExceptionForUnauthorizedUser(): void
+    public function testAssertCanViewHorseThrowsExceptionForUnrelatedUser(): void
     {
         $service = $this->createService();
 
         $owner = new AppUser();
-        $unauthorizedUser = new AppUser();
+        $unrelatedUser = new AppUser();
 
         $horse = new Horse();
         $horse->setOwner($owner);
 
         $this->expectException(AccessDeniedHttpException::class);
 
-        $service->assertCanManageHorse($horse, $unauthorizedUser);
+        $service->assertCanViewHorse($horse, $unrelatedUser);
+    }
+
+    public function testAssertCanEditHorseAllowsOwner(): void
+    {
+        $service = $this->createService();
+
+        $owner = new AppUser();
+
+        $horse = new Horse();
+        $horse->setOwner($owner);
+
+        $service->assertCanEditHorse($horse, $owner);
+
+        self::assertTrue(true);
+    }
+
+    public function testAssertCanEditHorseThrowsExceptionForAttachedRiderWhoIsNotOwner(): void
+    {
+        $service = $this->createService();
+
+        $owner = new AppUser();
+        $attachedUser = new AppUser();
+        $attachedRider = $this->createRiderForUser($attachedUser);
+
+        $horse = new Horse();
+        $horse->setOwner($owner);
+        $horse->addRider($attachedRider);
+
+        $this->expectException(AccessDeniedHttpException::class);
+
+        $service->assertCanEditHorse($horse, $attachedUser);
+    }
+
+    public function testAssertCanEditHorseThrowsExceptionForUnrelatedUser(): void
+    {
+        $service = $this->createService();
+
+        $owner = new AppUser();
+        $unrelatedUser = new AppUser();
+
+        $horse = new Horse();
+        $horse->setOwner($owner);
+
+        $this->expectException(AccessDeniedHttpException::class);
+
+        $service->assertCanEditHorse($horse, $unrelatedUser);
     }
 
     public function testSavePersistsAndFlushesHorse(): void
@@ -279,5 +305,17 @@ final class HorseServiceTest extends TestCase
             slugger: $this->createMock(SluggerInterface::class),
             horsePhotosDirectory: '/tmp'
         );
+    }
+
+    private function createRiderForUser(AppUser $user): Rider
+    {
+        $rider = new Rider();
+        $rider->setFirstName('Marie');
+        $rider->setLastName('Test');
+        $rider->setAppUser($user);
+
+        $user->setRider($rider);
+
+        return $rider;
     }
 }

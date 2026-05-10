@@ -5,13 +5,16 @@
 	<span class="horse-status-badge horse-status-badge--{{ horse.status|default('active') }}">
 		{{ ('horse.status.' ~ horse.status|default('active')) | trans }}
 	</span>
-	{{ macros.modalButton(
-		'edit-horse-details',
-		'general.edit',
-		'fa-solid fa-pen',
-		'horse-details-edit-modal',
-		'details-info-card__edit-link'
-	) }}
+	{% if canEditHorse|default(false) %}
+
+		{{ macros.modalButton(
+			'edit-horse-details',
+			'general.edit',
+			'fa-solid fa-pen',
+			'horse-details-edit-modal',
+			'details-info-card__edit-link'
+		) }}
+	{% endif %}
 
 	{% if horse.photoFilename %}
 		<img class="details-info-card__image" src="{{ asset('uploads/horses/' ~ horse.photoFilename) }}" alt="{{ horse.name }}">
@@ -40,7 +43,14 @@
 
 		<div>
 			<dt>{{ 'horse.age' | trans }}</dt>
-			<dd></dd>
+			<dd>
+				{% if horse.birthDate %}
+					{{ date().diff(horse.birthDate).y }}
+					{{ 'horse.years_old' | trans }}
+				{% else %}
+					{{ 'horse.no_info' | trans }}
+				{% endif %}
+			</dd>
 		</div>
 
 		<div>
