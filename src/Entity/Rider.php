@@ -34,7 +34,7 @@ class Rider
     /**
      * @var Collection<int, Horse>
      */
-    #[ORM\ManyToMany(targetEntity: Horse::class, mappedBy: 'rider')]
+    #[ORM\ManyToMany(targetEntity: Horse::class, mappedBy: 'riders')]
     private Collection $horses;
 
     public function __construct()

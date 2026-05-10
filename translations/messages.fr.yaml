@@ -86,3 +86,10 @@ horse:
         resting: "Au repos"
         retired: "Retraité"
         archived: "Archivé"
+    validation:
+        name_not_blank: "Le nom du cheval est obligatoire."
+        name_max_length: "Le nom du cheval ne peut pas dépasser 255 caractères."
+        breed_not_null: "La race du cheval est obligatoire."
+        coat_not_null: "La robe du cheval est obligatoire."
+        sire_max_length: "Le numéro SIRE ne peut pas dépasser 20 caractères."
+        affix_max_length: "L'affixe ne peut pas dépasser 255 caractères."

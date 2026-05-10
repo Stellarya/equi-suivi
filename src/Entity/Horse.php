@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: HorseRepository::class)]
 class Horse
@@ -22,15 +23,28 @@ class Horse
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'horse.validation.name_not_blank')]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'horse.validation.name_max_length'
+    )]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'horse.validation.affix_max_length'
+    )]
     private ?string $affix = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $birthDate = null;
 
     #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Length(
+        max: 20,
+        maxMessage: 'horse.validation.sire_max_length'
+    )]
     private ?string $sire = null;
 
     /**
@@ -41,10 +55,12 @@ class Horse
 
     #[ORM\ManyToOne(inversedBy: 'horses')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'horse.validation.breed_not_null')]
     private ?Breed $breed = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'horse.validation.coat_not_null')]
     private ?Coat $coat = null;
 
     #[ORM\ManyToOne(inversedBy: 'ownedHorses')]

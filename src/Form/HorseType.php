@@ -65,16 +65,15 @@ class HorseType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'constraints' => [
-                    new File([
-                        'maxSize' => '5M',
-                        'mimeTypes' => [
+                   new File(
+                        maxSize: '5M',
+                        mimeTypes: [
                             'image/jpeg',
-                            'image/jpg',
                             'image/png',
-                            'image/webp'
+                            'image/webp',
                         ],
-                        'mimeTypesMessage' => 'Veuillez importer une image valide : JPG, PNG ou WEBP.'
-                    ])
+                        mimeTypesMessage: 'Veuillez importer une image valide : JPG, PNG ou WEBP.',
+                    )
                 ]
             ])
         ;
