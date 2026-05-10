@@ -11,8 +11,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class HorseType extends AbstractType
 {
@@ -57,6 +59,23 @@ class HorseType extends AbstractType
                     return $coatRepository->createQueryBuilder('coat')
                         ->orderBy('coat.libelle', 'ASC');
                 }
+            ])
+            ->add('photo', FileType::class, [
+                'label' => 'horse.photo',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '5M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/jpg',
+                            'image/png',
+                            'image/webp'
+                        ],
+                        'mimeTypesMessage' => 'Veuillez importer une image valide : JPG, PNG ou WEBP.'
+                    ])
+                ]
             ])
         ;
     }

@@ -54,6 +54,9 @@ class Horse
     #[ORM\Column(length: 30)]
     private string $status = self::STATUS_ACTIVE;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $photoFilename = null;
+
     public function __construct()
     {
         $this->riders = new ArrayCollection();
@@ -190,5 +193,17 @@ class Horse
     public function __toString(): string
     {
         return trim(sprintf('%s %s', $this->name ?? '', $this->affix ?? ''));
+    }
+
+    public function getPhotoFilename(): ?string
+    {
+        return $this->photoFilename;
+    }
+
+    public function setPhotoFilename(?string $photoFilename): static
+    {
+        $this->photoFilename = $photoFilename;
+
+        return $this;
     }
 }

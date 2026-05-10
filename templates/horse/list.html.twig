@@ -37,25 +37,35 @@
 									</span>
 								{% endif %}
 
-								<div class="app-card__image-placeholder">
-									<i class="fa-solid fa-horse-head"></i>
-								</div>
+								{% if horse.photoFilename %}
+									<img class="app-card__image" src="{{ asset('uploads/horses/' ~ horse.photoFilename) }}" alt="{{ horse.name }}">
+								{% else %}
+									<div class="app-card__image-placeholder">
+										<i class="fa-solid fa-horse-head"></i>
+									</div>
+								{% endif %}
 							</div>
 							<div class="app-card__content">
 								<div class="app-card__main">
-									<div>
-										<h2>{{ horse }}</h2>
-										<p>
+									<div class="app-card__identity">
+										<h2 class="app-card__title">
+											<span class="app-card__name">{{ horse.name }}</span>
+
+											{% if horse.affix %}
+												<span class="app-card__affix">{{ horse.affix }}</span>
+											{% endif %}
+										</h2>
+
+										<p class="app-card__subtitle">
 											{% if horse.breed %}
 												{{ horse.breed.libelle }}
 											{% else %}
 												{{ 'horse.unknown_breed' | trans }}
 											{% endif %}
-
 										</p>
 									</div>
 
-									<span class="app-card__age">
+									<span class="app-card__meta">
 										{% if horse.birthDate %}
 											{{ date().diff(horse.birthDate).y }}
 											{{ 'horse.years_old' | trans }}

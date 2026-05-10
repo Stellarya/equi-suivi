@@ -47,6 +47,7 @@ final class HorseController extends AppController
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
+            $this->horseService->updatePhoto($horse, $form->get('photo')->getData());
             $this->horseService->save($horse);
 
             $this->addFlash('success', 'Cheval créé avec succès.');
@@ -96,6 +97,7 @@ final class HorseController extends AppController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->horseService->updatePhoto($horse, $form->get('photo')->getData());
             $this->horseService->save($horse);
 
             $this->addFlash('success', 'Cheval modifié avec succès.');

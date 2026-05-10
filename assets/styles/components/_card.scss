@@ -55,30 +55,51 @@
     &__main {
         display: flex;
         justify-content: space-between;
-        gap: 14px;
+        align-items: baseline;
+        gap: 12px;
         margin-bottom: 20px;
+    }
+
+    &__identity {
+        min-width: 0;
+        flex: 1;
     }
 
     &__title {
         margin: 0;
-        font-size: $label;
-        font-weight: 700;
         color: $neutral-90;
+        font-size: $label;
+        line-height: 1.25;
+    }
+
+    &__name {
+        font-weight: 700;
+        font-size: $h2;
+    }
+
+    &__affix {
+        margin-left: 4px;
+        color: $neutral-60;
+        font-size: $icons;
+        font-style: italic;
+        font-weight: 400;
     }
 
     &__subtitle {
-        margin: 5px 0 0;
+        margin: 6px 0 0;
+        color: $neutral-70;
         font-size: $small;
-        color: $neutral-50;
+        line-height: 1.25;
     }
 
     &__meta {
         flex-shrink: 0;
-        align-self: flex-end;
         color: $neutral-50;
         font-size: $small;
         font-weight: 600;
+        line-height: 1.25;
         text-align: right;
+        white-space: nowrap;
     }
 
     &__actions {

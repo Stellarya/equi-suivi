@@ -6,14 +6,18 @@ use App\Entity\AppUser;
 use App\Entity\Horse;
 use App\Repository\HorseRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class HorseService
 {
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly HorseRepository $horseRepository
+        private readonly HorseRepository $horseRepository,
+        private readonly SluggerInterface $slugger,
+        private readonly string $horsePhotosDirectory
     ){}
 
     /**
@@ -80,5 +84,20 @@ class HorseService
     {
         $this->entityManager->remove($horse);
         $this->entityManager->flush();
+    }
+
+    public function updatePhoto(Horse $horse, ?UploadedFile $photoFile): void
+    {
+        if($photoFile === null) {
+            return;
+        }
+
+        $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeFilename = $this->slugger->slug($originalFilename);
+        $newFilename = sprintf('%s-%s.%s', $safeFilename, uniqid(), $photoFile->guessExtension());
+
+        $photoFile->move($this->horsePhotosDirectory, $newFilename);
+
+        $horse->setPhotoFilename($newFilename);
     }
 }

@@ -71,7 +71,7 @@ horse:
     unknown_breed: "Race non renseignée"
     unknown_coat: "Robe non renseignée"
     years_old: "ans"
-
+    photo: "Photo"
     name: "Nom"
     affix: "Affixe"
     birth_date: "Date de naissance"
