@@ -137,6 +137,195 @@ final class HorseControllerTest extends WebTestCase
         self::assertSelectorExists('#horse-add-modal.is-open');
     }
 
+    public function testShowDisplaysOwnedHorse(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = $this->createRiderUser($entityManager);
+        $breed = $this->createBreed($entityManager);
+        $coat = $this->createCoat($entityManager);
+
+        $horse = $this->createHorse(
+            entityManager: $entityManager,
+            owner: $user,
+            breed: $breed,
+            coat: $coat,
+            name: 'Sarabi'
+        );
+
+        $client->loginUser($user);
+        $client->request('GET', sprintf('/horses/%d', $horse->getId()));
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('#horse');
+        self::assertSelectorTextContains('body', 'Sarabi');
+    }
+
+    public function testShowIsForbiddenForAnotherUserHorse(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+
+        $ownerUser = $this->createRiderUser($entityManager);
+        $otherUser = $this->createRiderUser($entityManager);
+
+        $breed = $this->createBreed($entityManager);
+        $coat = $this->createCoat($entityManager);
+
+        $horse = $this->createHorse(
+            entityManager: $entityManager,
+            owner: $ownerUser,
+            breed: $breed,
+            coat: $coat,
+            name: 'Cheval privé'
+        );
+
+        $client->loginUser($otherUser);
+        $client->request('GET', sprintf('/horses/%d', $horse->getId()));
+
+        self::assertResponseStatusCodeSame(403);
+    }
+
+    public function testEditUpdatesOwnedHorse(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = $this->createRiderUser($entityManager);
+        $oldBreed = $this->createBreed($entityManager, 'Ancienne race');
+        $newBreed = $this->createBreed($entityManager, 'Nouvelle race');
+        $coat = $this->createCoat($entityManager);
+
+        $horse = $this->createHorse(
+            entityManager: $entityManager,
+            owner: $user,
+            breed: $oldBreed,
+            coat: $coat,
+            name: 'Ancien nom'
+        );
+
+        $client->loginUser($user);
+
+        $crawler = $client->request('GET', sprintf('/horses/%d', $horse->getId()));
+
+        self::assertResponseIsSuccessful();
+
+        $formCrawler = $crawler->filterXPath(sprintf(
+            '//form[contains(@action, "/horses/%d/edit")]',
+            $horse->getId()
+        ));
+
+        self::assertCount(1, $formCrawler);
+
+        $form = $formCrawler->form([
+            'horse[name]' => 'Nouveau nom',
+            'horse[affix]' => 'du Val',
+            'horse[birthDate]' => '2019-04-24',
+            'horse[sire]' => '87654321B',
+            'horse[breed]' => $newBreed->getId(),
+            'horse[coat]' => $coat->getId(),
+        ]);
+
+        $client->submit($form);
+
+        self::assertResponseRedirects(sprintf('/horses/%d', $horse->getId()));
+
+        $horseRepository = static::getContainer()->get(HorseRepository::class);
+        $updatedHorse = $horseRepository->find($horse->getId());
+
+        self::assertNotNull($updatedHorse);
+        self::assertSame('Nouveau nom', $updatedHorse->getName());
+        self::assertSame('du Val', $updatedHorse->getAffix());
+        self::assertSame('87654321B', $updatedHorse->getSire());
+        self::assertSame($newBreed->getId(), $updatedHorse->getBreed()?->getId());
+        self::assertSame($coat->getId(), $updatedHorse->getCoat()?->getId());
+    }
+
+    public function testInactivateCanSetHorseResting(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = $this->createRiderUser($entityManager);
+        $breed = $this->createBreed($entityManager);
+        $coat = $this->createCoat($entityManager);
+
+        $horse = $this->createHorse(
+            entityManager: $entityManager,
+            owner: $user,
+            breed: $breed,
+            coat: $coat,
+            name: 'Cheval au repos'
+        );
+
+        $horseId = $horse->getId();
+
+        self::assertNotNull($horseId);
+
+        $client->loginUser($user);
+
+        $crawler = $client->request('GET', sprintf('/horses/%d', $horseId));
+
+        self::assertResponseIsSuccessful();
+
+        $formCrawler = $crawler->filter('form[data-horse-status-form="resting"]');
+
+        self::assertCount(1, $formCrawler);
+
+        $client->submit($formCrawler->form());
+
+        self::assertResponseRedirects(sprintf('/horses/%d', $horseId));
+
+        $horseRepository = static::getContainer()->get(HorseRepository::class);
+        $updatedHorse = $horseRepository->find($horseId);
+
+        self::assertNotNull($updatedHorse);
+        self::assertSame(Horse::STATUS_RESTING, $updatedHorse->getStatus());
+    }
+
+    public function testInactivateCanSetHorseRetired(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = $this->createRiderUser($entityManager);
+        $breed = $this->createBreed($entityManager);
+        $coat = $this->createCoat($entityManager);
+
+        $horse = $this->createHorse(
+            entityManager: $entityManager,
+            owner: $user,
+            breed: $breed,
+            coat: $coat,
+            name: 'Cheval retraité'
+        );
+
+        $horseId = $horse->getId();
+
+        self::assertNotNull($horseId);
+
+        $client->loginUser($user);
+
+        $crawler = $client->request('GET', sprintf('/horses/%d', $horseId));
+
+        self::assertResponseIsSuccessful();
+
+        $formCrawler = $crawler->filter('form[data-horse-status-form="retired"]');
+
+        self::assertCount(1, $formCrawler);
+
+        $client->submit($formCrawler->form());
+
+        self::assertResponseRedirects(sprintf('/horses/%d', $horseId));
+
+        $horseRepository = static::getContainer()->get(HorseRepository::class);
+        $updatedHorse = $horseRepository->find($horseId);
+
+        self::assertNotNull($updatedHorse);
+        self::assertSame(Horse::STATUS_RETIRED, $updatedHorse->getStatus());
+    }
+
     private function createRiderUser(EntityManagerInterface $entityManager): AppUser
     {
         $user = new AppUser();
@@ -209,5 +398,88 @@ final class HorseControllerTest extends WebTestCase
         $entityManager->flush();
 
         return $horse;
+    }
+
+    public function testAttachedRiderCanViewHorse(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+
+        $ownerUser = $this->createRiderUser($entityManager);
+        $attachedUser = $this->createRiderUser($entityManager);
+
+        $breed = $this->createBreed($entityManager);
+        $coat = $this->createCoat($entityManager);
+
+        $horse = $this->createHorse(
+            entityManager: $entityManager,
+            owner: $ownerUser,
+            breed: $breed,
+            coat: $coat,
+            name: 'Cheval partagé'
+        );
+
+        $attachedRider = $attachedUser->getRider();
+
+        self::assertNotNull($attachedRider);
+
+        $horse->addRider($attachedRider);
+        $entityManager->flush();
+
+        $client->loginUser($attachedUser);
+        $client->request('GET', sprintf('/horses/%d', $horse->getId()));
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('body', 'Cheval partagé');
+    }
+
+    public function testAttachedRiderCannotEditHorseWhenNotOwner(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+
+        $ownerUser = $this->createRiderUser($entityManager);
+        $attachedUser = $this->createRiderUser($entityManager);
+
+        $oldBreed = $this->createBreed($entityManager, 'Ancienne race');
+        $newBreed = $this->createBreed($entityManager, 'Nouvelle race');
+        $coat = $this->createCoat($entityManager);
+
+        $horse = $this->createHorse(
+            entityManager: $entityManager,
+            owner: $ownerUser,
+            breed: $oldBreed,
+            coat: $coat,
+            name: 'Cheval non modifiable'
+        );
+
+        $attachedRider = $attachedUser->getRider();
+
+        self::assertNotNull($attachedRider);
+
+        $horse->addRider($attachedRider);
+        $entityManager->flush();
+
+        $client->loginUser($attachedUser);
+
+        $client->request('POST', sprintf('/horses/%d/edit', $horse->getId()), [
+            'horse' => [
+                'name' => 'Nom interdit',
+                'affix' => 'Interdit',
+                'birthDate' => '2020-05-07',
+                'sire' => '99999999Z',
+                'breed' => $newBreed->getId(),
+                'coat' => $coat->getId(),
+            ],
+        ]);
+
+        self::assertResponseStatusCodeSame(403);
+
+        $horseRepository = static::getContainer()->get(HorseRepository::class);
+        $unchangedHorse = $horseRepository->find($horse->getId());
+
+        self::assertNotNull($unchangedHorse);
+        self::assertSame('Cheval non modifiable', $unchangedHorse->getName());
+        self::assertSame($oldBreed->getId(), $unchangedHorse->getBreed()?->getId());
     }
 }

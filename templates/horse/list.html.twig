@@ -31,11 +31,11 @@
 					<div class="col-12 col-sm-6 col-lg-4 col-xl-3">
 						<article class="app-card">
 							<div class="app-card__image-wrapper">
-								{% if horse.status is defined and horse.status != constant('App\\Entity\\Horse::STATUS_ACTIVE') %}
-									<span class="app-card__status">
-										{{ ('horse.status.' ~ horse.status) | trans }}
-									</span>
-								{% endif %}
+
+								<span class="horse-status-badge horse-status-badge--{{ horse.status|default('active') }}">
+									{{ ('horse.status.' ~ horse.status|default('active')) | trans }}
+								</span>
+
 
 								{% if horse.photoFilename %}
 									<img class="app-card__image" src="{{ asset('uploads/horses/' ~ horse.photoFilename) }}" alt="{{ horse.name }}">

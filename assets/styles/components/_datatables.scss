@@ -1,0 +1,87 @@
+@use '../general/variables' as *;
+
+.rider-profile-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: $white;
+
+        th,
+        td {
+            padding: 18px 20px;
+            border-bottom: $border-size solid $neutral-20;
+            font-size: $label;
+            text-align: left;
+        }
+
+        th {
+            color: $neutral-90;
+            font-weight: 700;
+            background-color: $white;
+        }
+
+        td {
+            color: $neutral-70;
+        }
+
+        tr:last-child {
+            td {
+                border-bottom: none;
+            }
+        }
+
+        .rider-profile-table__row--clickable {
+            cursor: pointer;
+
+            &:hover {
+                background-color: $neutral-10;
+            }
+
+            &:focus {
+                outline: none;
+                box-shadow: inset 0 0 0 2px $primary-50;
+            }
+        }
+    }
+
+    .dt-container {
+        font-size: $label;
+        color: $neutral-70;
+    }
+
+    .dt-layout-row {
+        margin: 0;
+    }
+
+    .dt-length,
+    .dt-search,
+    .dt-info,
+    .dt-paging {
+        display: none;
+    }
+
+    table.dataTable {
+        width: 100% !important;
+        border-collapse: collapse;
+
+        thead {
+            th {
+                border-bottom: $border-size solid $neutral-20;
+                color: $neutral-90;
+                font-weight: 700;
+                background-color: $white;
+            }
+        }
+
+        tbody {
+            td {
+                border-bottom: $border-size solid $neutral-20;
+                color: $neutral-70;
+            }
+
+            tr:last-child {
+                td {
+                    border-bottom: none;
+                }
+            }
+        }
+    }

@@ -15,7 +15,8 @@ class Horse
     public const STATUS_ACTIVE = 'active';
     public const STATUS_RESTING = 'resting';
     public const STATUS_RETIRED = 'retired';
-    public const STATUS_ARCHIVED = 'archived';
+    public const STATUS_SOLD = 'sold';
+    public const STATUS_DECEASED = 'deceased';
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy:'IDENTITY')]
@@ -68,7 +69,7 @@ class Horse
     private ?AppUser $owner = null;
 
     #[ORM\Column(length: 30)]
-    private string $status = self::STATUS_ACTIVE;
+    private ?string $status = self::STATUS_ACTIVE;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $photoFilename = null;
@@ -222,4 +223,12 @@ class Horse
 
         return $this;
     }
+
+    public const STATUS_CHOICES = [
+        self::STATUS_ACTIVE,
+        self::STATUS_RETIRED,
+        self::STATUS_RESTING,
+        self::STATUS_SOLD,
+        self::STATUS_DECEASED
+    ];
 }

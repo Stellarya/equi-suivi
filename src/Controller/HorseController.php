@@ -69,14 +69,15 @@ final class HorseController extends AppController
     {
         $user = $this->getCurrentAppUser();
 
-        $this->horseService->assertCanManageHorse($horse, $user);
+        $this->horseService->assertCanViewHorse($horse, $user);
 
-        return $this->render('horse/horse-details.html.twig', [
+         return $this->render('horse/horse-details.html.twig', [
             'horse' => $horse,
             'horseForm' => $this->createHorseFormView($horse, 'app_horse_edit', [
                 'id' => $horse->getId(),
             ]),
             'isHorseModalOpen' => false,
+            'canEditHorse' => $horse->getOwner() === $user,
         ]);
     }
 
@@ -85,7 +86,7 @@ final class HorseController extends AppController
     {
         $user = $this->getCurrentAppUser();
 
-        $this->horseService->assertCanManageHorse($horse, $user);
+        $this->horseService->assertCanEditHorse($horse, $user);
 
         $form = $this->createForm(HorseType::class, $horse, [
             'action' => $this->generateUrl('app_horse_edit', [
@@ -111,6 +112,7 @@ final class HorseController extends AppController
             'horse' => $horse,
             'horseForm' => $form->createView(),
             'isHorseModalOpen' => true,
+            'canEditHorse' => true,
         ]);
     }
 
@@ -119,7 +121,7 @@ final class HorseController extends AppController
     {
         $user = $this->getCurrentAppUser();
 
-        $this->horseService->assertCanManageHorse($horse, $user);
+        $this->horseService->assertCanEditHorse($horse, $user);
 
         if (!$this->isCsrfTokenValid('inactivate_horse_' . $horse->getId(), $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
@@ -158,28 +160,6 @@ final class HorseController extends AppController
         $this->addFlash('success', 'Cheval supprimé avec succès.');
 
         return $this->redirectToRoute('app_horse_index');
-    }
-
-    private function handleForm(Request $request, Horse $horse, string $successMessage): Response
-    {
-        $form = $this->createForm(HorseType::class, $horse);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->horseService->save($horse);
-
-            $this->addFlash('success', $successMessage);
-
-            return $this->redirectToRoute('app_horse_show', [
-                'id' => $horse->getId(),
-            ]);
-        }
-
-        return $this->render('horse/form.html.twig', [
-            'horse' => $horse,
-            'form' => $form,
-            'isEdit' => $horse->getId() !== null,
-        ]);
     }
 
     private function createHorseFormView(

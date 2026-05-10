@@ -1,0 +1,69 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+	{{ 'horse.details' | trans }}
+{% endblock %}
+
+{% block body %}
+	<section id="horse" class="details-page">
+		<div class="details-page__header d-flex">
+			<h1>
+				{% if horse %}
+					{{ horse.name }}
+				{% else %}
+					{{ 'horse.details' | trans }}
+				{% endif %}
+			</h1>
+
+			{% if horse is defined and horse is not null and canEditHorse|default(false) %}
+				<div class="details-page__actions d-flex gap-3">
+					<form method="post" action="{{ path('app_horse_inactivate', { id: horse.id }) }}" data-horse-status-form="resting">
+						<input type="hidden" name="_token" value="{{ csrf_token('inactivate_horse_' ~ horse.id) }}">
+						<input type="hidden" name="status" value="{{ constant('App\\Entity\\Horse::STATUS_RESTING') }}">
+
+						<button type="submit" class="btn btn-secondary">
+							{{ 'horse.set_resting' | trans }}
+						</button>
+					</form>
+
+					<form method="post" action="{{ path('app_horse_inactivate', { id: horse.id }) }}" data-horse-status-form="retired">
+						<input type="hidden" name="_token" value="{{ csrf_token('inactivate_horse_' ~ horse.id) }}">
+						<input type="hidden" name="status" value="{{ constant('App\\Entity\\Horse::STATUS_RETIRED') }}">
+
+						<button type="submit" class="btn btn-secondary">
+							{{ 'horse.set_retired' | trans }}
+						</button>
+					</form>
+				</div>
+			{% endif %}
+		</div>
+
+		{% if horse is not defined or horse is null %}
+			<div class="details-page__empty">
+				{{ 'horse.no_horse' | trans }}
+			</div>
+		{% else %}
+			<div class="details-page__layout">
+				{% include "horse/_info-horse.html.twig" with {
+					horse: horse,
+					canEditHorse: canEditHorse|default(false)
+				} %}
+
+				<section class="details-panel">
+					{% include "horse/_tabs.html.twig" %}
+
+					<div class="details-panel__content">
+						<div class="details-tab-content details-tab-content--active" id="tab-galops"></div>
+					</div>
+				</section>
+			</div>
+
+			{% include "horse/_horse-modal.html.twig" with {
+				modalId: 'horse-details-edit-modal',
+				modalTitle: 'horse.edit',
+				form: horseForm,
+				isOpen: isHorseModalOpen|default(false)
+			} %}
+		{% endif %}
+	</section>
+{% endblock %}

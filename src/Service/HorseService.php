@@ -53,11 +53,13 @@ class HorseService
             return;
         }
 
-        if($user->getRider() !== null && $horse->getRiders() === $user->getRider()) {
-            return;
-        }
+        $rider = $user->getRider();
 
-        throw new AccessDeniedHttpException('Vous ne pouvez pas gérer ce cheval.');
+    if ($rider !== null && $horse->getRiders()->contains($rider)) {
+        return;
+    }
+
+    throw new AccessDeniedHttpException('Vous ne pouvez pas gérer ce cheval.');
     }
 
     public function save(Horse $horse): void
@@ -99,5 +101,29 @@ class HorseService
         $photoFile->move($this->horsePhotosDirectory, $newFilename);
 
         $horse->setPhotoFilename($newFilename);
+    }
+
+    public function assertCanViewHorse(Horse $horse, AppUser $user): void
+    {
+        if ($horse->getOwner() === $user) {
+            return;
+        }
+
+        $rider = $user->getRider();
+
+        if ($rider !== null && $horse->getRiders()->contains($rider)) {
+            return;
+        }
+
+        throw new AccessDeniedHttpException('Vous ne pouvez pas consulter ce cheval.');
+    }
+
+    public function assertCanEditHorse(Horse $horse, AppUser $user): void
+    {
+        if ($horse->getOwner() === $user) {
+            return;
+        }
+
+        throw new AccessDeniedHttpException('Vous ne pouvez pas modifier ce cheval.');
     }
 }
