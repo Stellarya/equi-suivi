@@ -27,7 +27,8 @@ final class HorseControllerTest extends WebTestCase
             owner: $user,
             breed: $breed,
             coat: $coat,
-            name: 'Sarabi'
+            name: 'Sarabi',
+            status: Horse::STATUS_ACTIVE
         );
 
         $client->loginUser($user);
@@ -54,7 +55,8 @@ final class HorseControllerTest extends WebTestCase
             owner: $ownerUser,
             breed: $breed,
             coat: $coat,
-            name: 'Cheval privé'
+            name: 'Cheval privé',
+            status: Horse::STATUS_ACTIVE
         );
 
         $client->loginUser($connectedUser);
@@ -151,7 +153,8 @@ final class HorseControllerTest extends WebTestCase
             owner: $user,
             breed: $breed,
             coat: $coat,
-            name: 'Sarabi'
+            name: 'Sarabi',
+            status: Horse::STATUS_ACTIVE
         );
 
         $client->loginUser($user);
@@ -178,7 +181,8 @@ final class HorseControllerTest extends WebTestCase
             owner: $ownerUser,
             breed: $breed,
             coat: $coat,
-            name: 'Cheval privé'
+            name: 'Cheval privé',
+            status: Horse::STATUS_ACTIVE
         );
 
         $client->loginUser($otherUser);
@@ -202,7 +206,8 @@ final class HorseControllerTest extends WebTestCase
             owner: $user,
             breed: $oldBreed,
             coat: $coat,
-            name: 'Ancien nom'
+            name: 'Ancien nom',
+            status: Horse::STATUS_ACTIVE
         );
 
         $client->loginUser($user);
@@ -256,7 +261,8 @@ final class HorseControllerTest extends WebTestCase
             owner: $user,
             breed: $breed,
             coat: $coat,
-            name: 'Cheval au repos'
+            name: 'Cheval au repos',
+            status: Horse::STATUS_RESTING
         );
 
         $horseId = $horse->getId();
@@ -298,7 +304,8 @@ final class HorseControllerTest extends WebTestCase
             owner: $user,
             breed: $breed,
             coat: $coat,
-            name: 'Cheval retraité'
+            name: 'Cheval retraité',
+            status: Horse::STATUS_RETIRED
         );
 
         $horseId = $horse->getId();
@@ -379,6 +386,7 @@ final class HorseControllerTest extends WebTestCase
         Breed $breed,
         Coat $coat,
         string $name,
+        string $status = Horse::STATUS_ACTIVE,
     ): Horse {
         $horse = new Horse();
         $horse->setName($name);
@@ -388,7 +396,7 @@ final class HorseControllerTest extends WebTestCase
         $horse->setBreed($breed);
         $horse->setCoat($coat);
         $horse->setOwner($owner);
-        $horse->setStatus(Horse::STATUS_ACTIVE);
+        $horse->setStatus($status);
 
         if ($owner->getRider() !== null) {
             $horse->addRider($owner->getRider());
@@ -416,7 +424,8 @@ final class HorseControllerTest extends WebTestCase
             owner: $ownerUser,
             breed: $breed,
             coat: $coat,
-            name: 'Cheval partagé'
+            name: 'Cheval partagé',
+            status: Horse::STATUS_ACTIVE
         );
 
         $attachedRider = $attachedUser->getRider();
@@ -450,7 +459,8 @@ final class HorseControllerTest extends WebTestCase
             owner: $ownerUser,
             breed: $oldBreed,
             coat: $coat,
-            name: 'Cheval non modifiable'
+            name: 'Cheval non modifiable',
+            status: Horse::STATUS_ACTIVE
         );
 
         $attachedRider = $attachedUser->getRider();
@@ -481,5 +491,134 @@ final class HorseControllerTest extends WebTestCase
         self::assertNotNull($unchangedHorse);
         self::assertSame('Cheval non modifiable', $unchangedHorse->getName());
         self::assertSame($oldBreed->getId(), $unchangedHorse->getBreed()?->getId());
+    }
+
+    public function testIndexProvidesHorseStatusesForFrontFilter(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = $this->createRiderUser($entityManager);
+        $breed = $this->createBreed($entityManager);
+        $coat = $this->createCoat($entityManager);
+
+        $this->createHorse(
+            entityManager: $entityManager,
+            owner: $user,
+            breed: $breed,
+            coat: $coat,
+            name: 'Cheval actif',
+            status: Horse::STATUS_ACTIVE
+        );
+
+        $this->createHorse(
+            entityManager: $entityManager,
+            owner: $user,
+            breed: $breed,
+            coat: $coat,
+            name: 'Cheval archivé',
+            status: Horse::STATUS_ARCHIVED
+        );
+
+        $client->loginUser($user);
+        $crawler = $client->request('GET', '/horses/');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('[data-horse-active-filter-input]');
+        self::assertCount(2, $crawler->filter('[data-horse-card]'));
+        self::assertCount(1, $crawler->filter('[data-horse-card][data-horse-status="active"]'));
+        self::assertCount(1, $crawler->filter('[data-horse-card][data-horse-status="archived"]'));
+        self::assertSelectorTextContains('body', 'Cheval actif');
+        self::assertSelectorTextContains('body', 'Cheval archivé');
+    }
+
+    public function testArchiveOwnedHorse(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = $this->createRiderUser($entityManager);
+        $breed = $this->createBreed($entityManager);
+        $coat = $this->createCoat($entityManager);
+
+        $horse = $this->createHorse(
+            entityManager: $entityManager,
+            owner: $user,
+            breed: $breed,
+            coat: $coat,
+            name: 'Cheval à archiver',
+            status: Horse::STATUS_ARCHIVED
+        );
+
+        $horseId = $horse->getId();
+
+        self::assertNotNull($horseId);
+
+        $client->loginUser($user);
+
+        $crawler = $client->request('GET', sprintf('/horses/%d', $horseId));
+
+        self::assertResponseIsSuccessful();
+
+        $formCrawler = $crawler->filterXPath(sprintf(
+            '//form[contains(@action, "/horses/%d/archive")]',
+            $horseId
+        ));
+
+        self::assertCount(1, $formCrawler);
+
+        $client->submit($formCrawler->form());
+
+        self::assertResponseRedirects('/horses/');
+
+        $horseRepository = static::getContainer()->get(HorseRepository::class);
+        $archivedHorse = $horseRepository->find($horseId);
+
+        self::assertNotNull($archivedHorse);
+        self::assertSame(Horse::STATUS_ARCHIVED, $archivedHorse->getStatus());
+    }
+
+    public function testDeleteOwnedHorse(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = $this->createRiderUser($entityManager);
+        $breed = $this->createBreed($entityManager);
+        $coat = $this->createCoat($entityManager);
+
+        $horse = $this->createHorse(
+            entityManager: $entityManager,
+            owner: $user,
+            breed: $breed,
+            coat: $coat,
+            name: 'Cheval à supprimer',
+            status: Horse::STATUS_ARCHIVED
+        );
+
+        $horseId = $horse->getId();
+
+        self::assertNotNull($horseId);
+
+        $client->loginUser($user);
+
+        $crawler = $client->request('GET', sprintf('/horses/%d', $horseId));
+
+        self::assertResponseIsSuccessful();
+
+        $formCrawler = $crawler->filterXPath(sprintf(
+            '//form[contains(@action, "/horses/%d/delete")]',
+            $horseId
+        ));
+
+        self::assertCount(1, $formCrawler);
+
+        $client->submit($formCrawler->form());
+
+        self::assertResponseRedirects('/horses/');
+
+        $horseRepository = static::getContainer()->get(HorseRepository::class);
+
+        self::assertNull($horseRepository->find($horseId));
     }
 }
