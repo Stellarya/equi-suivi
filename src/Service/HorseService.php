@@ -23,15 +23,15 @@ class HorseService
     /**
      * @return Horse[]
      */
-    public function getVisibleHorsesForUser(AppUser $user): array
+    public function getVisibleHorsesForUser(AppUser $user, bool $activeOnly = true): array
     {
         $rider = $user->getRider();
 
         if($rider !== null) {
-            return $this->horseRepository->findForRider($rider);
+            return $this->horseRepository->findForRider($rider, $activeOnly);
         }
 
-        return $this->horseRepository->findForOwner($user);
+        return $this->horseRepository->findForOwner($user, $activeOnly);
     }
 
     public function createForUser(AppUser $user): Horse

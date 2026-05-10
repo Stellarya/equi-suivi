@@ -27,9 +27,9 @@ final class HorseController extends AppController
         $horse = $this->horseService->createForUser($user);
 
         return $this->render('horse/list.html.twig', [
-            'horses' => $this->horseService->getVisibleHorsesForUser($user),
+            'horses' => $this->horseService->getVisibleHorsesForUser($user, false),
             'horseForm' => $this->createHorseFormView($horse, 'app_horse_new'),
-            'isHorseModalOpen' => false
+            'isHorseModalOpen' => false,
         ]);
     }
 

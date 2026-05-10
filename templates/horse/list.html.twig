@@ -20,6 +20,17 @@
                 true
             )}}
 		</div>
+		<div class="horse-list__actions">
+			<label class="toggle-switch" data-horse-active-filter>
+				<input class="toggle-switch__input" type="checkbox" checked data-horse-active-filter-input>
+
+				<span class="toggle-switch__slider" aria-hidden="true"></span>
+
+				<span class="toggle-switch__label">
+					{{ 'horse.active_only' | trans }}
+				</span>
+			</label>
+		</div>
 
 		{% if horses is empty %}
 			<div class="horse-list__empty">
@@ -28,7 +39,7 @@
 		{% else %}
 			<div class="row g-4">
 				{% for horse in horses %}
-					<div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+					<div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-horse-card data-horse-status="{{ horse.status|default('active') }}">
 						<article class="app-card">
 							<div class="app-card__image-wrapper">
 

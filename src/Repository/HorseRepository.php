@@ -18,23 +18,39 @@ class HorseRepository extends ServiceEntityRepository
         parent::__construct($registry, Horse::class);
     }
 
-    public function findForRider(Rider $rider): array
+    public function findForRider(Rider $rider, bool $activeOnly = true): array
     {
-        return $this->createQueryBuilder('horse')
+        $queryBuilder = $this->createQueryBuilder('horse')
             ->innerJoin('horse.riders', 'rider')
             ->andWhere('rider = :rider')
             ->setParameter('rider', $rider)
-            ->orderBy('horse.name', 'ASC')
+            ->orderBy('horse.name', 'ASC');
+              
+        if($activeOnly) {
+            $queryBuilder
+                ->andWhere('horse.status = :activeStatus')
+                ->setParameter('activeStatus', Horse::STATUS_ACTIVE);
+        }
+
+        return $queryBuilder
             ->getQuery()
             ->getResult();
     }
 
-    public function findForOwner(AppUser $owner): array
+    public function findForOwner(AppUser $owner, bool $activeOnly = true): array
     {
-        return $this->createQueryBuilder('horse')
+        $queryBuilder = $this->createQueryBuilder('horse')
             ->andWhere('horse.owner = :owner')
-            ->setParameter('owner', '$owner')
-            ->orderBy('horse.name', 'ASC')
+            ->setParameter('owner', $owner)
+            ->orderBy('horse.name', 'ASC');
+        
+        if ($activeOnly) {
+            $queryBuilder
+                ->andWhere('horse.status = :activeStatus')
+                ->setParameter('activeStatus', Horse::STATUS_ACTIVE);
+        }
+            
+        return $queryBuilder
             ->getQuery()
             ->getResult();
     }
