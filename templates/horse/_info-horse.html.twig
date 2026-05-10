@@ -1,0 +1,54 @@
+{% import "macros/macros.html.twig" as macros %}
+
+<aside class="app-info-card details-info-card">
+	{{ macros.modalButton(
+		'edit-horse-details',
+		'general.edit',
+		'fa-solid fa-pen',
+		'horse-details-edit-modal',
+		'details-info-card__edit-link'
+	) }}
+
+	{% if horse.photoFilename %}
+		<img class="details-info-card__image" src="{{ asset('uploads/horses/' ~ horse.photoFilename) }}" alt="{{ horse.name }}">
+	{% else %}
+		<div class="app-info-card__avatar">
+			<i class="fa-solid fa-horse" aria-hidden="true"></i>
+		</div>
+	{% endif %}
+
+	<div class="app-info-card__identity">
+		<h2>{{ horse.name }}</h2>
+	</div>
+
+	<dl class="app-info-card__details">
+		<div>
+			<dt>{{ 'horse.name' | trans }}</dt>
+			<dd>{{ horse.name }}</dd>
+		</div>
+
+		{% if horse.affix %}
+			<div>
+				<dt>{{ 'horse.affix' | trans }}</dt>
+				<dd>{{ horse.affix }}</dd>
+			</div>
+		{% endif %}
+
+		<div>
+			<dt>{{ 'horse.age' | trans }}</dt>
+			<dd></dd>
+		</div>
+
+		<div>
+			<dt>{{ 'horse.breed' | trans }}</dt>
+			<dd>{{ horse.breed.libelle }}</dd>
+		</div>
+
+		<div>
+			<dt>{{ 'horse.coat' | trans }}</dt>
+			<dd>{{ horse.coat.libelle }}</dd>
+		</div>
+
+		<div class="app-info-card__separator"></div>
+	</dl>
+</aside>

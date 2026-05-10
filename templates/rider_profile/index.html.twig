@@ -4,49 +4,38 @@
 	{{ 'rider.profile' | trans }}
 {% endblock %}
 
-{% import "macros/macros.html.twig" as macros %}
-
 {% block body %}
-	<section id="rider" class="rider-profile">
-		<div class="rider-profile__header">
+	<section id="rider" class="details-page">
+		<div class="details-page__header">
 			<h1>{{ 'rider.profile' | trans }}</h1>
-
-			{% if rider %}
-				{{ macros.modalButton(
-					'edit-rider-profile',
-					'general.edit',
-					'fa-solid fa-pen',
-					'rider-profile-edit-modal',
-					'rider-profile__edit-link'
-				) }}
-			{% endif %}
 		</div>
 
-		{% if rider is null %}
-			<div class="rider-profile__empty">
+		{% if rider is null or rider is not defined %}
+			<div class="details-page__empty">
 				{{ 'rider.no_rider' | trans }}
 			</div>
 		{% else %}
-			<div class="rider-profile__layout">
+			<div class="details-page__layout">
 				{% include "rider_profile/_info-rider.html.twig" with {
-                    rider: rider,
-                    lastGalop: lastGalop
-                } %}
+					rider: rider,
+					lastGalop: lastGalop
+				} %}
 
-				<section class="rider-profile-panel">
+				<section class="details-panel">
 					{% include "rider_profile/_tabs.html.twig" %}
 
-					<div class="rider-profile-panel__content">
-						<div class="rider-profile-tab-content rider-profile-tab-content--active" id="tab-galops">
+					<div class="details-panel__content">
+						<div class="details-tab-content details-tab-content--active" id="tab-galops">
 							{% include "rider_profile/_tab-galops.html.twig" with {
-                                galopHistory: galopHistory,
+								galopHistory: galopHistory,
 								riderGalopEditForms: riderGalopEditForms,
 								openRiderGalopEditModalId: openRiderGalopEditModalId|default(null)
-                            } %}
+							} %}
 						</div>
 					</div>
 				</section>
 			</div>
+
 			{% include "rider_profile/_edit-profile-modal.html.twig" with {
 				form: form,
 				isProfileModalOpen: isProfileModalOpen|default(false)
@@ -59,6 +48,5 @@
 				isOpen: isRiderGalopModalOpen|default(false)
 			} %}
 		{% endif %}
-
 	</section>
 {% endblock %}

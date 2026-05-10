@@ -20,11 +20,11 @@
 	</li>
 {% endmacro %}
 
-{# Tabs profil rider #}
-{% macro riderTab(icon, label, target, active = false) %}
-	<button class="rider-profile-tabs__item {% if active %}rider-profile-tabs__item--active{% endif %}" type="button" data-tab-target="{{ target }}">
-		<i class="{{ icon }}"></i>
-		{{ label | trans }}
+{# Tabs profil/details #}
+{% macro tab(icon, label, target, isActive = false) %}
+	<button type="button" class="details-tabs__item{% if isActive %} details-tabs__item--active{% endif %}" data-target="{{ target }}">
+		<i class="{{ icon }}" aria-hidden="true"></i>
+		<span>{{ label|trans }}</span>
 	</button>
 {% endmacro %}
 

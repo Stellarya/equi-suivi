@@ -63,6 +63,7 @@ rider:
     edit_galop: "Modifier le galop"
     choose_galop: "Choisir un galop"
 horse:
+    horse: "Cheval"
     my_horses: "Mes chevaux"
     add: "Ajouter un cheval"
     edit: "Modifier le cheval"
@@ -75,6 +76,7 @@ horse:
     name: "Nom"
     affix: "Affixe"
     birth_date: "Date de naissance"
+    age: "Age"
     sire: "N° SIRE"
     breed: "Race"
     coat: "Robe"

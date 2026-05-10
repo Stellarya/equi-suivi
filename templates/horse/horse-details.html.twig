@@ -1,0 +1,46 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+	{{ 'horse.details' | trans }}
+{% endblock %}
+
+{% block body %}
+	<section id="horse" class="details-page">
+		<div class="details-page__header">
+			<h1>
+				{% if horse %}
+					{{ horse.name }}
+				{% else %}
+					{{ 'horse.details' | trans }}
+				{% endif %}
+			</h1>
+		</div>
+
+		{% if horse is null or horse is not defined %}
+			<div class="details-page__empty">
+				{{ 'horse.no_horse' | trans }}
+			</div>
+		{% else %}
+			<div class="details-page__layout">
+				{% include "horse/_info-horse.html.twig" with {
+					horse: horse
+				} %}
+
+				<section class="details-panel">
+					{% include "horse/_tabs.html.twig" %}
+
+					<div class="details-panel__content">
+						<div class="details-tab-content details-tab-content--active" id="tab-galops"></div>
+					</div>
+				</section>
+			</div>
+
+			{% include "horse/_horse-modal.html.twig" with {
+				modalId: 'horse-details-edit-modal',
+				modalTitle: 'horse.edit',
+				form: horseForm,
+				isOpen: isHorseModalOpen|default(false)
+			} %}
+		{% endif %}
+	</section>
+{% endblock %}

@@ -7,6 +7,10 @@
 @use 'components/icons';
 @use 'components/modal';
 @use 'components/card';
+@use 'components/info-card';
+@use 'components/datatables';
+@use 'components/details-tabs';
+@use 'components/details-page';
 
 @use './rider';
 @use './horse';

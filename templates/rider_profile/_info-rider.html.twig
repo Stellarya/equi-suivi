@@ -1,14 +1,24 @@
-<aside class="rider-info-card">
-	<div class="rider-info-card__avatar">
-		<i class="fa-solid fa-user"></i>
+{% import "macros/macros.html.twig" as macros %}
+
+<aside class="app-info-card details-info-card">
+	{{ macros.modalButton(
+		'edit-rider-profile',
+		'general.edit',
+		'fa-solid fa-pen',
+		'rider-profile-edit-modal',
+		'details-info-card__edit-link'
+	) }}
+
+	<div class="app-info-card__avatar">
+		<i class="fa-solid fa-user" aria-hidden="true"></i>
 	</div>
 
-	<div class="rider-info-card__identity">
+	<div class="app-info-card__identity">
 		<h2>{{ rider.fullName }}</h2>
 		<p>{{ 'rider.rider' | trans }}</p>
 	</div>
 
-	<dl class="rider-info-card__details">
+	<dl class="app-info-card__details">
 		<div>
 			<dt>{{ 'rider.firstName' | trans }}</dt>
 			<dd>{{ rider.firstName }}</dd>
@@ -24,7 +34,7 @@
 			<dd>{{ app.user.email }}</dd>
 		</div>
 
-		<div class="rider-info-card__separator"></div>
+		<div class="app-info-card__separator"></div>
 
 		<div>
 			<dt>{{ 'rider.lastGalop' | trans }}</dt>
