@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Traits\TableReferenceTrait;
 use App\Repository\DressageTestRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DressageTestRepository::class)]
@@ -34,6 +36,17 @@ class DressageTest
     #[ORM\ManyToOne(inversedBy: 'dressageTests')]
     #[ORM\JoinColumn(nullable: false)]
     private ?TypeTest $typeTest = null;
+
+    /**
+     * @var Collection<int, ProtocolStep>
+     */
+    #[ORM\OneToMany(targetEntity: ProtocolStep::class, mappedBy: 'dressageTest')]
+    private Collection $protocolSteps;
+
+    public function __construct()
+    {
+        $this->protocolSteps = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -96,6 +109,36 @@ class DressageTest
     public function setTypeTest(?TypeTest $typeTest): static
     {
         $this->typeTest = $typeTest;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProtocolStep>
+     */
+    public function getProtocolSteps(): Collection
+    {
+        return $this->protocolSteps;
+    }
+
+    public function addProtocolStep(ProtocolStep $protocolStep): static
+    {
+        if (!$this->protocolSteps->contains($protocolStep)) {
+            $this->protocolSteps->add($protocolStep);
+            $protocolStep->setDressageTest($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProtocolStep(ProtocolStep $protocolStep): static
+    {
+        if ($this->protocolSteps->removeElement($protocolStep)) {
+            // set the owning side to null (unless already changed)
+            if ($protocolStep->getDressageTest() === $this) {
+                $protocolStep->setDressageTest(null);
+            }
+        }
 
         return $this;
     }
