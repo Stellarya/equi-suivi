@@ -38,6 +38,7 @@ class AdminController extends AbstractDashboardController
         yield MenuItem::linkTo(DisciplineCrudController::class, 'Discipline', 'fas fa-list');
         yield MenuItem::linkTo(CategoryCrudController::class, 'Catégorie', 'fas fa-list');
         yield MenuItem::linkTo(GalopCrudController::class, 'Galop', 'fas fa-list');
+        yield MenuItem::linkTo(LevelCrudController::class, 'Niveau', 'fas fa-list');
         yield MenuItem::linkTo(BreedCrudController::class, 'Races', 'fas fa-list');
         yield MenuItem::linkTo(CoatCrudController::class, 'Robes', 'fas fa-list');
         yield MenuItem::linkTo(TypeEquitationCrudController::class, 'TypeEquitation', 'fas fa-list');
