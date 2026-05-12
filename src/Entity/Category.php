@@ -2,14 +2,17 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\TableReferenceTrait;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
 {
+    use TableReferenceTrait;
+
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy:'IDENTITY')]
     #[ORM\Column]
     private ?int $id = null;
 
