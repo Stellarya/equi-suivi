@@ -37,16 +37,6 @@ class DressageTest
     #[ORM\JoinColumn(nullable: false)]
     private ?TypeTest $typeTest = null;
 
-    /**
-     * @var Collection<int, ProtocolStep>
-     */
-    #[ORM\OneToMany(targetEntity: ProtocolStep::class, mappedBy: 'dressageTest')]
-    private Collection $protocolSteps;
-
-    public function __construct()
-    {
-        $this->protocolSteps = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -113,33 +103,4 @@ class DressageTest
         return $this;
     }
 
-    /**
-     * @return Collection<int, ProtocolStep>
-     */
-    public function getProtocolSteps(): Collection
-    {
-        return $this->protocolSteps;
-    }
-
-    public function addProtocolStep(ProtocolStep $protocolStep): static
-    {
-        if (!$this->protocolSteps->contains($protocolStep)) {
-            $this->protocolSteps->add($protocolStep);
-            $protocolStep->setDressageTest($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProtocolStep(ProtocolStep $protocolStep): static
-    {
-        if ($this->protocolSteps->removeElement($protocolStep)) {
-            // set the owning side to null (unless already changed)
-            if ($protocolStep->getDressageTest() === $this) {
-                $protocolStep->setDressageTest(null);
-            }
-        }
-
-        return $this;
-    }
 }
