@@ -37,6 +37,17 @@ class DressageTest
     #[ORM\JoinColumn(nullable: false)]
     private ?TypeTest $typeTest = null;
 
+    /**
+     * @var Collection<int, ProtocolFigure>
+     */
+    #[ORM\OneToMany(targetEntity: ProtocolFigure::class, mappedBy: 'dressageTest')]
+    private Collection $protocolFigures;
+
+    public function __construct()
+    {
+        $this->protocolFigures = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -99,6 +110,36 @@ class DressageTest
     public function setTypeTest(?TypeTest $typeTest): static
     {
         $this->typeTest = $typeTest;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProtocolFigure>
+     */
+    public function getProtocolFigures(): Collection
+    {
+        return $this->protocolFigures;
+    }
+
+    public function addProtocolFigure(ProtocolFigure $protocolFigure): static
+    {
+        if (!$this->protocolFigures->contains($protocolFigure)) {
+            $this->protocolFigures->add($protocolFigure);
+            $protocolFigure->setDressageTest($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProtocolFigure(ProtocolFigure $protocolFigure): static
+    {
+        if ($this->protocolFigures->removeElement($protocolFigure)) {
+            // set the owning side to null (unless already changed)
+            if ($protocolFigure->getDressageTest() === $this) {
+                $protocolFigure->setDressageTest(null);
+            }
+        }
 
         return $this;
     }
