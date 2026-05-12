@@ -51,4 +51,9 @@ class Discipline
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->getLibelle() ?? '';
+    }
 }
