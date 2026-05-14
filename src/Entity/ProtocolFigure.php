@@ -9,8 +9,18 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ProtocolFigureRepository::class)]
 class ProtocolFigure
 {
+    public const SECTION_TECHNICAL = 'technical';
+    public const SECTION_COLLECTIVE = 'collective';
+    public const SECTION_ARTISTIC = 'artistic';
+
+     public const SECTION_CHOICES = [
+        'Figure technique' => self::SECTION_TECHNICAL,
+        'Note d\'ensemble' => self::SECTION_COLLECTIVE,
+        'Note artistique' => self::SECTION_ARTISTIC,
+    ];
+
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy:'IDENTITY')]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -30,8 +40,20 @@ class ProtocolFigure
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $technicalNote = null;
 
-    #[ORM\Column]
-    private ?bool $estActif = null;
+    #[ORM\Column(name: 'est_actif', type: 'boolean', nullable: false, options: ['default' => true])]
+    private ?bool $estActif = true;
+
+    #[ORM\Column(length: 30)]
+    private ?string $section = self::SECTION_TECHNICAL;
+
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $ordre = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $label = null;
+
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $maxPoints = null;
 
     public function getId(): ?int
     {
@@ -108,5 +130,63 @@ class ProtocolFigure
         $this->estActif = $estActif;
 
         return $this;
+    }
+
+     public function getSection(): ?string
+     {
+         return $this->section;
+     }
+
+     public function setSection(?string $section): static
+     {
+         $this->section = $section;
+
+         return $this;
+     }
+
+     public function getOrdre(): ?int
+     {
+         return $this->ordre;
+     }
+
+     public function setOrdre(?int $ordre): static
+     {
+         $this->ordre = $ordre;
+
+         return $this;
+     }
+
+     public function getLabel(): ?string
+     {
+         return $this->label;
+     }
+
+     public function setLabel(?string $label): static
+     {
+         $this->label = $label;
+
+         return $this;
+     }
+
+     public function getMaxPoints(): ?int
+     {
+         return $this->maxPoints;
+     }
+
+     public function setMaxPoints(?int $maxPoints): static
+     {
+         $this->maxPoints = $maxPoints;
+
+         return $this;
+     }
+
+      public function __toString(): string
+    {
+        $testLabel = $this->dressageTest?->getLibelle() ?? 'Reprise inconnue';
+        $number = $this->number !== null ? sprintf('Figure %d', $this->number) : 'Ligne sans numéro';
+        $label = $this->label !== null ? sprintf(' - %s', $this->label) : '';
+
+
+        return sprintf('%s - %s%s', $testLabel, $number, $label);
     }
 }
