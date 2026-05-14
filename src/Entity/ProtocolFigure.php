@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProtocolFigureRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -54,6 +56,17 @@ class ProtocolFigure
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $maxPoints = null;
+
+    /**
+     * @var Collection<int, ProtocolMovement>
+     */
+    #[ORM\OneToMany(targetEntity: ProtocolMovement::class, mappedBy: 'protocolFigure')]
+    private Collection $protocolMovements;
+
+    public function __construct()
+    {
+        $this->protocolMovements = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -189,4 +202,34 @@ class ProtocolFigure
 
         return sprintf('%s - %s%s', $testLabel, $number, $label);
     }
+
+      /**
+       * @return Collection<int, ProtocolMovement>
+       */
+      public function getProtocolMovements(): Collection
+      {
+          return $this->protocolMovements;
+      }
+
+      public function addProtocolMovement(ProtocolMovement $protocolMovement): static
+      {
+          if (!$this->protocolMovements->contains($protocolMovement)) {
+              $this->protocolMovements->add($protocolMovement);
+              $protocolMovement->setProtocolFigure($this);
+          }
+
+          return $this;
+      }
+
+      public function removeProtocolMovement(ProtocolMovement $protocolMovement): static
+      {
+          if ($this->protocolMovements->removeElement($protocolMovement)) {
+              // set the owning side to null (unless already changed)
+              if ($protocolMovement->getProtocolFigure() === $this) {
+                  $protocolMovement->setProtocolFigure(null);
+              }
+          }
+
+          return $this;
+      }
 }
