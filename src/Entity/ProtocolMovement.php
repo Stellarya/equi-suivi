@@ -109,4 +109,14 @@ class ProtocolMovement
 
         return $this;
     }
+
+     public function __toString(): string
+    {
+        return sprintf(
+            '%s. %s - %s',
+            $this->ordre ?? '',
+            $this->marker ?? '',
+            mb_strimwidth($this->description ?? '', 0, 60, '...')
+        );
+    }
 }
