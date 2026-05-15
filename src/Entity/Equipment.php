@@ -43,9 +43,23 @@ class Equipment
     #[ORM\ManyToMany(targetEntity: EquipmentMaintenance::class, mappedBy: 'equipement')]
     private Collection $equipmentMaintenances;
 
+    /**
+     * @var Collection<int, Discipline>
+     */
+    #[ORM\ManyToMany(targetEntity: Discipline::class, inversedBy: 'equipments')]
+    private Collection $discipline;
+
+    /**
+     * @var Collection<int, ReminderMaintenance>
+     */
+    #[ORM\OneToMany(targetEntity: ReminderMaintenance::class, mappedBy: 'equipment')]
+    private Collection $reminderMaintenances;
+
     public function __construct()
     {
         $this->equipmentMaintenances = new ArrayCollection();
+        $this->discipline = new ArrayCollection();
+        $this->reminderMaintenances = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -159,6 +173,60 @@ class Equipment
     {
         if ($this->equipmentMaintenances->removeElement($equipmentMaintenance)) {
             $equipmentMaintenance->removeEquipement($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Discipline>
+     */
+    public function getDiscipline(): Collection
+    {
+        return $this->discipline;
+    }
+
+    public function addDiscipline(Discipline $discipline): static
+    {
+        if (!$this->discipline->contains($discipline)) {
+            $this->discipline->add($discipline);
+        }
+
+        return $this;
+    }
+
+    public function removeDiscipline(Discipline $discipline): static
+    {
+        $this->discipline->removeElement($discipline);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ReminderMaintenance>
+     */
+    public function getReminderMaintenances(): Collection
+    {
+        return $this->reminderMaintenances;
+    }
+
+    public function addReminderMaintenance(ReminderMaintenance $reminderMaintenance): static
+    {
+        if (!$this->reminderMaintenances->contains($reminderMaintenance)) {
+            $this->reminderMaintenances->add($reminderMaintenance);
+            $reminderMaintenance->setEquipment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReminderMaintenance(ReminderMaintenance $reminderMaintenance): static
+    {
+        if ($this->reminderMaintenances->removeElement($reminderMaintenance)) {
+            // set the owning side to null (unless already changed)
+            if ($reminderMaintenance->getEquipment() === $this) {
+                $reminderMaintenance->setEquipment(null);
+            }
         }
 
         return $this;

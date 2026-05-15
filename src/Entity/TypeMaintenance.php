@@ -49,9 +49,16 @@ class TypeMaintenance
     #[ORM\OneToMany(targetEntity: EquipmentMaintenance::class, mappedBy: 'typeMaintenance')]
     private Collection $equipmentMaintenances;
 
+    /**
+     * @var Collection<int, ReminderMaintenance>
+     */
+    #[ORM\OneToMany(targetEntity: ReminderMaintenance::class, mappedBy: 'typeMaintenance')]
+    private Collection $reminderMaintenances;
+
     public function __construct()
     {
         $this->equipmentMaintenances = new ArrayCollection();
+        $this->reminderMaintenances = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -207,6 +214,36 @@ class TypeMaintenance
             // set the owning side to null (unless already changed)
             if ($equipmentMaintenance->getTypeMaintenance() === $this) {
                 $equipmentMaintenance->setTypeMaintenance(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ReminderMaintenance>
+     */
+    public function getReminderMaintenances(): Collection
+    {
+        return $this->reminderMaintenances;
+    }
+
+    public function addReminderMaintenance(ReminderMaintenance $reminderMaintenance): static
+    {
+        if (!$this->reminderMaintenances->contains($reminderMaintenance)) {
+            $this->reminderMaintenances->add($reminderMaintenance);
+            $reminderMaintenance->setTypeMaintenance($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReminderMaintenance(ReminderMaintenance $reminderMaintenance): static
+    {
+        if ($this->reminderMaintenances->removeElement($reminderMaintenance)) {
+            // set the owning side to null (unless already changed)
+            if ($reminderMaintenance->getTypeMaintenance() === $this) {
+                $reminderMaintenance->setTypeMaintenance(null);
             }
         }
 
