@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Controller\Admin\BreedCrudController;
 use App\Controller\Admin\CoatCrudController;
+use App\Controller\Admin\TypePensionCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -45,6 +46,7 @@ class AdminController extends AbstractDashboardController
         yield MenuItem::linkTo(DressageTestCrudController::class, 'Reprise Dressage', 'fas fa-list');
         yield MenuItem::linkTo(CoatCrudController::class, 'Robes', 'fas fa-list');
         yield MenuItem::linkTo(StatusCompetitionCrudController::class, 'Statut Compétition', 'fas fa-list');
+        yield MenuItem::linkTo(TypeMaintenanceCrudController::class, 'Type Entretien', 'fas fa-list');
         yield MenuItem::linkTo(TypeEquipmentCrudController::class, 'Type Equipment', 'fas fa-list');        
         yield MenuItem::linkTo(TypeEquitationCrudController::class, 'Type Equitation', 'fas fa-list');
         yield MenuItem::linkTo(TypeCareCrudController::class, 'Type Soins', 'fas fa-list');

@@ -3,14 +3,14 @@
 namespace App\Entity;
 
 use App\Entity\Traits\TableReferenceTrait;
-use App\Repository\TypeCareRepository;
+use App\Repository\TypeMaintenanceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TypeCareRepository::class)]
-class TypeCare
+#[ORM\Entity(repositoryClass: TypeMaintenanceRepository::class)]
+class TypeMaintenance
 {
     use TableReferenceTrait;
 
@@ -44,21 +44,21 @@ class TypeCare
     private ?string $conseils = null;
 
     /**
-     * @var Collection<int, HorseCare>
+     * @var Collection<int, EquipmentMaintenance>
      */
-    #[ORM\OneToMany(targetEntity: HorseCare::class, mappedBy: 'typeCare')]
-    private Collection $horseCares;
+    #[ORM\OneToMany(targetEntity: EquipmentMaintenance::class, mappedBy: 'typeMaintenance')]
+    private Collection $equipmentMaintenances;
 
     /**
-     * @var Collection<int, ReminderCare>
+     * @var Collection<int, ReminderMaintenance>
      */
-    #[ORM\OneToMany(targetEntity: ReminderCare::class, mappedBy: 'typeCare')]
-    private Collection $reminderCares;
+    #[ORM\OneToMany(targetEntity: ReminderMaintenance::class, mappedBy: 'typeMaintenance')]
+    private Collection $reminderMaintenances;
 
     public function __construct()
     {
-        $this->horseCares = new ArrayCollection();
-        $this->reminderCares = new ArrayCollection();
+        $this->equipmentMaintenances = new ArrayCollection();
+        $this->reminderMaintenances = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -71,7 +71,7 @@ class TypeCare
         return $this->libelle;
     }
 
-    public function setLibelle(?string $libelle): static
+    public function setLibelle(string $libelle): static
     {
         $this->libelle = $libelle;
 
@@ -95,7 +95,7 @@ class TypeCare
         return $this->intervalDefaultUnit;
     }
 
-    public function setIntervalDefaultUnit(?string $intervalDefaultUnit): static
+    public function setIntervalDefaultUnit(string $intervalDefaultUnit): static
     {
         $this->intervalDefaultUnit = $intervalDefaultUnit;
 
@@ -191,29 +191,29 @@ class TypeCare
     }
 
     /**
-     * @return Collection<int, HorseCare>
+     * @return Collection<int, EquipmentMaintenance>
      */
-    public function getHorseCares(): Collection
+    public function getEquipmentMaintenances(): Collection
     {
-        return $this->horseCares;
+        return $this->equipmentMaintenances;
     }
 
-    public function addHorseCare(HorseCare $horseCare): static
+    public function addEquipmentMaintenance(EquipmentMaintenance $equipmentMaintenance): static
     {
-        if (!$this->horseCares->contains($horseCare)) {
-            $this->horseCares->add($horseCare);
-            $horseCare->setTypeCare($this);
+        if (!$this->equipmentMaintenances->contains($equipmentMaintenance)) {
+            $this->equipmentMaintenances->add($equipmentMaintenance);
+            $equipmentMaintenance->setTypeMaintenance($this);
         }
 
         return $this;
     }
 
-    public function removeHorseCare(HorseCare $horseCare): static
+    public function removeEquipmentMaintenance(EquipmentMaintenance $equipmentMaintenance): static
     {
-        if ($this->horseCares->removeElement($horseCare)) {
+        if ($this->equipmentMaintenances->removeElement($equipmentMaintenance)) {
             // set the owning side to null (unless already changed)
-            if ($horseCare->getTypeCare() === $this) {
-                $horseCare->setTypeCare(null);
+            if ($equipmentMaintenance->getTypeMaintenance() === $this) {
+                $equipmentMaintenance->setTypeMaintenance(null);
             }
         }
 
@@ -221,29 +221,29 @@ class TypeCare
     }
 
     /**
-     * @return Collection<int, ReminderCare>
+     * @return Collection<int, ReminderMaintenance>
      */
-    public function getReminderCares(): Collection
+    public function getReminderMaintenances(): Collection
     {
-        return $this->reminderCares;
+        return $this->reminderMaintenances;
     }
 
-    public function addReminderCare(ReminderCare $reminderCare): static
+    public function addReminderMaintenance(ReminderMaintenance $reminderMaintenance): static
     {
-        if (!$this->reminderCares->contains($reminderCare)) {
-            $this->reminderCares->add($reminderCare);
-            $reminderCare->setTypeCare($this);
+        if (!$this->reminderMaintenances->contains($reminderMaintenance)) {
+            $this->reminderMaintenances->add($reminderMaintenance);
+            $reminderMaintenance->setTypeMaintenance($this);
         }
 
         return $this;
     }
 
-    public function removeReminderCare(ReminderCare $reminderCare): static
+    public function removeReminderMaintenance(ReminderMaintenance $reminderMaintenance): static
     {
-        if ($this->reminderCares->removeElement($reminderCare)) {
+        if ($this->reminderMaintenances->removeElement($reminderMaintenance)) {
             // set the owning side to null (unless already changed)
-            if ($reminderCare->getTypeCare() === $this) {
-                $reminderCare->setTypeCare(null);
+            if ($reminderMaintenance->getTypeMaintenance() === $this) {
+                $reminderMaintenance->setTypeMaintenance(null);
             }
         }
 
