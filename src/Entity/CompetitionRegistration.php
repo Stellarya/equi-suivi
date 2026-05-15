@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CompetitionRegistrationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -38,6 +40,17 @@ class CompetitionRegistration
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $note = null;
+
+    /**
+     * @var Collection<int, CompetitionEntry>
+     */
+    #[ORM\OneToMany(targetEntity: CompetitionEntry::class, mappedBy: 'competitionRegistration')]
+    private Collection $competitionEntries;
+
+    public function __construct()
+    {
+        $this->competitionEntries = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -124,6 +137,36 @@ class CompetitionRegistration
     public function setNote(?string $note): static
     {
         $this->note = $note;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CompetitionEntry>
+     */
+    public function getCompetitionEntries(): Collection
+    {
+        return $this->competitionEntries;
+    }
+
+    public function addCompetitionEntry(CompetitionEntry $competitionEntry): static
+    {
+        if (!$this->competitionEntries->contains($competitionEntry)) {
+            $this->competitionEntries->add($competitionEntry);
+            $competitionEntry->setCompetitionRegistration($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetitionEntry(CompetitionEntry $competitionEntry): static
+    {
+        if ($this->competitionEntries->removeElement($competitionEntry)) {
+            // set the owning side to null (unless already changed)
+            if ($competitionEntry->getCompetitionRegistration() === $this) {
+                $competitionEntry->setCompetitionRegistration(null);
+            }
+        }
 
         return $this;
     }

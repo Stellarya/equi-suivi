@@ -43,9 +43,16 @@ class DressageTest
     #[ORM\OneToMany(targetEntity: ProtocolFigure::class, mappedBy: 'dressageTest')]
     private Collection $protocolFigures;
 
+    /**
+     * @var Collection<int, CompetitionEntry>
+     */
+    #[ORM\OneToMany(targetEntity: CompetitionEntry::class, mappedBy: 'dressageTest')]
+    private Collection $competitionEntries;
+
     public function __construct()
     {
         $this->protocolFigures = new ArrayCollection();
+        $this->competitionEntries = new ArrayCollection();
     }
 
 
@@ -146,6 +153,36 @@ class DressageTest
     public function __toString(): string
     {
         return $this->getLibelle() ?? '';
+    }
+
+    /**
+     * @return Collection<int, CompetitionEntry>
+     */
+    public function getCompetitionEntries(): Collection
+    {
+        return $this->competitionEntries;
+    }
+
+    public function addCompetitionEntry(CompetitionEntry $competitionEntry): static
+    {
+        if (!$this->competitionEntries->contains($competitionEntry)) {
+            $this->competitionEntries->add($competitionEntry);
+            $competitionEntry->setDressageTest($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetitionEntry(CompetitionEntry $competitionEntry): static
+    {
+        if ($this->competitionEntries->removeElement($competitionEntry)) {
+            // set the owning side to null (unless already changed)
+            if ($competitionEntry->getDressageTest() === $this) {
+                $competitionEntry->setDressageTest(null);
+            }
+        }
+
+        return $this;
     }
 
 }

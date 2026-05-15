@@ -27,9 +27,16 @@ class Category
     #[ORM\OneToMany(targetEntity: Level::class, mappedBy: 'category')]
     private Collection $levels;
 
+    /**
+     * @var Collection<int, CompetitionEntry>
+     */
+    #[ORM\OneToMany(targetEntity: CompetitionEntry::class, mappedBy: 'category')]
+    private Collection $competitionEntries;
+
     public function __construct()
     {
         $this->levels = new ArrayCollection();
+        $this->competitionEntries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -82,5 +89,35 @@ class Category
     public function __toString(): string
     {
         return $this->getLibelle() ?? '';
+    }
+
+    /**
+     * @return Collection<int, CompetitionEntry>
+     */
+    public function getCompetitionEntries(): Collection
+    {
+        return $this->competitionEntries;
+    }
+
+    public function addCompetitionEntry(CompetitionEntry $competitionEntry): static
+    {
+        if (!$this->competitionEntries->contains($competitionEntry)) {
+            $this->competitionEntries->add($competitionEntry);
+            $competitionEntry->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetitionEntry(CompetitionEntry $competitionEntry): static
+    {
+        if ($this->competitionEntries->removeElement($competitionEntry)) {
+            // set the owning side to null (unless already changed)
+            if ($competitionEntry->getCategory() === $this) {
+                $competitionEntry->setCategory(null);
+            }
+        }
+
+        return $this;
     }
 }
