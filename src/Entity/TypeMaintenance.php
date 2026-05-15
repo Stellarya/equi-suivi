@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Traits\TableReferenceTrait;
 use App\Repository\TypeMaintenanceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -40,6 +42,17 @@ class TypeMaintenance
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $conseils = null;
+
+    /**
+     * @var Collection<int, EquipmentMaintenance>
+     */
+    #[ORM\OneToMany(targetEntity: EquipmentMaintenance::class, mappedBy: 'typeMaintenance')]
+    private Collection $equipmentMaintenances;
+
+    public function __construct()
+    {
+        $this->equipmentMaintenances = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -168,5 +181,35 @@ class TypeMaintenance
     public function __toString(): string
     {
         return $this->libelle ?? '';
+    }
+
+    /**
+     * @return Collection<int, EquipmentMaintenance>
+     */
+    public function getEquipmentMaintenances(): Collection
+    {
+        return $this->equipmentMaintenances;
+    }
+
+    public function addEquipmentMaintenance(EquipmentMaintenance $equipmentMaintenance): static
+    {
+        if (!$this->equipmentMaintenances->contains($equipmentMaintenance)) {
+            $this->equipmentMaintenances->add($equipmentMaintenance);
+            $equipmentMaintenance->setTypeMaintenance($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEquipmentMaintenance(EquipmentMaintenance $equipmentMaintenance): static
+    {
+        if ($this->equipmentMaintenances->removeElement($equipmentMaintenance)) {
+            // set the owning side to null (unless already changed)
+            if ($equipmentMaintenance->getTypeMaintenance() === $this) {
+                $equipmentMaintenance->setTypeMaintenance(null);
+            }
+        }
+
+        return $this;
     }
 }
