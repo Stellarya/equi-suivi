@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Traits\TableReferenceTrait;
 use App\Repository\TypeEquipmentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TypeEquipmentRepository::class)]
@@ -22,6 +24,17 @@ class TypeEquipment
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?TypeEquitation $typeEquitation = null;
+
+    /**
+     * @var Collection<int, Equipment>
+     */
+    #[ORM\OneToMany(targetEntity: Equipment::class, mappedBy: 'typeEquipment')]
+    private Collection $equipment;
+
+    public function __construct()
+    {
+        $this->equipment = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -48,6 +61,36 @@ class TypeEquipment
     public function setTypeEquitation(?TypeEquitation $typeEquitation): static
     {
         $this->typeEquitation = $typeEquitation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Equipment>
+     */
+    public function getEquipment(): Collection
+    {
+        return $this->equipment;
+    }
+
+    public function addEquipment(Equipment $equipment): static
+    {
+        if (!$this->equipment->contains($equipment)) {
+            $this->equipment->add($equipment);
+            $equipment->setTypeEquipment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEquipment(Equipment $equipment): static
+    {
+        if ($this->equipment->removeElement($equipment)) {
+            // set the owning side to null (unless already changed)
+            if ($equipment->getTypeEquipment() === $this) {
+                $equipment->setTypeEquipment(null);
+            }
+        }
 
         return $this;
     }

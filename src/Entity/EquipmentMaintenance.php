@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EquipmentMaintenanceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -22,6 +24,17 @@ class EquipmentMaintenance
 
     #[ORM\ManyToOne(inversedBy: 'equipmentMaintenances')]
     private ?TypeMaintenance $typeMaintenance = null;
+
+    /**
+     * @var Collection<int, Equipment>
+     */
+    #[ORM\ManyToMany(targetEntity: Equipment::class, inversedBy: 'equipmentMaintenances')]
+    private Collection $equipement;
+
+    public function __construct()
+    {
+        $this->equipement = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -60,6 +73,30 @@ class EquipmentMaintenance
     public function setTypeMaintenance(?TypeMaintenance $typeMaintenance): static
     {
         $this->typeMaintenance = $typeMaintenance;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Equipment>
+     */
+    public function getEquipement(): Collection
+    {
+        return $this->equipement;
+    }
+
+    public function addEquipement(Equipment $equipement): static
+    {
+        if (!$this->equipement->contains($equipement)) {
+            $this->equipement->add($equipement);
+        }
+
+        return $this;
+    }
+
+    public function removeEquipement(Equipment $equipement): static
+    {
+        $this->equipement->removeElement($equipement);
 
         return $this;
     }
