@@ -48,6 +48,7 @@ class AdminController extends AbstractDashboardController
         yield MenuItem::linkTo(TypeEquipmentCrudController::class, 'Type Equipment', 'fas fa-list');        
         yield MenuItem::linkTo(TypeEquitationCrudController::class, 'Type Equitation', 'fas fa-list');
         yield MenuItem::linkTo(TypeCareCrudController::class, 'Type Soins', 'fas fa-list');
+        yield MenuItem::linkTo(TypePensionCrudController::class, 'Type Pension', 'fas fa-list');        
         yield MenuItem::linkTo(TypeSaddleCrudController::class, 'Type Selle', 'fas fa-list');
         yield MenuItem::linkTo(TypeTestCrudController::class, 'TypeReprise', 'fas fa-list');
     }
