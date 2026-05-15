@@ -87,10 +87,17 @@ class Horse
     #[ORM\OneToOne(mappedBy: 'horse', cascade: ['persist', 'remove'])]
     private ?Pension $pension = null;
 
+    /**
+     * @var Collection<int, HorseCare>
+     */
+    #[ORM\ManyToMany(targetEntity: HorseCare::class, mappedBy: 'horse')]
+    private Collection $horseCares;
+
     public function __construct()
     {
         $this->riders = new ArrayCollection();
         $this->competitionRegistrations = new ArrayCollection();
+        $this->horseCares = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -302,6 +309,33 @@ class Horse
         }
 
         $this->pension = $pension;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, HorseCare>
+     */
+    public function getHorseCares(): Collection
+    {
+        return $this->horseCares;
+    }
+
+    public function addHorseCare(HorseCare $horseCare): static
+    {
+        if (!$this->horseCares->contains($horseCare)) {
+            $this->horseCares->add($horseCare);
+            $horseCare->addHorse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHorseCare(HorseCare $horseCare): static
+    {
+        if ($this->horseCares->removeElement($horseCare)) {
+            $horseCare->removeHorse($this);
+        }
 
         return $this;
     }

@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Traits\TableReferenceTrait;
 use App\Repository\TypeCareRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -40,6 +42,17 @@ class TypeCare
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $conseils = null;
+
+    /**
+     * @var Collection<int, HorseCare>
+     */
+    #[ORM\OneToMany(targetEntity: HorseCare::class, mappedBy: 'typeCare')]
+    private Collection $horseCares;
+
+    public function __construct()
+    {
+        $this->horseCares = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -168,5 +181,35 @@ class TypeCare
     public function __toString(): string
     {
         return $this->libelle ?? '';
+    }
+
+    /**
+     * @return Collection<int, HorseCare>
+     */
+    public function getHorseCares(): Collection
+    {
+        return $this->horseCares;
+    }
+
+    public function addHorseCare(HorseCare $horseCare): static
+    {
+        if (!$this->horseCares->contains($horseCare)) {
+            $this->horseCares->add($horseCare);
+            $horseCare->setTypeCare($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHorseCare(HorseCare $horseCare): static
+    {
+        if ($this->horseCares->removeElement($horseCare)) {
+            // set the owning side to null (unless already changed)
+            if ($horseCare->getTypeCare() === $this) {
+                $horseCare->setTypeCare(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -43,9 +43,16 @@ class AppUser implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Horse::class, mappedBy: 'owner')]
     private Collection $ownedHorses;
 
+    /**
+     * @var Collection<int, HorseCare>
+     */
+    #[ORM\OneToMany(targetEntity: HorseCare::class, mappedBy: 'enteredBy')]
+    private Collection $horseCares;
+
     public function __construct()
     {
         $this->ownedHorses = new ArrayCollection();
+        $this->horseCares = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -167,6 +174,36 @@ class AppUser implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($ownedHorse->getOwner() === $this) {
                 $ownedHorse->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, HorseCare>
+     */
+    public function getHorseCares(): Collection
+    {
+        return $this->horseCares;
+    }
+
+    public function addHorseCare(HorseCare $horseCare): static
+    {
+        if (!$this->horseCares->contains($horseCare)) {
+            $this->horseCares->add($horseCare);
+            $horseCare->setEnteredBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHorseCare(HorseCare $horseCare): static
+    {
+        if ($this->horseCares->removeElement($horseCare)) {
+            // set the owning side to null (unless already changed)
+            if ($horseCare->getEnteredBy() === $this) {
+                $horseCare->setEnteredBy(null);
             }
         }
 
