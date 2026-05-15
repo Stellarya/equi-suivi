@@ -84,6 +84,9 @@ class Horse
     #[ORM\ManyToOne(inversedBy: 'horses')]
     private ?Ranch $ranch = null;
 
+    #[ORM\OneToOne(mappedBy: 'horse', cascade: ['persist', 'remove'])]
+    private ?Pension $pension = null;
+
     public function __construct()
     {
         $this->riders = new ArrayCollection();
@@ -282,6 +285,23 @@ class Horse
     public function setRanch(?Ranch $ranch): static
     {
         $this->ranch = $ranch;
+
+        return $this;
+    }
+
+    public function getPension(): ?Pension
+    {
+        return $this->pension;
+    }
+
+    public function setPension(Pension $pension): static
+    {
+        // set the owning side of the relation if necessary
+        if ($pension->getHorse() !== $this) {
+            $pension->setHorse($this);
+        }
+
+        $this->pension = $pension;
 
         return $this;
     }

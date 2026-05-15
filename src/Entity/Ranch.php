@@ -38,10 +38,17 @@ class Ranch
     #[ORM\ManyToMany(targetEntity: Rider::class, mappedBy: 'ranch')]
     private Collection $riders;
 
+    /**
+     * @var Collection<int, Pension>
+     */
+    #[ORM\OneToMany(targetEntity: Pension::class, mappedBy: 'ranch')]
+    private Collection $pensions;
+
     public function __construct()
     {
         $this->horses = new ArrayCollection();
         $this->riders = new ArrayCollection();
+        $this->pensions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -137,6 +144,36 @@ class Ranch
     {
         if ($this->riders->removeElement($rider)) {
             $rider->removeRanch($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Pension>
+     */
+    public function getPensions(): Collection
+    {
+        return $this->pensions;
+    }
+
+    public function addPension(Pension $pension): static
+    {
+        if (!$this->pensions->contains($pension)) {
+            $this->pensions->add($pension);
+            $pension->setRanch($this);
+        }
+
+        return $this;
+    }
+
+    public function removePension(Pension $pension): static
+    {
+        if ($this->pensions->removeElement($pension)) {
+            // set the owning side to null (unless already changed)
+            if ($pension->getRanch() === $this) {
+                $pension->setRanch(null);
+            }
         }
 
         return $this;
