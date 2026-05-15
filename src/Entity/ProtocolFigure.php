@@ -63,9 +63,16 @@ class ProtocolFigure
     #[ORM\OneToMany(targetEntity: ProtocolMovement::class, mappedBy: 'protocolFigure')]
     private Collection $protocolMovements;
 
+    /**
+     * @var Collection<int, ProtocolFigureScore>
+     */
+    #[ORM\OneToMany(targetEntity: ProtocolFigureScore::class, mappedBy: 'protocolFigure')]
+    private Collection $protocolFigureScores;
+
     public function __construct()
     {
         $this->protocolMovements = new ArrayCollection();
+        $this->protocolFigureScores = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -227,6 +234,36 @@ class ProtocolFigure
               // set the owning side to null (unless already changed)
               if ($protocolMovement->getProtocolFigure() === $this) {
                   $protocolMovement->setProtocolFigure(null);
+              }
+          }
+
+          return $this;
+      }
+
+      /**
+       * @return Collection<int, ProtocolFigureScore>
+       */
+      public function getProtocolFigureScores(): Collection
+      {
+          return $this->protocolFigureScores;
+      }
+
+      public function addProtocolFigureScore(ProtocolFigureScore $protocolFigureScore): static
+      {
+          if (!$this->protocolFigureScores->contains($protocolFigureScore)) {
+              $this->protocolFigureScores->add($protocolFigureScore);
+              $protocolFigureScore->setProtocolFigure($this);
+          }
+
+          return $this;
+      }
+
+      public function removeProtocolFigureScore(ProtocolFigureScore $protocolFigureScore): static
+      {
+          if ($this->protocolFigureScores->removeElement($protocolFigureScore)) {
+              // set the owning side to null (unless already changed)
+              if ($protocolFigureScore->getProtocolFigure() === $this) {
+                  $protocolFigureScore->setProtocolFigure(null);
               }
           }
 

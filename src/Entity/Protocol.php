@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProtocolRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -35,6 +37,17 @@ class Protocol
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $generalComment = null;
+
+    /**
+     * @var Collection<int, ProtocolFigureScore>
+     */
+    #[ORM\OneToMany(targetEntity: ProtocolFigureScore::class, mappedBy: 'protocol')]
+    private Collection $protocolFigureScores;
+
+    public function __construct()
+    {
+        $this->protocolFigureScores = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -121,6 +134,36 @@ class Protocol
     public function setGeneralComment(?string $generalComment): static
     {
         $this->generalComment = $generalComment;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProtocolFigureScore>
+     */
+    public function getProtocolFigureScores(): Collection
+    {
+        return $this->protocolFigureScores;
+    }
+
+    public function addProtocolFigureScore(ProtocolFigureScore $protocolFigureScore): static
+    {
+        if (!$this->protocolFigureScores->contains($protocolFigureScore)) {
+            $this->protocolFigureScores->add($protocolFigureScore);
+            $protocolFigureScore->setProtocol($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProtocolFigureScore(ProtocolFigureScore $protocolFigureScore): static
+    {
+        if ($this->protocolFigureScores->removeElement($protocolFigureScore)) {
+            // set the owning side to null (unless already changed)
+            if ($protocolFigureScore->getProtocol() === $this) {
+                $protocolFigureScore->setProtocol(null);
+            }
+        }
 
         return $this;
     }
