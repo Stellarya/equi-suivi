@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CompetitionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -29,6 +31,17 @@ class Competition
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     #[ORM\JoinColumn(nullable: false)]
     private ?StatusCompetition $statusCompetition = null;
+
+    /**
+     * @var Collection<int, CompetitionRegistration>
+     */
+    #[ORM\OneToMany(targetEntity: CompetitionRegistration::class, mappedBy: 'competition')]
+    private Collection $competitionRegistrations;
+
+    public function __construct()
+    {
+        $this->competitionRegistrations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -91,6 +104,36 @@ class Competition
     public function setStatusCompetition(?StatusCompetition $statusCompetition): static
     {
         $this->statusCompetition = $statusCompetition;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CompetitionRegistration>
+     */
+    public function getCompetitionRegistrations(): Collection
+    {
+        return $this->competitionRegistrations;
+    }
+
+    public function addCompetitionRegistration(CompetitionRegistration $competitionRegistration): static
+    {
+        if (!$this->competitionRegistrations->contains($competitionRegistration)) {
+            $this->competitionRegistrations->add($competitionRegistration);
+            $competitionRegistration->setCompetition($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetitionRegistration(CompetitionRegistration $competitionRegistration): static
+    {
+        if ($this->competitionRegistrations->removeElement($competitionRegistration)) {
+            // set the owning side to null (unless already changed)
+            if ($competitionRegistration->getCompetition() === $this) {
+                $competitionRegistration->setCompetition(null);
+            }
+        }
 
         return $this;
     }

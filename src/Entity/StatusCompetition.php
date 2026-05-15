@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\TableReferenceTrait;
 use App\Repository\StatusCompetitionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,6 +26,17 @@ class StatusCompetition
      */
     #[ORM\OneToMany(targetEntity: Competition::class, mappedBy: 'statusCompetition')]
     private Collection $competitions;
+
+    /**
+     * @var Collection<int, CompetitionRegistration>
+     */
+    #[ORM\OneToMany(targetEntity: CompetitionRegistration::class, mappedBy: 'statusRegistration')]
+    private Collection $competitionRegistrations;
+
+    public function __construct()
+    {
+        $this->competitionRegistrations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -67,6 +79,36 @@ class StatusCompetition
             // set the owning side to null (unless already changed)
             if ($competition->getStatusCompetition() === $this) {
                 $competition->setStatusCompetition(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CompetitionRegistration>
+     */
+    public function getCompetitionRegistrations(): Collection
+    {
+        return $this->competitionRegistrations;
+    }
+
+    public function addCompetitionRegistration(CompetitionRegistration $competitionRegistration): static
+    {
+        if (!$this->competitionRegistrations->contains($competitionRegistration)) {
+            $this->competitionRegistrations->add($competitionRegistration);
+            $competitionRegistration->setStatusRegistration($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetitionRegistration(CompetitionRegistration $competitionRegistration): static
+    {
+        if ($this->competitionRegistrations->removeElement($competitionRegistration)) {
+            // set the owning side to null (unless already changed)
+            if ($competitionRegistration->getStatusRegistration() === $this) {
+                $competitionRegistration->setStatusRegistration(null);
             }
         }
 
