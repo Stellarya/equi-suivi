@@ -81,6 +81,9 @@ class Horse
     #[ORM\OneToMany(targetEntity: CompetitionRegistration::class, mappedBy: 'horse')]
     private Collection $competitionRegistrations;
 
+    #[ORM\ManyToOne(inversedBy: 'horses')]
+    private ?Ranch $ranch = null;
+
     public function __construct()
     {
         $this->riders = new ArrayCollection();
@@ -267,6 +270,18 @@ class Horse
                 $competitionRegistration->setHorse(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRanch(): ?Ranch
+    {
+        return $this->ranch;
+    }
+
+    public function setRanch(?Ranch $ranch): static
+    {
+        $this->ranch = $ranch;
 
         return $this;
     }

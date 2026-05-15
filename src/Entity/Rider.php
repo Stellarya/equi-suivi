@@ -43,11 +43,18 @@ class Rider
     #[ORM\OneToMany(targetEntity: CompetitionRegistration::class, mappedBy: 'rider')]
     private Collection $competitionRegistrations;
 
+    /**
+     * @var Collection<int, Ranch>
+     */
+    #[ORM\ManyToMany(targetEntity: Ranch::class, inversedBy: 'riders')]
+    private Collection $ranch;
+
     public function __construct()
     {
         $this->galopHistory = new ArrayCollection();
         $this->horses = new ArrayCollection();
         $this->competitionRegistrations = new ArrayCollection();
+        $this->ranch = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -178,6 +185,30 @@ class Rider
                 $competitionRegistration->setRider(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ranch>
+     */
+    public function getRanch(): Collection
+    {
+        return $this->ranch;
+    }
+
+    public function addRanch(Ranch $ranch): static
+    {
+        if (!$this->ranch->contains($ranch)) {
+            $this->ranch->add($ranch);
+        }
+
+        return $this;
+    }
+
+    public function removeRanch(Ranch $ranch): static
+    {
+        $this->ranch->removeElement($ranch);
 
         return $this;
     }
