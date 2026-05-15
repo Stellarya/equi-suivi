@@ -75,9 +75,16 @@ class Horse
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $photoFilename = null;
 
+    /**
+     * @var Collection<int, CompetitionRegistration>
+     */
+    #[ORM\OneToMany(targetEntity: CompetitionRegistration::class, mappedBy: 'horse')]
+    private Collection $competitionRegistrations;
+
     public function __construct()
     {
         $this->riders = new ArrayCollection();
+        $this->competitionRegistrations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -233,4 +240,34 @@ class Horse
         self::STATUS_DECEASED,
         self::STATUS_ARCHIVED
     ];
+
+    /**
+     * @return Collection<int, CompetitionRegistration>
+     */
+    public function getCompetitionRegistrations(): Collection
+    {
+        return $this->competitionRegistrations;
+    }
+
+    public function addCompetitionRegistration(CompetitionRegistration $competitionRegistration): static
+    {
+        if (!$this->competitionRegistrations->contains($competitionRegistration)) {
+            $this->competitionRegistrations->add($competitionRegistration);
+            $competitionRegistration->setHorse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetitionRegistration(CompetitionRegistration $competitionRegistration): static
+    {
+        if ($this->competitionRegistrations->removeElement($competitionRegistration)) {
+            // set the owning side to null (unless already changed)
+            if ($competitionRegistration->getHorse() === $this) {
+                $competitionRegistration->setHorse(null);
+            }
+        }
+
+        return $this;
+    }
 }

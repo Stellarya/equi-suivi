@@ -37,10 +37,17 @@ class Rider
     #[ORM\ManyToMany(targetEntity: Horse::class, mappedBy: 'riders')]
     private Collection $horses;
 
+    /**
+     * @var Collection<int, CompetitionRegistration>
+     */
+    #[ORM\OneToMany(targetEntity: CompetitionRegistration::class, mappedBy: 'rider')]
+    private Collection $competitionRegistrations;
+
     public function __construct()
     {
         $this->galopHistory = new ArrayCollection();
         $this->horses = new ArrayCollection();
+        $this->competitionRegistrations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -140,6 +147,36 @@ class Rider
     {
         if ($this->horses->removeElement($horse)) {
             $horse->removeRider($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CompetitionRegistration>
+     */
+    public function getCompetitionRegistrations(): Collection
+    {
+        return $this->competitionRegistrations;
+    }
+
+    public function addCompetitionRegistration(CompetitionRegistration $competitionRegistration): static
+    {
+        if (!$this->competitionRegistrations->contains($competitionRegistration)) {
+            $this->competitionRegistrations->add($competitionRegistration);
+            $competitionRegistration->setRider($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetitionRegistration(CompetitionRegistration $competitionRegistration): static
+    {
+        if ($this->competitionRegistrations->removeElement($competitionRegistration)) {
+            // set the owning side to null (unless already changed)
+            if ($competitionRegistration->getRider() === $this) {
+                $competitionRegistration->setRider(null);
+            }
         }
 
         return $this;

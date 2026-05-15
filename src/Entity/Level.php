@@ -31,9 +31,16 @@ class Level
     #[ORM\OneToMany(targetEntity: DressageTest::class, mappedBy: 'level')]
     private Collection $dressageTests;
 
+    /**
+     * @var Collection<int, CompetitionEntry>
+     */
+    #[ORM\OneToMany(targetEntity: CompetitionEntry::class, mappedBy: 'level')]
+    private Collection $competitionEntries;
+
     public function __construct()
     {
         $this->dressageTests = new ArrayCollection();
+        $this->competitionEntries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -98,5 +105,35 @@ class Level
     public function __toString(): string
     {
         return $this->getLibelle() ?? '';
+    }
+
+    /**
+     * @return Collection<int, CompetitionEntry>
+     */
+    public function getCompetitionEntries(): Collection
+    {
+        return $this->competitionEntries;
+    }
+
+    public function addCompetitionEntry(CompetitionEntry $competitionEntry): static
+    {
+        if (!$this->competitionEntries->contains($competitionEntry)) {
+            $this->competitionEntries->add($competitionEntry);
+            $competitionEntry->setLevel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetitionEntry(CompetitionEntry $competitionEntry): static
+    {
+        if ($this->competitionEntries->removeElement($competitionEntry)) {
+            // set the owning side to null (unless already changed)
+            if ($competitionEntry->getLevel() === $this) {
+                $competitionEntry->setLevel(null);
+            }
+        }
+
+        return $this;
     }
 }
