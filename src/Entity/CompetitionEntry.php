@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CompetitionEntryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -60,6 +62,17 @@ class CompetitionEntry
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $startDate = null;
+
+    /**
+     * @var Collection<int, Protocol>
+     */
+    #[ORM\OneToMany(targetEntity: Protocol::class, mappedBy: 'competitionEntry')]
+    private Collection $protocols;
+
+    public function __construct()
+    {
+        $this->protocols = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -230,6 +243,36 @@ class CompetitionEntry
     public function setStartDate(?\DateTime $startDate): static
     {
         $this->startDate = $startDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Protocol>
+     */
+    public function getProtocols(): Collection
+    {
+        return $this->protocols;
+    }
+
+    public function addProtocol(Protocol $protocol): static
+    {
+        if (!$this->protocols->contains($protocol)) {
+            $this->protocols->add($protocol);
+            $protocol->setCompetitionEntry($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProtocol(Protocol $protocol): static
+    {
+        if ($this->protocols->removeElement($protocol)) {
+            // set the owning side to null (unless already changed)
+            if ($protocol->getCompetitionEntry() === $this) {
+                $protocol->setCompetitionEntry(null);
+            }
+        }
 
         return $this;
     }
