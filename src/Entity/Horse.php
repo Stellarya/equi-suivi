@@ -93,11 +93,18 @@ class Horse
     #[ORM\ManyToMany(targetEntity: HorseCare::class, mappedBy: 'horse')]
     private Collection $horseCares;
 
+    /**
+     * @var Collection<int, ReminderCare>
+     */
+    #[ORM\OneToMany(targetEntity: ReminderCare::class, mappedBy: 'horse')]
+    private Collection $reminderCares;
+
     public function __construct()
     {
         $this->riders = new ArrayCollection();
         $this->competitionRegistrations = new ArrayCollection();
         $this->horseCares = new ArrayCollection();
+        $this->reminderCares = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -335,6 +342,36 @@ class Horse
     {
         if ($this->horseCares->removeElement($horseCare)) {
             $horseCare->removeHorse($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ReminderCare>
+     */
+    public function getReminderCares(): Collection
+    {
+        return $this->reminderCares;
+    }
+
+    public function addReminderCare(ReminderCare $reminderCare): static
+    {
+        if (!$this->reminderCares->contains($reminderCare)) {
+            $this->reminderCares->add($reminderCare);
+            $reminderCare->setHorse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReminderCare(ReminderCare $reminderCare): static
+    {
+        if ($this->reminderCares->removeElement($reminderCare)) {
+            // set the owning side to null (unless already changed)
+            if ($reminderCare->getHorse() === $this) {
+                $reminderCare->setHorse(null);
+            }
         }
 
         return $this;

@@ -49,9 +49,16 @@ class TypeCare
     #[ORM\OneToMany(targetEntity: HorseCare::class, mappedBy: 'typeCare')]
     private Collection $horseCares;
 
+    /**
+     * @var Collection<int, ReminderCare>
+     */
+    #[ORM\OneToMany(targetEntity: ReminderCare::class, mappedBy: 'typeCare')]
+    private Collection $reminderCares;
+
     public function __construct()
     {
         $this->horseCares = new ArrayCollection();
+        $this->reminderCares = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -207,6 +214,36 @@ class TypeCare
             // set the owning side to null (unless already changed)
             if ($horseCare->getTypeCare() === $this) {
                 $horseCare->setTypeCare(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ReminderCare>
+     */
+    public function getReminderCares(): Collection
+    {
+        return $this->reminderCares;
+    }
+
+    public function addReminderCare(ReminderCare $reminderCare): static
+    {
+        if (!$this->reminderCares->contains($reminderCare)) {
+            $this->reminderCares->add($reminderCare);
+            $reminderCare->setTypeCare($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReminderCare(ReminderCare $reminderCare): static
+    {
+        if ($this->reminderCares->removeElement($reminderCare)) {
+            // set the owning side to null (unless already changed)
+            if ($reminderCare->getTypeCare() === $this) {
+                $reminderCare->setTypeCare(null);
             }
         }
 
