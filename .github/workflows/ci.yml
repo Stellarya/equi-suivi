@@ -1,0 +1,99 @@
+name: CI/CD Pipeline
+
+on:
+    push:
+        branches: ["main", "master"]
+    pull_request:
+        branches: ["main", "master"]
+
+permissions:
+    contents: read
+
+jobs:
+    tests-and-quality:
+        runs-on: ubuntu-latest
+
+        services:
+            postgres:
+                image: postgres:16-alpine
+                env:
+                    POSTGRES_DB: app_test
+                    POSTGRES_PASSWORD: root
+                    POSTGRES_USER: app
+                ports:
+                    - 5432:5432
+                options: --health-cmd="pg_isready -d app_test -U app" --health-interval=10s --health-timeout=5s --health-retries=5
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            # --- PHP ENVIRONMENT ---
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: "8.2"
+                  extensions: mbstring, xml, ctype, iconv, intl, pdo_pgsql
+                  coverage: none
+
+            - name: Get Composer Cache Directory
+              id: composer-cache
+              run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+            - name: Cache Composer dependencies
+              uses: actions/cache@v4
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: ${{ runner.os }}-composer-
+
+            - name: Install PHP Dependencies
+              run: composer install --prefer-dist --no-progress
+
+            - name: Check PHP Syntax (Lint)
+              run: find src/ -name "*.php" -exec php -l {} \;
+
+            - name: Symfony Linters
+              run: |
+                  php bin/console lint:container
+                  php bin/console lint:twig templates/
+                  php bin/console lint:yaml config/
+
+            - name: Security Check (Composer Audit)
+              run: composer audit
+
+            # --- FRONTEND ENVIRONMENT---
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
+
+            - name: Install Frontend Dependencies
+              run: npm ci
+
+            - name: Build Assets (Webpack Encore)
+              run: npm run build
+
+            - name: Lint JavaScript (ESLint)
+              run: npm run lint:js
+
+            - name: Lint SCSS (Stylelint)
+              run: npm run lint:scss
+
+            # --- CONTINUOUS QUALITY & TESTS ---
+            - name: Check PHP Code Style
+              run: vendor/bin/php-cs-fixer fix --dry-run --diff --allow-risky=yes
+              continue-on-error: true
+
+            - name: PHPStan Static Analysis
+              run: vendor/bin/phpstan analyse src --level=5
+              continue-on-error: true
+
+            - name: Run PHPUnit Tests
+              env:
+                  DATABASE_URL: "postgresql://app:root@127.0.0.1:5432/app_test?serverVersion=16&charset=utf8"
+              run: |
+                  php bin/console doctrine:database:create --env=test --if-not-exists
+                  php bin/console doctrine:schema:update --env=test --force
+                  vendor/bin/phpunit
