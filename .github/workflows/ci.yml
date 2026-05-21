@@ -53,11 +53,12 @@ jobs:
 
             # 2. On génère dynamiquement un fichier .env minimaliste pour que la suite de la CI fonctionne
             - name: Generate local .env for CI
-              run: |
-                  echo "APP_ENV=test" > .env
-                  echo "APP_SECRET=abcdef1234567890" >> .env
-                  echo "DATABASE_URL=postgresql://app:root@127.0.0.1:5432/app_test?serverVersion=16&charset=utf8" >> .env
-                  echo "MESSENGER_TRANSPORT_DSN=doctrine://default" >> .env
+                  run: |
+                    echo "APP_ENV=test" > .env
+                    echo "APP_SECRET=abcdef1234567890" >> .env
+                    echo "DATABASE_URL=postgresql://app:root@127.0.0.1:5432/app_test?serverVersion=16&charset=utf8" >> .env
+                    echo "MESSENGER_TRANSPORT_DSN=doctrine://default" >> .env
+                    echo "KERNEL_CLASS=App\Kernel" >> .env
 
             # --- FRONTEND ENVIRONMENT---
             - name: Setup Node.js
