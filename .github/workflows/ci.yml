@@ -57,6 +57,7 @@ jobs:
                   echo "APP_ENV=test" > .env
                   echo "APP_SECRET=abcdef1234567890" >> .env
                   echo "DATABASE_URL=postgresql://app:root@127.0.0.1:5432/app_test?serverVersion=16&charset=utf8" >> .env
+                  echo "MESSENGER_TRANSPORT_DSN=doctrine://default" >> .env
 
             # --- FRONTEND ENVIRONMENT---
             - name: Setup Node.js
@@ -87,9 +88,7 @@ jobs:
               continue-on-error: true
 
             - name: Run PHPUnit Tests
-              env:
-                  DATABASE_URL: "postgresql://app:root@127.0.0.1:5432/app_test?serverVersion=16&charset=utf8"
               run: |
-                  php bin/console doctrine:database:create --env=test --if-not-exists
-                  php bin/console doctrine:schema:update --env=test --force
+                  php bin/console doctrine:database:create --if-not-exists
+                  php bin/console doctrine:schema:update --force
                   vendor/bin/phpunit

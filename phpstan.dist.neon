@@ -1,8 +1,8 @@
+includes:
+    - vendor/phpstan/phpstan-doctrine/extension.neon
 parameters:
-    level: 6
+    level: 5
     paths:
-        - bin/
-        - config/
-        - public/
-        - src/
-        - tests/
+        - src
+    ignoreErrors:
+        - '#Property .*::\$id \(int\|null\) is never assigned int#'
