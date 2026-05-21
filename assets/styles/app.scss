@@ -1,7 +1,6 @@
-/* Variables and components*/
+/* Variables and components */
 @use 'general/variables' as *;
 @use 'general/layout';
-
 @use 'components/buttons';
 @use 'components/navTabs';
 @use 'components/icons';
@@ -13,13 +12,12 @@
 @use 'components/details-page';
 @use 'components/horse-status-badge';
 @use 'components/toggle-switch';
-
 @use './rider';
 @use './horse';
 @use 'login';
 
 * {
-    font-family: 'Inter', sans-serif;
+    font-family: Inter, sans-serif;
 }
 
 body {
@@ -32,9 +30,11 @@ body {
     h1 {
         font-size: $h1;
     }
+
     h2 {
         font-size: $h2;
     }
+
     h3 {
         font-size: $h3;
     }

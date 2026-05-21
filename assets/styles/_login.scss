@@ -3,12 +3,14 @@
 .login {
     height: 100vh;
     display: flex;
+
     .img-side {
         width: 50%;
         background-size: auto;
         background-position: center;
         background-repeat: no-repeat;
     }
+
     .text-side {
         width: 50%;
         background-color: $neutral-10;
@@ -23,15 +25,15 @@
         background-color: $white;
         border-radius: $border-radius;
         padding: 40px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 8px 24px rgb(0 0 0 / 0.08);
 
         h1 {
-            margin: 0 0 12px 0;
+            margin: 0 0 12px;
             text-align: center;
         }
 
         .subtitle {
-            margin: 0 0 32px 0;
+            margin: 0 0 32px;
             text-align: center;
             color: $neutral-60;
         }

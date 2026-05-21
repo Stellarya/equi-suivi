@@ -1,0 +1,95 @@
+name: CI/CD Pipeline
+
+on:
+    push:
+        branches: ["main", "master"]
+    pull_request:
+        branches: ["main", "master"]
+
+permissions:
+    contents: read
+
+jobs:
+    tests-and-quality:
+        runs-on: ubuntu-latest
+
+        services:
+            postgres:
+                image: postgres:16-alpine
+                env:
+                    POSTGRES_DB: app_test
+                    POSTGRES_PASSWORD: root
+                    POSTGRES_USER: app
+                ports:
+                    - 5432:5432
+                options: --health-cmd="pg_isready -d app_test -U app" --health-interval=10s --health-timeout=5s --health-retries=5
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            # --- PHP ENVIRONMENT ---
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: "8.2" # Reste en 8.3 si tu as basculé dessus
+                  extensions: mbstring, xml, ctype, iconv, intl, pdo_pgsql
+                  coverage: none
+
+            - name: Get Composer Cache Directory
+              id: composer-cache
+              run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+            - name: Cache Composer dependencies
+              uses: actions/cache@v4
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: ${{ runner.os }}-composer-
+
+            # 1. On installe sans exécuter les scripts Symfony pour éviter le crash immédiat
+            - name: Install PHP Dependencies
+              run: composer install --prefer-dist --no-progress --no-scripts
+
+            # 2. On génère dynamiquement un fichier .env minimaliste pour que la suite de la CI fonctionne
+            - name: Generate local .env for CI
+              run: |
+                  echo "APP_ENV=test" > .env
+                  echo "APP_SECRET=abcdef1234567890" >> .env
+                  echo "DATABASE_URL=postgresql://app:root@127.0.0.1:5432/app_test?serverVersion=16&charset=utf8" >> .env
+                  echo "MESSENGER_TRANSPORT_DSN=doctrine://default" >> .env
+                  echo "KERNEL_CLASS=App\Kernel" >> .env
+
+            # --- FRONTEND ENVIRONMENT---
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
+
+            - name: Install Frontend Dependencies
+              run: npm ci
+
+            - name: Build Assets (Webpack Encore)
+              run: npm run build
+
+            - name: Lint JavaScript (ESLint)
+              run: npm run lint:js
+
+            - name: Lint SCSS (Stylelint)
+              run: npm run lint:scss
+
+            # --- CONTINUOUS QUALITY & TESTS ---
+            - name: Check PHP Code Style
+              run: vendor/bin/php-cs-fixer fix --dry-run --diff --allow-risky=yes
+              continue-on-error: true
+
+            - name: PHPStan Static Analysis
+              run: vendor/bin/phpstan analyse src --level=5
+              continue-on-error: true
+
+            - name: Run PHPUnit Tests
+              run: |
+                  php bin/console doctrine:database:create --if-not-exists
+                  php bin/console doctrine:schema:update --force
+                  vendor/bin/phpunit

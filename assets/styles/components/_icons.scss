@@ -3,15 +3,12 @@
     width: 24px;
     height: 24px;
     margin-right: 10px;
-    background-color: currentColor;
+    background-color: currentcolor;
     mask-repeat: no-repeat;
     mask-position: center;
     mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    -webkit-mask-size: contain;
 }
+
 .icon-horse {
     mask-image: url('../../images/icons/horse.svg');
-    -webkit-mask-image: url('../../images/icons/horse.svg');
 }

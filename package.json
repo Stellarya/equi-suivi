@@ -1,12 +1,17 @@
-{
+{   "type": "module",
     "devDependencies": {
         "@babel/core": "^7.17.0",
         "@babel/preset-env": "^7.16.0",
+        "@eslint/js": "^10.0.1",
         "@symfony/webpack-encore": "^6.0.0",
         "core-js": "^3.38.0",
+        "eslint": "^10.4.0",
+        "globals": "^17.6.0",
         "regenerator-runtime": "^0.13.9",
         "sass": "^1.99.0",
         "sass-loader": "^16.0.7",
+        "stylelint": "^17.12.0",
+        "stylelint-config-standard-scss": "^17.0.0",
         "webpack": "^5.72",
         "webpack-cli": "^6.0.0"
     },
@@ -16,7 +21,9 @@
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
-        "build": "encore production --progress"
+        "build": "encore production --progress",
+        "lint:js": "eslint \"assets/**/*.js\"",
+        "lint:scss": "stylelint \"assets/styles/**/*.scss\""
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^7.2.0",
