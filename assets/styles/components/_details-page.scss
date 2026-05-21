@@ -51,7 +51,7 @@
     min-height: 520px;
     border-radius: $border-radius;
     background-color: $white;
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 12px 30px rgb(15 23 42 / 0.06);
 }
 
 .details-panel__content {
@@ -160,11 +160,11 @@
         height: 34px;
         border: none;
         border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.92);
+        background-color: rgb(255 255 255 / 0.92);
         color: $neutral-60;
         cursor: pointer;
         text-decoration: none;
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+        box-shadow: 0 4px 12px rgb(15 23 42 / 0.12);
 
         &:hover {
             background-color: $tertiary-10;
@@ -204,7 +204,7 @@
     color: $neutral-50;
     cursor: pointer;
     text-decoration: none;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 4px 12px rgb(15 23 42 / 0.08);
 
     &:hover {
         background-color: $tertiary-10;
@@ -212,7 +212,7 @@
     }
 }
 
-@media (max-width: 900px) {
+@media (width <= 900px) {
     .details-page__layout {
         flex-direction: column;
 
@@ -229,7 +229,7 @@
     }
 }
 
-@media (max-width: 600px) {
+@media (width <= 600px) {
     .details-page {
         padding: 14px;
     }

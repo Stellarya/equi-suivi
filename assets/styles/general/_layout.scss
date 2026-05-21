@@ -43,7 +43,6 @@
         }
 
         .nav-item {
-         
             a {
                 color: $white;
                 padding: 8px 10px 8px 22px;
@@ -85,6 +84,7 @@
 
     #content {
         width: 100%;
+
         .topbar {
             display: flex;
             justify-content: flex-end;
@@ -135,6 +135,7 @@
                 line-height: 16px;
                 text-align: center;
             }
+
             &__profile-wrapper {
                 position: relative;
 
@@ -212,7 +213,7 @@
                 border: 1px solid $neutral-30;
                 border-radius: 12px;
                 background-color: $white;
-                box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+                box-shadow: 0 12px 30px rgb(15 23 42 / 0.14);
                 opacity: 0;
                 visibility: hidden;
                 transform: translateY(-6px);
@@ -235,6 +236,7 @@
                     background-color: $neutral-20;
                     color: $primary-50;
                 }
+
                 i {
                     width: 16px;
                     font-size: $body;
