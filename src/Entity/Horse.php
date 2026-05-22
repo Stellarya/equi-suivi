@@ -99,12 +99,19 @@ class Horse
     #[ORM\OneToMany(targetEntity: ReminderCare::class, mappedBy: 'horse')]
     private Collection $reminderCares;
 
+    /**
+     * @var Collection<int, Discipline>
+     */
+    #[ORM\ManyToMany(targetEntity: Discipline::class, inversedBy: 'horses')]
+    private Collection $disciplines;
+
     public function __construct()
     {
         $this->riders = new ArrayCollection();
         $this->competitionRegistrations = new ArrayCollection();
         $this->horseCares = new ArrayCollection();
         $this->reminderCares = new ArrayCollection();
+        $this->disciplines = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -373,6 +380,30 @@ class Horse
                 $reminderCare->setHorse(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Discipline>
+     */
+    public function getDisciplines(): Collection
+    {
+        return $this->disciplines;
+    }
+
+    public function addDiscipline(Discipline $discipline): static
+    {
+        if (!$this->disciplines->contains($discipline)) {
+            $this->disciplines->add($discipline);
+        }
+
+        return $this;
+    }
+
+    public function removeDiscipline(Discipline $discipline): static
+    {
+        $this->disciplines->removeElement($discipline);
 
         return $this;
     }

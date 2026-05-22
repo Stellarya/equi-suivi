@@ -37,10 +37,17 @@ class Discipline
     #[ORM\ManyToMany(targetEntity: Equipment::class, mappedBy: 'discipline')]
     private Collection $equipments;
 
+    /**
+     * @var Collection<int, Horse>
+     */
+    #[ORM\ManyToMany(targetEntity: Horse::class, mappedBy: 'disciplines')]
+    private Collection $horses;
+
     public function __construct()
     {
         $this->competitionEntries = new ArrayCollection();
         $this->equipments = new ArrayCollection();
+        $this->horses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -129,6 +136,33 @@ class Discipline
     {
         if ($this->equipments->removeElement($equipment)) {
             $equipment->removeDiscipline($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Horse>
+     */
+    public function getHorses(): Collection
+    {
+        return $this->horses;
+    }
+
+    public function addHorse(Horse $horse): static
+    {
+        if (!$this->horses->contains($horse)) {
+            $this->horses->add($horse);
+            $horse->addDiscipline($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHorse(Horse $horse): static
+    {
+        if ($this->horses->removeElement($horse)) {
+            $horse->removeDiscipline($this);
         }
 
         return $this;
