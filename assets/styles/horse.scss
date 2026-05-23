@@ -66,8 +66,8 @@
 .discipline-tag {
     display: inline-flex;
     align-items: center;
-    background-color: #e9ecef;
-    color: #495057;
+    background-color: $neutral-30;
+    color: $neutral-70;
     padding: 4px 10px;
     border-radius: 20px;
     font-size: 0.875rem;
@@ -75,13 +75,13 @@
     .remove-tag {
         background: none;
         border: none;
-        color: #dc3545;
+        color: $error-50;
         margin-left: 6px;
         cursor: pointer;
         padding: 0;
         font-size: 0.75rem;
         &:hover {
-            color: #a71d2a;
+            color: $error-60
         }
     }
 }
