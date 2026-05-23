@@ -4,9 +4,11 @@ namespace App\Form;
 
 use App\Entity\Breed;
 use App\Entity\Coat;
+use App\Entity\Discipline;
 use App\Entity\Horse;
 use App\Repository\BreedRepository;
 use App\Repository\CoatRepository;
+use App\Repository\DisciplineRepository;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -59,6 +61,20 @@ class HorseType extends AbstractType
                 'query_builder' => static function (CoatRepository $coatRepository) {
                     return $coatRepository->createQueryBuilder('coat')
                         ->orderBy('coat.libelle', 'ASC');
+                }
+            ])
+
+            ->add('disciplines', EntityType::class, [
+                'class' => Discipline::class,
+                'label' => 'horse.disciplines',
+                'choice_label' => 'libelle',
+                'multiple' => true,
+                'expanded' => false,
+                'placeholder' => 'horse.unknown_discipline',
+                'required' => false,
+                'query_builder' => static function (DisciplineRepository $disciplineRepository) {
+                    return $disciplineRepository->createQueryBuilder('discipline')
+                        ->orderBy('discipline.libelle', 'ASC');
                 }
             ])
             ->add('photo', FileType::class, [

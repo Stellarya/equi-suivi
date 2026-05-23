@@ -55,3 +55,33 @@
         margin: 0;
     }
 }
+
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.discipline-tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: $neutral-30;
+    color: $neutral-70;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    .remove-tag {
+        background: none;
+        border: none;
+        color: $error-50;
+        margin-left: 6px;
+        cursor: pointer;
+        padding: 0;
+        font-size: 0.75rem;
+        &:hover {
+            color: $error-60
+        }
+    }
+}
