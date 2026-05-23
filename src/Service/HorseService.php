@@ -25,6 +25,15 @@ class HorseService
      */
     public function getVisibleHorsesForUser(AppUser $user, bool $activeOnly = true): array
     {
+        if(in_array('ROLE_ECURIE', $user->getRoles(), true)) {
+            $ranch = $user->getManageRanch();
+            if($ranch === null) {
+                return [];
+            }
+
+            return $this->horseRepository->findAllHorsesByRanch($ranch);
+        }    
+    
         $rider = $user->getRider();
 
         if($rider !== null) {
@@ -120,6 +129,13 @@ class HorseService
 
         if ($rider !== null && $horse->getRiders()->contains($rider)) {
             return;
+        }
+
+        if(in_array('ROLE_ECURIE', $user->getRoles(), true)) {
+            $ranch = $user->getManageRanch();
+            if($ranch !== null && $horse->getRanch() === $ranch) {
+                return;
+            }
         }
 
         throw new AccessDeniedHttpException('Vous ne pouvez pas consulter ce cheval.');

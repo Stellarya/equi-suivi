@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\AppUser;
 use App\Entity\Horse;
+use App\Entity\Ranch;
 use App\Entity\Rider;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -33,6 +34,15 @@ class HorseRepository extends ServiceEntityRepository
         }
 
         return $queryBuilder
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllHorsesByRanch(Ranch $ranch): array {
+        return $this->createQueryBuilder('horse')
+            ->innerJoin('horse.pension', 'pension')
+            ->where('pension.ranch = :ranch')
+            ->setParameter('ranch', $ranch)
             ->getQuery()
             ->getResult();
     }
