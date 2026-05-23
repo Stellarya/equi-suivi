@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Twig\Node\Expression\Test\TrueTest;
 
 final class HorseServiceTest extends TestCase
 {
@@ -34,6 +33,7 @@ final class HorseServiceTest extends TestCase
 
         $user = new AppUser();
         $rider = $this->createRiderForUser($user);
+        $user->setRider($rider);
 
         $horse = $service->createForUser($user);
 
@@ -149,6 +149,49 @@ final class HorseServiceTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
 
         $service->assertCanViewHorse($horse, $unrelatedUser);
+    }
+
+    public function testAssertCanViewHorseThrowsExceptionWhenForbidden(): void
+    {
+        $service = $this->createService();
+
+        $owner = new AppUser();
+        $otherUser = new AppUser();
+
+        $horse = new Horse();
+        $horse->setOwner($owner);
+
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->expectExceptionMessage('Vous ne pouvez pas consulter ce cheval.');
+
+        $service->assertCanViewHorse($horse, $otherUser);
+    }
+
+    public function testAssertCanViewHorseGrantsAccessToOwner(): void
+    {
+        $service = $this->createService();
+
+        $user = new AppUser();
+        $horse = new Horse();
+        $horse->setOwner($user);
+
+        $service->assertCanViewHorse($horse, $user);
+        self::assertTrue(true);
+    }
+
+    public function testAssertCanViewHorseGrantsAccessToRider(): void
+    {
+        $service = $this->createService();
+
+        $user = new AppUser();
+        $rider = new Rider();
+        $user->setRider($rider);
+
+        $horse = new Horse();
+        $horse->addRider($rider);
+
+        $service->assertCanViewHorse($horse, $user);
+        self::assertTrue(true);
     }
 
     public function testAssertCanEditHorseAllowsOwner(): void
