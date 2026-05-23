@@ -71,13 +71,15 @@ final class HorseController extends AppController
 
         $this->horseService->assertCanViewHorse($horse, $user);
 
+        $canEditHorse = $horse->getOwner() === $user;
+
+        $horseForm = $canEditHorse ? $this->createHorseFormView($horse, 'app_horse_edit', ['id' => $horse->getId()]) : null;
+
          return $this->render('horse/horse-details.html.twig', [
             'horse' => $horse,
-            'horseForm' => $this->createHorseFormView($horse, 'app_horse_edit', [
-                'id' => $horse->getId(),
-            ]),
+            'horseForm' => $horseForm,
             'isHorseModalOpen' => false,
-            'canEditHorse' => $horse->getOwner() === $user,
+            'canEditHorse' => $canEditHorse,
         ]);
     }
 
