@@ -49,6 +49,9 @@ class AppUser implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: HorseCare::class, mappedBy: 'enteredBy')]
     private Collection $horseCares;
 
+    #[ORM\OneToOne(mappedBy: 'owner', cascade: ['persist', 'remove'])]
+    private ?Ranch $manageRanch = null;
+
     public function __construct()
     {
         $this->ownedHorses = new ArrayCollection();
@@ -206,6 +209,22 @@ class AppUser implements UserInterface, PasswordAuthenticatedUserInterface
                 $horseCare->setEnteredBy(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getManageRanch(): ?Ranch
+    {
+        return $this->manageRanch;
+    }
+
+    public function setManageRanch(?Ranch $manageRanch): static
+    {
+        if($manageRanch !== null && $manageRanch->getOwner() !== $this) {
+            $manageRanch->setOwner($this);
+        }
+
+        $this->manageRanch = $manageRanch;
 
         return $this;
     }

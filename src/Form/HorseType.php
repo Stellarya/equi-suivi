@@ -16,6 +16,8 @@ use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
@@ -103,7 +105,26 @@ class HorseType extends AbstractType
                     'horse.status.deceased' => Horse::STATUS_DECEASED,
                 ]
             ])
+            ->add('pension', PensionType::class, [
+                'label' => false,
+                'required' => false,
+            ])
         ;
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+            /** @var Horse $horse */
+            $horse = $event->getData();
+            $pension = $horse->getPension();
+
+            if ($pension) {
+                // Si les champs essentiels sont vides, on annule la création de la pension
+                if (!$pension->getRanch() && !$pension->getTypePension() && !$pension->getEntryDate()) {
+                    $horse->setPension(null);
+                } else {
+                    // Lier obligatoirement le cheval à la pension si elle est valide
+                    $pension->setHorse($horse);
+                }
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

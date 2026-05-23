@@ -19,82 +19,113 @@
         }) }}
 
 		<div class="app-modal__body">
-			<div class="d-flex row">
-				<div class="app-modal__field col-6">
-					{{ form_label(form.name) }}
-					{{ form_widget(form.name) }}
-					{{ form_errors(form.name) }}
-				</div>
-
-
-				<div class="app-modal__field col-6">
-					{{ form_label(form.affix) }}
-					{{ form_widget(form.affix) }}
-					{{ form_errors(form.affix) }}
-				</div>
-			</div>
-			<div class="d-flex row">
-				<div class="app-modal__field col-6">
-					{{ form_label(form.birthDate) }}
-					{{ form_widget(form.birthDate) }}
-					{{ form_errors(form.birthDate) }}
-				</div>
-
-				<div class="app-modal__field col-6">
-					{{ form_label(form.sire) }}
-					{{ form_widget(form.sire) }}
-					{{ form_errors(form.sire) }}
-				</div>
-			</div>
-			<div class="d-flex row">
-				<div class="app-modal__field col-6">
-					{{ form_label(form.breed) }}
-					{{ form_widget(form.breed) }}
-					{{ form_errors(form.breed) }}
-				</div>
-
-				<div class="app-modal__field col-6">
-					{{ form_label(form.coat) }}
-					{{ form_widget(form.coat) }}
-					{{ form_errors(form.coat) }}
-				</div>
-			</div>
-			<div class="d-flex row">
-				<div class="app-modal__field col-12">
-					{{ form_label(form.disciplines) }}
-
-					<!-- Conteneur personnalisé pour le système de tags -->
-					<div class="custom-tag-select" data-tag-select>
-						<div
-							class="tag-container" data-tag-container><!-- Les tags sélectionnés apparaîtront ici via JS -->
+			<div class="row">
+				<div class="col-6">
+					<div class="d-flex row">
+						<div class="app-modal__field col-6">
+							{{ form_label(form.name) }}
+							{{ form_widget(form.name) }}
+							{{ form_errors(form.name) }}
 						</div>
 
-						<!-- Le widget Symfony générera un <select multiple> -->
-						{{ form_widget(form.disciplines, { 'attr': {'class': 'd-none', 'data-tag-select-input': 'true'} }) }}
 
-						<!-- Un select visible et épuré pour choisir les disciplines à ajouter -->
-						<select class="form-control mt-2" data-tag-select-selector>
-							<option value="">{{ 'horse.select_discipline' | trans }}</option>
-							{% for choice in form.disciplines.vars.choices %}
-								<option value="{{ choice.value }}">{{ choice.label }}</option>
-							{% endfor %}
-						</select>
+						<div class="app-modal__field col-6">
+							{{ form_label(form.affix) }}
+							{{ form_widget(form.affix) }}
+							{{ form_errors(form.affix) }}
+						</div>
+					</div>
+					<div class="d-flex row mt-1">
+						<div class="app-modal__field col-6">
+							{{ form_label(form.birthDate) }}
+							{{ form_widget(form.birthDate) }}
+							{{ form_errors(form.birthDate) }}
+						</div>
+
+						<div class="app-modal__field col-6">
+							{{ form_label(form.sire) }}
+							{{ form_widget(form.sire) }}
+							{{ form_errors(form.sire) }}
+						</div>
+					</div>
+					<div class="d-flex row mt-1">
+						<div class="app-modal__field col-6">
+							{{ form_label(form.breed) }}
+							{{ form_widget(form.breed) }}
+							{{ form_errors(form.breed) }}
+						</div>
+
+						<div class="app-modal__field col-6">
+							{{ form_label(form.coat) }}
+							{{ form_widget(form.coat) }}
+							{{ form_errors(form.coat) }}
+						</div>
+					</div>
+					<div class="d-flex row mt-1">
+						<div class="app-modal__field col-12">
+							{{ form_label(form.disciplines) }}
+
+							<div class="custom-tag-select" data-tag-select>
+								{{ form_widget(form.disciplines, { 'attr': {'class': 'd-none', 'data-tag-select-input': 'true'} }) }}
+
+								<select class="form-control" data-tag-select-selector>
+									<option value="">{{ 'horse.select_discipline' | trans }}</option>
+									{% for choice in form.disciplines.vars.choices %}
+										<option value="{{ choice.value }}">{{ choice.label }}</option>
+									{% endfor %}
+								</select>
+
+								<div
+									class="tag-container  mt-2" data-tag-container><!-- Les tags sélectionnés apparaîtront ici via JS -->
+								</div>
+							</div>
+
+							{{ form_errors(form.disciplines) }}
+						</div>
+					</div>
+				</div>
+				<div class="col-6">
+					<div class="d-flex row">
+						<div class="app-modal__field col-6">
+							{{ form_label(form.pension.ranch) }}
+							{{ form_widget(form.pension.ranch, {'attr': {'class': 'form-control'}}) }}
+							{{ form_errors(form.pension.ranch) }}
+						</div>
+
+						<div class="app-modal__field col-6">
+							{{ form_label(form.pension.typePension) }}
+							{{ form_widget(form.pension.typePension, {'attr': {'class': 'form-control'}}) }}
+							{{ form_errors(form.pension.typePension) }}
+						</div>
 					</div>
 
-					{{ form_errors(form.disciplines) }}
-				</div>
-			</div>
-			<div class="d-flex row">
-				<div class="app-modal__field col-6">
-					{{ form_label(form.photo) }}
-					{{ form_widget(form.photo) }}
-					{{ form_errors(form.photo) }}
-				</div>
+					<div class="d-flex row mt-1">
+						<div class="app-modal__field col-6">
+							{{ form_label(form.pension.entryDate) }}
+							{{ form_widget(form.pension.entryDate, {'attr': {'class': 'form-control'}}) }}
+							{{ form_errors(form.pension.entryDate) }}
+						</div>
 
-				<div class="app-modal__field col-6">
-					{{ form_label(form.status) }}
-					{{ form_widget(form.status) }}
-					{{ form_errors(form.status) }}
+						<div class="app-modal__field col-6">
+							{{ form_label(form.pension.endDate) }}
+							{{ form_widget(form.pension.endDate, {'attr': {'class': 'form-control'}}) }}
+							{{ form_errors(form.pension.endDate) }}
+						</div>
+					</div>
+					<div class="d-flex row lastLineHorseModal">
+						<div class="app-modal__field col-6">
+							{{ form_label(form.photo) }}
+							{{ form_widget(form.photo) }}
+							{{ form_errors(form.photo) }}
+						</div>
+
+						<div class="app-modal__field col-6">
+							{{ form_label(form.status) }}
+							{{ form_widget(form.status) }}
+							{{ form_errors(form.status) }}
+						</div>
+					</div>
+
 				</div>
 			</div>
 		</div>

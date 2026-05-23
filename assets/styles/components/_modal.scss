@@ -26,7 +26,7 @@ body.has-open-modal {
     &__dialog {
         position: relative;
         z-index: 1;
-        width: min(100%, 520px);
+        width: min(100%, 70%);
         border-radius: $border-radius;
         background-color: $white;
         box-shadow: 0 24px 70px rgb(15 23 42 / 0.25);
@@ -101,6 +101,11 @@ body.has-open-modal {
                 border-color: $primary-50;
                 box-shadow: 0 0 0 3px $primary-10;
             }
+            /* stylelint-disable selector-id-pattern */
+            &#horse-photo {
+                border: none;
+            }
+            /* stylelint-enable selector-id-pattern */
         }
 
         textarea {
