@@ -621,4 +621,90 @@ final class HorseControllerTest extends WebTestCase
 
         self::assertNull($horseRepository->find($horseId));
     }
+
+    public function testRanchManagerCanViewAssignedHorse(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+
+        // 1. Créer l'utilisateur Écurie et son Ranch
+        $ranchManager = new AppUser();
+        $ranchManager->setEmail(sprintf('ranch-manager-%s@example.com', uniqid()));
+        $ranchManager->setRoles(['ROLE_ECURIE', 'ROLE_USER']);
+        $ranchManager->setPassword('test-password');
+
+        $ranch = new \App\Entity\Ranch();
+        $ranch->setName('Mon Super Ranch');
+        $ranch->setAddress('123 Rue du Galop'); // <-- AJOUTE CETTE LIGNE (et d'autres si obligatoires)
+        $ranchManager->setManageRanch($ranch);
+
+        $entityManager->persist($ranch);
+        $entityManager->persist($ranchManager);
+
+        // 2. Créer un cheval appartenant à un tiers mais lié au Ranch
+        $owner = $this->createRiderUser($entityManager);
+        $breed = $this->createBreed($entityManager);
+        $coat = $this->createCoat($entityManager);
+
+        $horse = $this->createHorse($entityManager, $owner, $breed, $coat, 'Cheval du Ranch');
+        $horse->setRanch($ranch);
+        $entityManager->flush();
+
+        // 3. Tester l'accès
+        $client->loginUser($ranchManager);
+        $client->request('GET', sprintf('/horses/%d', $horse->getId()));
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('body', 'Cheval du Ranch');
+    }
+
+    public function testRanchManagerCanViewHorseViaPension(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+
+        // 1. Créer l'utilisateur Écurie et son Ranch
+        $ranchManager = new AppUser();
+        $ranchManager->setEmail(sprintf('ranch-pension-%s@example.com', uniqid()));
+        $ranchManager->setRoles(['ROLE_ECURIE', 'ROLE_USER']);
+        $ranchManager->setPassword('test-password');
+
+        $ranch = new \App\Entity\Ranch();
+        $ranch->setName('Ranch de Pension');
+        $ranch->setAddress('456 Chemin des Sabots');
+        $ranchManager->setManageRanch($ranch);
+
+        $entityManager->persist($ranch);
+        $entityManager->persist($ranchManager);
+
+        // 2. Créer un cheval associé au ranch via une entité Pension
+        $owner = $this->createRiderUser($entityManager);
+        $breed = $this->createBreed($entityManager);
+        $coat = $this->createCoat($entityManager);
+
+        $horse = $this->createHorse($entityManager, $owner, $breed, $coat, 'Cheval en Pension');
+        
+        $typePension = new \App\Entity\TypePension(); 
+        $typePension->setLibelle('Pension Pré');
+        $entityManager->persist($typePension);
+
+        $pension = new \App\Entity\Pension();
+        $pension->setHorse($horse);
+        $pension->setRanch($ranch);
+        $pension->setEntryDate(new \DateTime()); 
+
+        $pension->setTypePension($typePension);
+
+        $horse->setPension($pension);
+
+        $entityManager->persist($pension);
+        $entityManager->flush();
+
+        // 3. Tester l'accès
+        $client->loginUser($ranchManager);
+        $client->request('GET', sprintf('/horses/%d', $horse->getId()));
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('body', 'Cheval en Pension');
+    }
 }

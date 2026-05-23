@@ -58,12 +58,15 @@
 				</section>
 			</div>
 
-			{% include "horse/_horse-modal.html.twig" with {
-				modalId: 'horse-details-edit-modal',
-				modalTitle: 'horse.edit',
-				form: horseForm,
-				isOpen: isHorseModalOpen|default(false)
-			} %}
+			{% if canEditHorse and horseForm is defined and horseForm is not null %}
+
+				{% include "horse/_horse-modal.html.twig" with {
+					modalId: 'horse-details-edit-modal',
+					modalTitle: 'horse.edit',
+					form: horseForm,
+					isOpen: isHorseModalOpen|default(false)
+				} %}
+			{% endif %}
 		{% endif %}
 	</section>
 {% endblock %}

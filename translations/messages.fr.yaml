@@ -30,6 +30,7 @@ general:
         my_stats: "Mes stats"
         my_equipements: "Mes équipements"
         my_competitions: "Mes compétitions"
+        competitions: "Les compétitions"
         my_care: "Mes soins"
         care: "Les soins"
         riders: "Les cavaliers"

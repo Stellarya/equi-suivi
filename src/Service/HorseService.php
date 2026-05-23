@@ -25,6 +25,15 @@ class HorseService
      */
     public function getVisibleHorsesForUser(AppUser $user, bool $activeOnly = true): array
     {
+        if(in_array('ROLE_ECURIE', $user->getRoles(), true)) {
+            $ranch = $user->getManageRanch();
+            if($ranch === null) {
+                return [];
+            }
+
+            return $this->horseRepository->findAllHorsesByRanch($ranch);
+        }    
+    
         $rider = $user->getRider();
 
         if($rider !== null) {
@@ -112,14 +121,34 @@ class HorseService
 
     public function assertCanViewHorse(Horse $horse, AppUser $user): void
     {
+        // if user is the horse owner
         if ($horse->getOwner() === $user) {
             return;
         }
 
+        // if user is the horse rider
         $rider = $user->getRider();
 
         if ($rider !== null && $horse->getRiders()->contains($rider)) {
             return;
+        }
+
+        // if user is a ranch (ROLE_ECURIE)
+        if (in_array('ROLE_ECURIE', $user->getRoles(), true)) {
+            $ranch = $user->getManageRanch();
+            
+            if ($ranch !== null) {
+                // Cas A : the ranch is directly associated to the horse
+                if ($horse->getRanch() === $ranch) {
+                    return;
+                }
+
+                // Cas B : The ranch is associated via Pension entity (OneToOne)
+                $pension = $horse->getPension();
+                if ($pension !== null && method_exists($pension, 'getRanch') && $pension->getRanch() === $ranch) {
+                    return;
+                }
+            }
         }
 
         throw new AccessDeniedHttpException('Vous ne pouvez pas consulter ce cheval.');
