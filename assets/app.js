@@ -13,6 +13,7 @@ import 'datatables.net-dt/css/dataTables.dataTables.css'
 import { initTopbarDropdown } from './js/topbar-dropdown.js';
 import { initModals } from './js/modal.js';
 import { initHorseListFilter } from './js/horse-list-filter.js';
+import { initMultiselect } from './js/multi-select.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     //Topbar
@@ -23,6 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Horse active filter
     initHorseListFilter();
+
+    //Multi-select
+    initMultiselect();
 
     //Rider
     const riderGalopsTable = document.querySelector('#rider-galops-table');

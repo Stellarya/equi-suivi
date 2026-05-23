@@ -80,6 +80,8 @@ horse:
     sire: "N° SIRE"
     breed: "Race"
     coat: "Robe"
+    disciplines: "Disciplines"
+    select_discipline: "Sélection de discipline(s)"
     owner: "Propriétaire"
     riders: "Cavaliers"
     status_label: "Statut"
