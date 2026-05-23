@@ -26,6 +26,10 @@ class Ranch
     #[ORM\Column(nullable: true)]
     private ?int $phone = null;
 
+    #[ORM\OneToOne(inversedBy: 'manageRanch', cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'app_user_id', referencedColumnName: 'id', nullable: true)]
+    private ?AppUser $owner = null;
+
     /**
      * @var Collection<int, Horse>
      */
@@ -176,6 +180,17 @@ class Ranch
             }
         }
 
+        return $this;
+    }
+
+    public function getOwner(): ?AppUser
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?AppUser $owner): static
+    {
+        $this->owner = $owner;
         return $this;
     }
 
