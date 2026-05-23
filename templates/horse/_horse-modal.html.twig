@@ -84,6 +84,39 @@
 					{{ form_errors(form.disciplines) }}
 				</div>
 			</div>
+			<hr>
+			<div class="d-flex row mt-3">
+				<div class="col-12">
+					<h3 class="h4 border-bottom pb-2 mb-3">Pension (Facultatif)</h3>
+				</div>
+
+				<div class="app-modal__field col-6">
+					{{ form_label(form.pension.ranch) }}
+					{{ form_widget(form.pension.ranch, {'attr': {'class': 'form-control'}}) }}
+					{{ form_errors(form.pension.ranch) }}
+				</div>
+
+				<div class="app-modal__field col-6">
+					{{ form_label(form.pension.typePension) }}
+					{{ form_widget(form.pension.typePension, {'attr': {'class': 'form-control'}}) }}
+					{{ form_errors(form.pension.typePension) }}
+				</div>
+			</div>
+
+			<div class="d-flex row">
+				<div class="app-modal__field col-6">
+					{{ form_label(form.pension.entryDate) }}
+					{{ form_widget(form.pension.entryDate, {'attr': {'class': 'form-control'}}) }}
+					{{ form_errors(form.pension.entryDate) }}
+				</div>
+
+				<div class="app-modal__field col-6">
+					{{ form_label(form.pension.endDate) }}
+					{{ form_widget(form.pension.endDate, {'attr': {'class': 'form-control'}}) }}
+					{{ form_errors(form.pension.endDate) }}
+				</div>
+			</div>
+			<hr>
 			<div class="d-flex row">
 				<div class="app-modal__field col-6">
 					{{ form_label(form.photo) }}

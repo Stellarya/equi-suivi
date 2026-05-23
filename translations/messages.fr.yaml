@@ -112,3 +112,8 @@ horse:
     delete_confirm_message: "Cette action supprimera définitivement le cheval. Cette opération est irréversible."
     delete_confirm: "Supprimer définitivement"
     active_only: "Chevaux actifs uniquement"
+pension:
+    ranch: "Ecurie"
+    type: "Type de pension"
+    entry_date: "Date de début"
+    end_date: "Date de fin"

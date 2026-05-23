@@ -315,10 +315,10 @@ class Horse
         return $this->pension;
     }
 
-    public function setPension(Pension $pension): static
+    public function setPension(?Pension $pension): static
     {
         // set the owning side of the relation if necessary
-        if ($pension->getHorse() !== $this) {
+        if ($pension !== null && $pension->getHorse() !== $this) {
             $pension->setHorse($this);
         }
 
