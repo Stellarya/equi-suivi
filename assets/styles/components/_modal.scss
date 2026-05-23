@@ -101,9 +101,11 @@ body.has-open-modal {
                 border-color: $primary-50;
                 box-shadow: 0 0 0 3px $primary-10;
             }
-            &#horse_photo {
+            /* stylelint-disable selector-id-pattern */
+            &#horse-photo {
                 border: none;
             }
+            /* stylelint-enable selector-id-pattern */
         }
 
         textarea {
