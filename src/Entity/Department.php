@@ -24,6 +24,10 @@ class Department
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $numberDepartment = null;
 
+    #[ORM\ManyToOne(inversedBy: 'departments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Region $region = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -49,6 +53,18 @@ class Department
     public function setNumberDepartment(int $numberDepartment): static
     {
         $this->numberDepartment = $numberDepartment;
+
+        return $this;
+    }
+
+    public function getRegion(): ?Region
+    {
+        return $this->region;
+    }
+
+    public function setRegion(?Region $region): static
+    {
+        $this->region = $region;
 
         return $this;
     }
