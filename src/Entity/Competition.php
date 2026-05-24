@@ -22,8 +22,8 @@ class Competition
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $startDate = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $endDate = null;
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTime $endDate = null;
 
     #[ORM\Column(length: 255)]
     private ?string $location = null;
@@ -72,12 +72,12 @@ class Competition
         return $this;
     }
 
-    public function getEndDate(): ?string
+    public function getEndDate(): ?\DateTime
     {
         return $this->endDate;
     }
 
-    public function setEndDate(string $endDate): static
+    public function setEndDate(\DateTime $endDate): static
     {
         $this->endDate = $endDate;
 

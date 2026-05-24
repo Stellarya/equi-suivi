@@ -126,3 +126,12 @@ ranch:
     department: "Département"
     zipcode: "Code postal"
     city: "Ville"
+competition:
+    name: "Nom de la compétition"
+    startDate: "Date de début"
+    endDate: "Date de fin"
+    location: "Lieu / Ecurie"
+    statusCompetition: "Status du concours"
+    no_data: "Pas de compétitions"
+    all_competitions: "Les compétitions"
+    my_competitions: "Mes compétitions"

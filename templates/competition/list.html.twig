@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% import "macros/macros.html.twig" as macros %}
+
+{% block title %}
+	{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_ECURIE') %}
+		{{ 'competition.all_competition' | trans }}
+	{% else %}
+		{{ 'competition.my_competitions' | trans }}
+	{% endif %}
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+
+		<div class="rider-profile-panel__toolbar d-flex justify-content-between align-items-end mb-4">
+			<h2>
+				{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_ECURIE') %}
+					{{ 'competition.all_competitions' | trans }}
+				{% else %}
+					{{ 'competition.my_competitions' | trans }}
+				{% endif %}
+			</h2>
+
+			{% if is_granted('ROLE_ADMIN') %}
+				{{ macros.modalButton(
+                'add-competition',
+                'actions.add',
+                'fa-solid fa-plus',
+                'competition-add-modal',
+                'btn btn-primary rider-profile-panel__action',
+                true
+            ) }}
+			{% endif %}
+		</div>
+
+		{# Flash Messages #}
+		{% for label, messages in app.flashes %}
+			{% for message in messages %}
+				<div class="alert alert-{{ label == 'danger' ? 'danger' : 'success' }} alert-dismissible fade show" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+		{% endfor %}
+
+		<div class="rider-profile-table-wrapper">
+			<table id="competitions-table" class="rider-profile-table">
+				<thead>
+					<tr>
+						<th>{{ 'competition.name' | trans }}</th>
+						<th>{{ 'competition.location' | trans }}</th>
+						<th>{{ 'competition.startDate' | trans }}</th>
+						<th>{{ 'competition.endDate' | trans }}</th>
+						<th>{{ 'competition.statusCompetition' | trans }}</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					{% set date_format = 'Y-m-d' %}
+					{# Comparaison avec la date du jour (2026) #}
+					{% set current_date = "now"|date(date_format) %}
+
+					{% for competition in competitions %}
+						{% set is_past = competition.endDate|date(date_format) < current_date %}
+
+
+						<tr class="rider-profile-table__row rider-profile-table__row--clickable {{ is_past ? 'rider-profile-table__row--past text-muted bg-light' }}" {% if is_granted('ROLE_ADMIN') %} data-modal-open="competition-edit-modal-{{ competition.id }}" {% else %} {# Pour le rider/écurie, redirection vers la consultation ou autre modal de détail #} data-url="{{ path('app_competition_index') }}" {# À adapter si tu as une route view #} {% endif %} role="button" tabindex="0" {% if is_past %} style="opacity: 0.65;" {% endif %}>
+
+							<td>
+								<strong>{{ competition.name }}</strong>
+							</td>
+							<td>{{ competition.location }}</td>
+							<td>{{ competition.startDate|date('d/m/Y') }}</td>
+							<td>{{ competition.endDate|date('d/m/Y') }}</td>
+							<td>
+								<span class="badge bg-secondary">{{ competition.statusCompetition.libelle ?? 'N/A' }}</span>
+							</td>
+						</tr>
+					{% else %}
+						<tr>
+							<td colspan="5" class="text-center p-4 text-muted">{{ 'competition.no_data' | trans }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+
+			{# --- MODALS D'ÉDITION (Uniquement générés pour l'ADMIN) --- #}
+			{% if is_granted('ROLE_ADMIN') %}
+				{% for competition in competitions %}
+					{% include "competition/_competition-modal.html.twig" with {
+                    modalId: 'competition-edit-modal-' ~ competition.id,
+                    modalTitle: 'competition.edit' | default('Modifier la compétition'),
+                    form: competitionEditForms[competition.id],
+                    isOpen: openCompetitionEditModalId|default(null) == competition.id
+                    } %}
+				{% endfor %}
+
+				{# --- MODAL D'AJOUT (ADMIN) --- #}
+				{% include "competition/_competition-modal.html.twig" with {
+                modalId: 'competition-add-modal',
+                modalTitle: 'competition.add' | default('Ajouter une compétition'),
+                form: newCompetitionForm,
+                isOpen: false
+                } %}
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
