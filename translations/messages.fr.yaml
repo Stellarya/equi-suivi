@@ -135,3 +135,5 @@ competition:
     no_data: "Pas de compétitions"
     all_competitions: "Les compétitions"
     my_competitions: "Mes compétitions"
+    edit: "Modifier une compétition"
+    add: "Ajouter une compétition"

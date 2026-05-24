@@ -76,6 +76,8 @@ final class CompetitionController extends AppController
         return $this->redirectToRoute('app_competition_index');
     }
 
+    #[Route('/edit', name:'edit', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function edit(Request $request, Competition $competition): Response
     {
         $form = $this->createForm(CompetitionType::class, $competition);

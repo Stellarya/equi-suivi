@@ -89,7 +89,7 @@
 				{% for competition in competitions %}
 					{% include "competition/_competition-modal.html.twig" with {
                     modalId: 'competition-edit-modal-' ~ competition.id,
-                    modalTitle: 'competition.edit' | default('Modifier la compétition'),
+                    modalTitle: 'competition.edit' | trans,
                     form: competitionEditForms[competition.id],
                     isOpen: openCompetitionEditModalId|default(null) == competition.id
                     } %}
@@ -98,7 +98,7 @@
 				{# --- MODAL D'AJOUT (ADMIN) --- #}
 				{% include "competition/_competition-modal.html.twig" with {
                 modalId: 'competition-add-modal',
-                modalTitle: 'competition.add' | default('Ajouter une compétition'),
+                modalTitle: 'competition.add' | trans,
                 form: newCompetitionForm,
                 isOpen: false
                 } %}
