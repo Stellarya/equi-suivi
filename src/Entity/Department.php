@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Traits\TableReferenceTrait;
 use App\Repository\DepartmentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -27,6 +29,17 @@ class Department
     #[ORM\ManyToOne(inversedBy: 'departments')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Region $region = null;
+
+    /**
+     * @var Collection<int, Ranch>
+     */
+    #[ORM\OneToMany(targetEntity: Ranch::class, mappedBy: 'department')]
+    private Collection $ranches;
+
+    public function __construct()
+    {
+        $this->ranches = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -65,6 +78,36 @@ class Department
     public function setRegion(?Region $region): static
     {
         $this->region = $region;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ranch>
+     */
+    public function getRanches(): Collection
+    {
+        return $this->ranches;
+    }
+
+    public function addRanch(Ranch $ranch): static
+    {
+        if (!$this->ranches->contains($ranch)) {
+            $this->ranches->add($ranch);
+            $ranch->setDepartment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRanch(Ranch $ranch): static
+    {
+        if ($this->ranches->removeElement($ranch)) {
+            // set the owning side to null (unless already changed)
+            if ($ranch->getDepartment() === $this) {
+                $ranch->setDepartment(null);
+            }
+        }
 
         return $this;
     }

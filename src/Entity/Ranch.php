@@ -48,6 +48,9 @@ class Ranch
     #[ORM\OneToMany(targetEntity: Pension::class, mappedBy: 'ranch')]
     private Collection $pensions;
 
+    #[ORM\ManyToOne(inversedBy: 'ranches')]
+    private ?Department $department = null;
+
     public function __construct()
     {
         $this->horses = new ArrayCollection();
@@ -191,6 +194,18 @@ class Ranch
     public function setOwner(?AppUser $owner): static
     {
         $this->owner = $owner;
+        return $this;
+    }
+
+    public function getDepartment(): ?Department
+    {
+        return $this->department;
+    }
+
+    public function setDepartment(?Department $department): static
+    {
+        $this->department = $department;
+
         return $this;
     }
 
