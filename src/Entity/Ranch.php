@@ -48,6 +48,15 @@ class Ranch
     #[ORM\OneToMany(targetEntity: Pension::class, mappedBy: 'ranch')]
     private Collection $pensions;
 
+    #[ORM\ManyToOne(inversedBy: 'ranches')]
+    private ?Department $department = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $zipCode = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $city = null;
+
     public function __construct()
     {
         $this->horses = new ArrayCollection();
@@ -191,6 +200,42 @@ class Ranch
     public function setOwner(?AppUser $owner): static
     {
         $this->owner = $owner;
+        return $this;
+    }
+
+    public function getDepartment(): ?Department
+    {
+        return $this->department;
+    }
+
+    public function setDepartment(?Department $department): static
+    {
+        $this->department = $department;
+
+        return $this;
+    }
+
+    public function getZipCode(): ?int
+    {
+        return $this->zipCode;
+    }
+
+    public function setZipCode(int $zipCode): static
+    {
+        $this->zipCode = $zipCode;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(string $city): static
+    {
+        $this->city = $city;
+
         return $this;
     }
 

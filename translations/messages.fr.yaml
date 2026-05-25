@@ -118,3 +118,11 @@ pension:
     type: "Type de pension"
     entry_date: "Date de début"
     end_date: "Date de fin"
+ranch:
+    name: "Nom de l'écurie"
+    address: "Adresse"
+    phone: "Téléphone"
+    region: "Région"
+    department: "Département"
+    zipcode: "Code postal"
+    city: "Ville"
