@@ -124,3 +124,5 @@ ranch:
     phone: "Téléphone"
     region: "Région"
     department: "Département"
+    zipcode: "Code postal"
+    city: "Ville"

@@ -21,27 +21,28 @@ class RanchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class, ['label' => 'Nom de l\'écurie'])
-            ->add('address', TextType::class, ['label' => 'Adresse'])
-            ->add('phone', IntegerType::class, ['label' => 'Téléphone', 'required' => false])
+            ->add('name', TextType::class, ['label' => 'ranch.name'])
+            ->add('address', TextType::class, ['label' => 'ranch.address'])
+            ->add('zipCode', IntegerType::class, ['label' => 'ranch.zipcode', 'required' => false])
+            ->add('city', TextType::class, ['label' => 'ranch.city'])
+            ->add('phone', IntegerType::class, ['label' => 'ranch.phone', 'required' => false])
             ->add('region', EntityType::class, [
                 'class' => Region::class,
                 'choice_label' => 'libelle',
-                'label' => 'Région',
+                'label' => 'ranch.region',
                 'mapped' => false,
                 'placeholder' => 'Sélectionnez une région...',
                 'required' => false,
             ])
         ;
 
-        // Fonction réutilisable pour ajouter le champ Department filtré
         $addDepartmentField = function (FormInterface $form, ?Region $region) {
             $form->add('department', EntityType::class, [
                 'class' => Department::class,
                 'choice_label' => function (Department $department) {
                     return $department->getNumberDepartment() . ' - ' . $department->getName();
                 },
-                'label' => 'Département',
+                'label' => 'ranch.department',
                 'placeholder' => $region ? 'Sélectionnez un département...' : 'Sélectionnez d\'abord une région',
                 'disabled' => $region === null,
                 'query_builder' => function (DepartmentRepository $repo) use ($region) {

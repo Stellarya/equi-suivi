@@ -51,10 +51,10 @@ class Ranch
     #[ORM\ManyToOne(inversedBy: 'ranches')]
     private ?Department $department = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $zipCode = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $city = null;
 
     public function __construct()
