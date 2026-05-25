@@ -137,3 +137,7 @@ competition:
     my_competitions: "Mes compétitions"
     edit: "Modifier une compétition"
     add: "Ajouter une compétition"
+locationSelection:
+    region: "Région"
+    department: "Département"
+    ranch: "Ecurie"

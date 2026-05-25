@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Competition;
 use App\Form\CompetitionType;
 use App\Service\CompetitionService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -59,37 +60,71 @@ final class CompetitionController extends AppController
 
     #[Route('/new', name:'new', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function new(Request $request): Response
+    public function new(Request $request, EntityManagerInterface $em): Response
     {
         $competition = new Competition();
 
         $form = $this->createForm(CompetitionType::class, $competition);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()) {
-            $this->competitionService->saveCompetition($competition);
-            $this->addFlash('success', sprintf('La compétition "%s" a bien été créée.', $competition->getName()));            
-        } else {
-            $this->addFlash('danger', 'Erreur lors de la création de la compétition.');
+        if ($form->isSubmitted()) {
+        // 🔄 INTERCEPTION AJAX ICI : 
+        // Si la requête contient le header 'X-Requested-With', c'est notre script JS de cascade.
+        // On renvoie juste le formulaire mis à jour (le HTML partiel), SANS enregistrer en BDD.
+            if ($request->isXmlHttpRequest()) {
+                return $this->render('competition/_competition-modal.html.twig', [
+                    'form' => $form->createView(),
+                    'modalId' => 'competition-modal', // Ajuste selon tes variables
+                    'modalTitle' => 'Créer une compétition',
+                    'isOpen' => true,
+                ]);
+            }
+
+            // Si ce n'est PAS de l'AJAX, c'est que l'utilisateur a cliqué sur "Enregistrer"
+            if ($form->isValid()) {
+                $em->persist($competition);
+                $em->flush();
+
+                $this->addFlash('success', 'La compétition a bien été créée.');
+                return $this->redirectToRoute('app_competition_index'); // Ou ta route de redirection
+            }
         }
 
-        return $this->redirectToRoute('app_competition_index');
+        return $this->render('competition/_competition-modal.html.twig', [
+            'form' => $form,
+        ]);
     }
 
-    #[Route('/edit', name:'edit', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function edit(Request $request, Competition $competition): Response
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Competition $competition, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(CompetitionType::class, $competition);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()) {
-            $this->competitionService->saveCompetition($competition);
-            $this->addFlash('success', sprintf('La compétition "%s" a bien été modifiée.', $competition->getName()));
-        } else {
-            $this->addFlash('danger', 'Erreur lors de la modification.');
+        if ($form->isSubmitted()) {
+            
+            // 2. CORRECTION POUR L'AJAX EN MODE ÉDITION
+            if ($request->isXmlHttpRequest()) {
+                return $this->render('competition-modal.hmtl.twig', [
+                    'form' => $form->createView(),
+                    'modalId' => 'competition-modal',
+                    'modalTitle' => 'Modifier une compétition',
+                    'isOpen' => true,
+                ]);
+            }
+
+            if ($form->isValid()) {
+                $em->flush(); 
+
+                $this->addFlash('success', 'La compétition a bien été modifiée.');
+                return $this->redirectToRoute('app_competition_index');
+            }
         }
 
-        return $this->redirectToRoute('app_competition_index');
+        return $this->render('competition/edit.html.twig', [
+            'competition' => $competition,
+            'form' => $form,
+        ]);
     }
 }

@@ -57,19 +57,18 @@
 
 				<tbody>
 					{% set date_format = 'Y-m-d' %}
-					{# Comparaison avec la date du jour (2026) #}
 					{% set current_date = "now"|date(date_format) %}
 
 					{% for competition in competitions %}
 						{% set is_past = competition.endDate|date(date_format) < current_date %}
 
 
-						<tr class="rider-profile-table__row rider-profile-table__row--clickable {{ is_past ? 'rider-profile-table__row--past text-muted bg-light' }}" {% if is_granted('ROLE_ADMIN') %} data-modal-open="competition-edit-modal-{{ competition.id }}" {% else %} {# Pour le rider/écurie, redirection vers la consultation ou autre modal de détail #} data-url="{{ path('app_competition_index') }}" {# À adapter si tu as une route view #} {% endif %} role="button" tabindex="0" {% if is_past %} style="opacity: 0.65;" {% endif %}>
+						<tr class="rider-profile-table__row rider-profile-table__row--clickable {{ is_past ? 'rider-profile-table__row--past text-muted bg-light' }}" {% if is_granted('ROLE_ADMIN') %} data-modal-open="competition-edit-modal-{{ competition.id }}" {% else %} data-url="{{ path('app_competition_index') }}" {% endif %} role="button" tabindex="0" {% if is_past %} style="opacity: 0.65;" {% endif %}>
 
 							<td>
 								<strong>{{ competition.name }}</strong>
 							</td>
-							<td>{{ competition.location }}</td>
+							<td>{{ competition.location.name }}</td>
 							<td>{{ competition.startDate|date('d/m/Y') }}</td>
 							<td>{{ competition.endDate|date('d/m/Y') }}</td>
 							<td>
@@ -84,7 +83,7 @@
 				</tbody>
 			</table>
 
-			{# --- MODALS D'ÉDITION (Uniquement générés pour l'ADMIN) --- #}
+			{# --- EDITION MODAL --- #}
 			{% if is_granted('ROLE_ADMIN') %}
 				{% for competition in competitions %}
 					{% include "competition/_competition-modal.html.twig" with {
@@ -95,7 +94,7 @@
                     } %}
 				{% endfor %}
 
-				{# --- MODAL D'AJOUT (ADMIN) --- #}
+				{# --- ADD MODAL (ADMIN) --- #}
 				{% include "competition/_competition-modal.html.twig" with {
                 modalId: 'competition-add-modal',
                 modalTitle: 'competition.add' | trans,

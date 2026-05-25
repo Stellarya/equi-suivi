@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Competition;
 use App\Entity\StatusCompetition;
+use App\Form\Type\LocationSelectorType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -28,9 +29,9 @@ class CompetitionType extends AbstractType
                 'label' => 'competition.endDate',
                 'widget' => 'single_text'
             ])
-            ->add('location', TextType::class, [
-                'label' => 'competition.location',
-                'attr' => ['placeholder' => 'ex: Pôle Hippique du Grand Format']
+            ->add('location', LocationSelectorType::class, [
+                'label' => false,
+                'required' => true
             ])
             ->add('statusCompetition', EntityType::class, [
                 'class' => StatusCompetition::class,
