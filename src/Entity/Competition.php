@@ -22,11 +22,12 @@ class Competition
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $startDate = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $endDate = null;
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTime $endDate = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $location = null;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'location_id', referencedColumnName: 'id', nullable: false)]
+    private ?Ranch $location = null;
 
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     #[ORM\JoinColumn(nullable: false)]
@@ -65,31 +66,31 @@ class Competition
         return $this->startDate;
     }
 
-    public function setStartDate(\DateTime $startDate): static
+    public function setStartDate(?\DateTime $startDate): static
     {
         $this->startDate = $startDate;
 
         return $this;
     }
 
-    public function getEndDate(): ?string
+    public function getEndDate(): ?\DateTime
     {
         return $this->endDate;
     }
 
-    public function setEndDate(string $endDate): static
+    public function setEndDate(?\DateTime $endDate): static
     {
         $this->endDate = $endDate;
 
         return $this;
     }
 
-    public function getLocation(): ?string
+    public function getLocation(): ?Ranch
     {
         return $this->location;
     }
 
-    public function setLocation(string $location): static
+    public function setLocation(?Ranch $location): static
     {
         $this->location = $location;
 

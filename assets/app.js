@@ -14,6 +14,7 @@ import { initTopbarDropdown } from './js/topbar-dropdown.js';
 import { initModals } from './js/modal.js';
 import { initHorseListFilter } from './js/horse-list-filter.js';
 import { initMultiselect } from './js/multi-select.js';
+import { initCascadingSelects } from './js/cascading-select.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     //Topbar
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Multi-select
     initMultiselect();
+    initCascadingSelects();
 
     //Rider
     const riderGalopsTable = document.querySelector('#rider-galops-table');

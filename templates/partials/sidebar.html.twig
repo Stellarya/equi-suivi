@@ -10,7 +10,7 @@
 		{% set competitionLabel = is_granted('ROLE_ECURIE') ? 'general.sidebar.competitions' : 'general.sidebar.my_competitions' %}
 
 		{{navItem.navItem('icon icon-horse', horsesLabel, 'ROLE_USER', 'app_horse_index')}}
-		{{navItem.navItem('fas fa-award', competitionLabel , 'ROLE_USER', 'admin')}}
+		{{navItem.navItem('fas fa-award', competitionLabel , 'ROLE_USER', 'app_competition_index')}}
 		{{navItem.navItem('fas fa-chart-line', 'general.sidebar.my_stats', 'ROLE_USER', 'admin')}}
 		{{navItem.navItem('fas fa-briefcase-medical', 'general.sidebar.my_care', 'ROLE_USER', 'admin')}}
 

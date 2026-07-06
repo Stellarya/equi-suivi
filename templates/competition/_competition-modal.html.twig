@@ -1,0 +1,84 @@
+<div id="{{ modalId }}" class="app-modal {% if isOpen %}is-open{% endif %}" aria-hidden="{{ isOpen ? 'false' : 'true' }}" data-modal>
+	<div class="app-modal__overlay" data-modal-close></div>
+
+	<div class="app-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="{{ modalId }}-title">
+		<div class="app-modal__header">
+			<h2 id="{{ modalId }}-title">
+				{{ modalTitle | trans }}
+			</h2>
+
+			<button type="button" class="app-modal__close" aria-label="Fermer" data-modal-close>
+				<i class="fa-solid fa-xmark"></i>
+			</button>
+		</div>
+
+		{{ form_start(form, {
+            attr: {
+			class: 'app-modal__form js-cascading-form',
+			action: form.vars.data.id ? path('app_competition_edit', {'id': form.vars.data.id}) : path('app_competition_new')
+		}
+        }) }}
+
+		<div class="app-modal__body">
+			<div class="d-flex row">
+				<div class="app-modal__field col-4">
+					{{ form_label(form.name) }}
+					{{ form_widget(form.name) }}
+					{{ form_errors(form.name) }}
+				</div>
+
+				<div class="app-modal__field col-4">
+					{{ form_label(form.startDate) }}
+					{{ form_widget(form.startDate) }}
+					{{ form_errors(form.startDate) }}
+				</div>
+
+				<div class="app-modal__field col-4">
+					{{ form_label(form.endDate) }}
+					{{ form_widget(form.endDate) }}
+					{{ form_errors(form.endDate) }}
+				</div>
+			</div>
+
+			<div class="d-flex row mt-1 js-location-container">
+				<div class="app-modal__field col-4">
+					{{ form_label(form.location.region) }}
+					{{ form_widget(form.location.region, {'attr': {'class': 'js-region-select'}}) }}
+					{{ form_errors(form.location.region) }}
+				</div>
+
+				<div class="app-modal__field col-4 js-department-wrapper">
+					{{ form_label(form.location.department) }}
+					{{ form_widget(form.location.department, {'attr': {'class': 'js-department-select'}}) }}
+					{{ form_errors(form.location.department) }}
+				</div>
+
+				<div class="app-modal__field col-4 js-ranch-wrapper">
+					{{ form_label(form.location.ranch) }}
+					{{ form_widget(form.location.ranch, {'attr': {'class': 'js-ranch-select'}}) }}
+					{{ form_errors(form.location.ranch) }}
+				</div>
+			</div>
+
+			<div class="d-flex row mt-1">
+				<div class="app-modal__field col-4">
+					{{ form_label(form.statusCompetition) }}
+					{{ form_widget(form.statusCompetition) }}
+					{{ form_errors(form.statusCompetition) }}
+				</div>
+			</div>
+		</div>
+
+		<div class="app-modal__footer">
+			<button type="button" class="app-modal__button app-modal__button--secondary" data-modal-close>
+				{{ 'actions.cancel' | trans }}
+			</button>
+
+			<button type="submit" class="app-modal__button app-modal__button--primary">
+				{{ 'actions.save' | trans }}
+			</button>
+		</div>
+
+		{{ form_end(form) }}
+	</div>
+</div>
