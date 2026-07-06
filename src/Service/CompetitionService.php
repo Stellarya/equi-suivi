@@ -2,13 +2,10 @@
 
 namespace App\Service;
 
-use App\Entity\AppUser;
 use App\Entity\Competition;
 use App\Entity\StatusCompetition;
 use App\Repository\CompetitionRepository;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CompetitionService
 {

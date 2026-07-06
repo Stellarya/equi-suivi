@@ -68,25 +68,20 @@ final class CompetitionController extends AppController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-        // 🔄 INTERCEPTION AJAX ICI : 
-        // Si la requête contient le header 'X-Requested-With', c'est notre script JS de cascade.
-        // On renvoie juste le formulaire mis à jour (le HTML partiel), SANS enregistrer en BDD.
             if ($request->isXmlHttpRequest()) {
                 return $this->render('competition/_competition-modal.html.twig', [
                     'form' => $form->createView(),
-                    'modalId' => 'competition-modal', // Ajuste selon tes variables
+                    'modalId' => 'competition-modal', 
                     'modalTitle' => 'Créer une compétition',
                     'isOpen' => true,
                 ]);
             }
 
-            // Si ce n'est PAS de l'AJAX, c'est que l'utilisateur a cliqué sur "Enregistrer"
             if ($form->isValid()) {
-                $em->persist($competition);
-                $em->flush();
+                $this->competitionService->saveCompetition($competition);
 
                 $this->addFlash('success', 'La compétition a bien été créée.');
-                return $this->redirectToRoute('app_competition_index'); // Ou ta route de redirection
+                return $this->redirectToRoute('app_competition_index'); 
             }
         }
 
@@ -104,9 +99,8 @@ final class CompetitionController extends AppController
 
         if ($form->isSubmitted()) {
             
-            // 2. CORRECTION POUR L'AJAX EN MODE ÉDITION
             if ($request->isXmlHttpRequest()) {
-                return $this->render('competition-modal.hmtl.twig', [
+                return $this->render('competition-modal.html.twig', [
                     'form' => $form->createView(),
                     'modalId' => 'competition-modal',
                     'modalTitle' => 'Modifier une compétition',
@@ -115,7 +109,7 @@ final class CompetitionController extends AppController
             }
 
             if ($form->isValid()) {
-                $em->flush(); 
+                $this->competitionService->saveCompetition($competition);
 
                 $this->addFlash('success', 'La compétition a bien été modifiée.');
                 return $this->redirectToRoute('app_competition_index');
