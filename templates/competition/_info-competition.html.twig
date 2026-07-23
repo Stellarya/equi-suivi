@@ -1,0 +1,65 @@
+{% import "macros/macros.html.twig" as macros %}
+
+<aside class="app-info-card details-info-card">
+	<div
+		class="details-info-card__media">
+		{# Badge de statut de la compétition #}
+		<span class="horse-status-badge horse-status-badge--{{ competition.statusCompetition.libelle|default('active')|lower }}">
+			{{ competition.statusCompetition.libelle ?? 'N/A' }}
+		</span>
+
+		{# Boutons d'action réservés à l'organisateur / admin #}
+		{% if canEditCompetition|default(false) %}
+			<div class="details-info-card__actions">
+				{{ macros.modalButton(
+                    'edit-competition-details',
+                    'general.edit',
+                    'fa-solid fa-pen',
+                    'competition-details-edit-modal',
+                    'details-info-card__action'
+                ) }}
+				{# Vous pourrez rajouter d'autres macros ici (ex: annuler la compétition) #}
+			</div>
+		{% endif %}
+
+		{# Placeholder ou illustration de l'événement #}
+		<div class="details-info-card__placeholder bg-primary text-white">
+			<i class="fa-solid fa-trophy" aria-hidden="true"></i>
+		</div>
+	</div>
+
+	<div class="app-info-card__identity">
+		<h2>{{ competition.name }}</h2>
+		<p class="text-muted">
+			<i class="fa-solid fa-location-dot me-1"></i>
+			{{ competition.location.name }}</p>
+	</div>
+
+	<dl class="app-info-card__details">
+		<div>
+			<dt>Date de début</dt>
+			<dd>{{ competition.startDate|date('d/m/Y') }}</dd>
+		</div>
+
+		<div>
+			<dt>Date de fin</dt>
+			<dd>{{ competition.endDate|date('d/m/Y') }}</dd>
+		</div>
+
+		<div class="app-info-card__separator"></div>
+
+		<div>
+			<dt>Structure Hôte</dt>
+			<dd>
+				{{ competition.location.name|default('Non spécifiée') }}
+			</dd>
+		</div>
+
+		<div>
+			<dt>Adresse</dt>
+			<dd>
+				<small>{{ competition.location.address|default('N/A') }}</small>
+			</dd>
+		</div>
+	</dl>
+</aside>

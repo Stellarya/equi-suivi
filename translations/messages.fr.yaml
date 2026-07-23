@@ -137,6 +137,11 @@ competition:
     my_competitions: "Mes compétitions"
     edit: "Modifier une compétition"
     add: "Ajouter une compétition"
+competitionRegistration:
+    rider: "Cavalier"
+    horse: "Cheval"
+    note: "Note"
+    register_couple: "Inscrire un couple"
 locationSelection:
     region: "Région"
     department: "Département"

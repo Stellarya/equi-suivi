@@ -63,7 +63,7 @@
 						{% set is_past = competition.endDate|date(date_format) < current_date %}
 
 
-						<tr class="rider-profile-table__row rider-profile-table__row--clickable {{ is_past ? 'rider-profile-table__row--past text-muted bg-light' }}" {% if is_granted('ROLE_ADMIN') %} data-modal-open="competition-edit-modal-{{ competition.id }}" {% else %} data-url="{{ path('app_competition_index') }}" {% endif %} role="button" tabindex="0" {% if is_past %} style="opacity: 0.65;" {% endif %}>
+						<tr class="rider-profile-table__row rider-profile-table__row--clickable {{ is_past ? 'rider-profile-table__row--past text-muted bg-light' }}" {% if is_granted('ROLE_ADMIN') %} data-modal-open="competition-edit-modal-{{ competition.id }}" {% elseif is_granted('ROLE_ECURIE')%} data-url="{{ path('app_competition_register', {'id': competition.id}) }}" {% else %} data-url="{{ path('app_competition_index') }}" {% endif %} role="button" tabindex="0" {% if is_past %} style="opacity: 0.65;" {% endif %}>
 
 							<td>
 								<strong>{{ competition.name }}</strong>
@@ -104,4 +104,18 @@
 			{% endif %}
 		</div>
 	</div>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+const clickableRows = document.querySelectorAll('tr[data-url]');
+
+clickableRows.forEach(row => {
+row.addEventListener('click', () => {
+window.location.href = row.getAttribute('data-url');
+});
+});
+});
+	</script>
 {% endblock %}

@@ -1,0 +1,61 @@
+<div id="{{ modalId }}" class="app-modal {% if isOpen %}is-open{% endif %}" aria-hidden="{{ isOpen ? 'false' : 'true' }}" data-modal>
+	<div class="app-modal__overlay" data-modal-close></div>
+
+	<div class="app-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="{{ modalId }}-title">
+		<div class="app-modal__header">
+			<h2 id="{{ modalId }}-title">
+				{{ modalTitle | trans }}
+			</h2>
+
+			<button type="button" class="app-modal__close" aria-label="Fermer" data-modal-close>
+				<i class="fa-solid fa-xmark"></i>
+			</button>
+		</div>
+
+		{{ form_start(form, {
+            attr: {
+                class: 'app-modal__form'
+            }
+        }) }}
+
+		<div class="app-modal__body">
+			<div
+				class="row">
+				{# Ligne 1 : Cavalier & Cheval côte à côte #}
+				<div class="app-modal__field col-6">
+					{{ form_label(form.rider) }}
+					{{ form_widget(form.rider, {'attr': {'class': 'form-control'}}) }}
+					{{ form_errors(form.rider) }}
+				</div>
+
+				<div class="app-modal__field col-6">
+					{{ form_label(form.horse) }}
+					{{ form_widget(form.horse, {'attr': {'class': 'form-control'}}) }}
+					{{ form_errors(form.horse) }}
+				</div>
+			</div>
+
+			<div
+				class="row mt-2">
+				{# Ligne 2 : Note sur toute la largeur #}
+				<div class="app-modal__field col-12">
+					{{ form_label(form.note) }}
+					{{ form_widget(form.note, {'attr': {'class': 'form-control', 'placeholder': 'Ajouter une remarque facultative...'}}) }}
+					{{ form_errors(form.note) }}
+				</div>
+			</div>
+		</div>
+
+		<div class="app-modal__footer">
+			<button type="button" class="app-modal__button app-modal__button--secondary" data-modal-close>
+				{{ 'actions.cancel' | trans }}
+			</button>
+
+			<button type="submit" class="app-modal__button app-modal__button--primary">
+				{{ 'actions.save' | trans }}
+			</button>
+		</div>
+
+		{{ form_end(form) }}
+	</div>
+</div>
