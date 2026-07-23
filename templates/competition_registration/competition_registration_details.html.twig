@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% import "macros/macros.html.twig" as macros %}
+
+{% block title %}
+	{{ 'competition.details' | trans }}
+	-
+	{{ competition.name }}
+{% endblock %}
+
+{% block body %}
+	<section id="competition" class="details-page">
+		<div class="details-page__header d-flex justify-content-between align-items-center mb-4">
+			<h1>
+				{{ competition.name }}
+			</h1>
+		</div>
+
+		{# Flash Messages #}
+		{% for label, messages in app.flashes %}
+			{% for message in messages %}
+				<div class="alert alert-{{ label == 'danger' ? 'danger' : 'success' }} alert-dismissible fade show" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+		{% endfor %}
+
+		<div
+			class="details-page__layout">
+
+			{# --- ASIDE : INFOS COMPÉTITION --- #}
+			{% include "competition/_info-competition.html.twig" with {
+                competition: competition,
+                canEditCompetition: canEditCompetition|default(false)
+            } %}
+
+			{# --- CONTENU PRINCIPAL : INSCRIPTIONS --- #}
+			<section class="details-panel flex-grow-1">
+				<div class="details-panel__content">
+					<div class='d-flex justify-content-between align-content-center mb-3'>
+						<h3 class="h4">
+							<i class="fa-solid fa-users-equestrian me-2"></i>Couples engagés par votre structure
+						</h3>
+						{{ macros.modalButton(
+							'open-registration-modal-btn',
+							'competitionRegistration.register_couple'|default('Inscrire un couple'),
+							'fa-solid fa-user-plus ms-2',
+							'registration-add-modal',
+							'btn btn-primary fw-bold d-flex align-items-center gap-2',
+							true
+						) }}</div>
+
+					<div class="table-responsive">
+						<table class="table table-hover align-middle bg-white rounded shadow-sm">
+							<thead class="table-light">
+								<tr>
+									<th>Cavalier</th>
+									<th>Cheval</th>
+									<th class="text-end">Statut</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for registrationItem in competition.competitionRegistrations %}
+									{% if (ranch is not null and ranch in registrationItem.rider.ranch) or is_granted('ROLE_ADMIN') or canEditCompetition %}
+										<tr>
+											<td>
+												<strong>{{ registrationItem.rider.firstName }}
+													{{ registrationItem.rider.lastName }}</strong>
+											</td>
+											<td>{{ registrationItem.horse.name }}</td>
+											<td class="text-end">
+												<span class="badge bg-success">{{ registrationItem.statusRegistration.libelle }}</span>
+											</td>
+										</tr>
+									{% endif %}
+								{% else %}
+									<tr>
+										<td colspan="3" class="text-center p-4 text-muted">Aucun couple inscrit pour le moment.</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</section>
+		</div>
+
+		{# --- MODALE 1 : AJOUT/MODIFICATION D'UNE INSCRIPTION --- #}
+		{% include "competition_registration/_competition_registration_modal.html.twig" with {
+            modalId: 'registration-add-modal',
+            modalTitle: 'competition.register_couple'|default('Inscrire un couple'),
+            form: form,
+            isOpen: false
+        } %}
+
+		{# --- MODALE 2 : ÉDITION COMPÉTITION (SI HÔTE OU ADMIN) --- #}
+		{% if canEditCompetition and competitionForm is defined and competitionForm is not null %}
+			{% include "competition/_competition-modal.html.twig" with {
+                modalId: 'competition-details-edit-modal',
+                modalTitle: 'competition.edit' | trans,
+                form: competitionForm,
+                isOpen: false
+            } %}
+		{% endif %}
+	</section>
+{% endblock %}
