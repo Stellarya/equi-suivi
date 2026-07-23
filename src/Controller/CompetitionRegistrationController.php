@@ -26,7 +26,8 @@ class CompetitionRegistrationController extends AbstractController
         Request $request, 
         CompetitionRegistrationService $registrationService,
         RanchRepository $ranchRepository,
-        StatusCompetitionRepository $statusCompetitionRepository
+        StatusCompetitionRepository $statusCompetitionRepository,
+        EntityManagerInterface $entityManager
     ): Response {
         
         $user = $this->getUser();
@@ -47,7 +48,10 @@ class CompetitionRegistrationController extends AbstractController
                 $competitionForm->handleRequest($request);
 
                 if($competitionForm->isSubmitted() && $competitionForm->isValid()) {
+                    $entityManager->flush();
+
                     $this->addFlash('success', 'La compétition a été modifiée avec succès.');
+                    
                     return $this->redirectToRoute('app_competition_register', ['id' => $competition->getId()]);
                 }
             }
@@ -64,19 +68,14 @@ class CompetitionRegistrationController extends AbstractController
             $registrationForm->handleRequest($request);
             if ($registrationForm->isSubmitted() && $registrationForm->isValid()) {
                 
-                // --- AMÉLIORATION : FIX DE L'ERREUR SQL NOT NULL ---
-                // On va chercher l'enregistrement "Proposée" grâce au mnémonique de votre table
                 $statusPropose = $statusCompetitionRepository->findOneBy(['mnemonique' => 'PROPOSEE']);
                 
                 if (!$statusPropose) {
                     throw new \Exception("Le statut avec le mnémonique 'PROPOSEE' n'existe pas en base de données. Pensez à vérifier vos fixtures ou inserts.");
                 }
 
-                // On injecte le statut dans l'entité d'inscription (status_registration_id)
                 $registration->setStatusRegistration($statusPropose);
-                // ---------------------------------------------------
 
-                // Le service se charge ensuite d'enregistrer le couple et de l'associer à la compétition
                 $registrationService->registerCouple($registration, $competition);
 
                 $this->addFlash('success', 'Le couple a été proposé avec succès.');
