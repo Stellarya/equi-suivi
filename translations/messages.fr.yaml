@@ -159,3 +159,5 @@ locationSelection:
     region: "Région"
     department: "Département"
     ranch: "Ecurie"
+protocol:
+    file: ""
