@@ -22,7 +22,7 @@
 
 {# Tabs profil/details #}
 {% macro tab(icon, label, target, isActive = false) %}
-	<button type="button" class="details-tabs__item{% if isActive %} details-tabs__item--active{% endif %}" data-target="{{ target }}">
+	<button type="button" class="details-tabs__item{% if isActive %} details-tabs__item--active{% endif %}" data-target="{{ target }}" data-tab="{{ target }}">
 		<i class="{{ icon }}" aria-hidden="true"></i>
 		<span>{{ label|trans }}</span>
 	</button>

@@ -3,8 +3,11 @@
 namespace App\Service;
 
 use App\Entity\AppUser;
+use App\Entity\Competition;
+use App\Entity\CompetitionRegistration;
 use App\Entity\Rider;
 use App\Entity\RiderGalop;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -43,21 +46,78 @@ class RiderProfileService {
         return $galopHistory[0] ?? null;
     }
 
+    public function getCompetitionsRegistrations(Rider $rider): array {
+        $registrationsHistory = [];
+        $registrationsToGo = [];
+
+        $today = new DateTimeImmutable('today');
+
+        foreach ($rider->getCompetitionRegistrations() as $registration) {
+            $competition = $registration->getCompetition();
+
+            if($competition === null) {
+                continue;
+            }
+
+            if ($competition->getEndDate() < $today) {
+                $registrationsHistory[] = $registration;
+            } else {
+                $registrationsToGo[] = $registration;
+            }
+        }
+        return [
+            'registrationsToGo' => $this->sortCompetitionRegistrations($registrationsToGo),
+            'registrationsHistory' => $this->sortCompetitionRegistrations($registrationsHistory, false)
+        ];
+    }
+
+    /**
+     * 
+     */
+    private function sortCompetitionRegistrations(
+        array $registrations,
+        bool $ascending = true
+    ): array {
+        usort(
+            $registrations,
+            static function (
+                CompetitionRegistration $firstRegistration,
+                CompetitionRegistration $secondRegistration
+            ) use ($ascending): int {
+                $comparison =
+                    $firstRegistration->getCompetition()->getStartDate()
+                    <=>
+                    $secondRegistration->getCompetition()->getStartDate();
+
+                return $ascending
+                    ? $comparison
+                    : -$comparison;
+            }
+        );
+
+        return $registrations;
+    }
+
     public function buildProfileViewData(?Rider $rider): array {
         if($rider === null) {
             return [
                 'rider' => null,
                 'lastGalop' => null,
-                'galopHistory' => []
+                'galopHistory' => [],
+                'registrationsHistory' => [],
+                'registrationsToGo' => [],
             ];
         }
 
         $galopHistory = $this->getSortedGalopHistory($rider);
+        $registrations = $this->getCompetitionsRegistrations($rider);
 
         return [
             'rider' => $rider,
             'lastGalop' => $galopHistory[0] ?? null,
-            'galopHistory' => $galopHistory
+            'galopHistory' => $galopHistory,
+            'registrationsHistory' => $registrations['registrationsHistory'],
+            'registrationsToGo' => $registrations['registrationsToGo']
         ];
     }
 
