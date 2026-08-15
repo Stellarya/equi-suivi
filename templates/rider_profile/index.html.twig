@@ -79,5 +79,15 @@ target.classList.add('details-tab-content--active');
 }
 });
 });
+
+const requestedTab = window.location.hash.replace('#', '');
+
+if (requestedTab) {
+const tabToOpen = document.querySelector (`.details-tabs__item[data-target="${requestedTab}"]`);
+
+if (tabToOpen) {
+tabToOpen.click();
+}
+}
 	</script>
 {% endblock %}

@@ -50,7 +50,7 @@ final class ProtocolController extends AppController
             $this->addFlash('danger', 'Import impossible : vérifiez le format du ficiher');
         }
 
-        return $this->redirectToRoute('app_competition_index');
+        return $this->redirectToRoute('app_rider_profile', ['_fragment' => 'tab-competitions']);
     }
 
     #[Route('/{id}/file', name: 'file', methods: ['GET'])]
