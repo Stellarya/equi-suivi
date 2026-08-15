@@ -108,6 +108,8 @@ final class RiderProfileServiceTest extends TestCase
             'rider' => null,
             'lastGalop' => null,
             'galopHistory' => [],
+            'registrationsHistory' => [],
+            'registrationsToGo' => [],
         ], $viewData);
     }
 

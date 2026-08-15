@@ -4,7 +4,7 @@ namespace App\Form;
 
 use App\Entity\Competition;
 use App\Entity\StatusCompetition;
-use App\Form\Type\LocationSelectorType;
+use App\Form\LocationSelectorType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
