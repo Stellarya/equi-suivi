@@ -54,8 +54,8 @@ class CompetitionEntry
     #[ORM\Column(nullable: true)]
     private ?int $score = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $scorePercent = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 3,nullable: true)]
+    private ?string $scorePercent = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $comment = null;
@@ -211,12 +211,12 @@ class CompetitionEntry
         return $this;
     }
 
-    public function getScorePercent(): ?int
+    public function getScorePercent(): ?string
     {
         return $this->scorePercent;
     }
 
-    public function setScorePercent(?int $scorePercent): static
+    public function setScorePercent(?string $scorePercent): static
     {
         $this->scorePercent = $scorePercent;
 

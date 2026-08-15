@@ -17,6 +17,8 @@ class Protocol
     public const STATUS_ANALYZED  = 'analyzed';
     public const STATUS_FAILED    = 'failed';
 
+    public const STATUS_NEEDS_REVIEW = 'needs_review';
+
     public const JUDGE_C = 'C';
     public const JUDGE_H = 'H';
 

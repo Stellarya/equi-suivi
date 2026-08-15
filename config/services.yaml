@@ -11,6 +11,7 @@ parameters:
     version_equi_stats: "0.0.1"
     horse_photos_directory: "%kernel.project_dir%/var/uploads/horses"
     protocol_files_directory: "%kernel.project_dir%/var/uploads/protocols"
+    ai_daily_call_limit: 50
 
 services:
     # default configuration for services in *this* file
@@ -20,6 +21,7 @@ services:
         bind:
             string $horsePhotosDirectory: "%horse_photos_directory%"
             string $protocolFilesDirectory: "%protocol_files_directory%"
+            int $aiDailyCallLimit: "%ai_daily_call_limit%"
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -29,6 +31,9 @@ services:
             - "../src/DependencyInjection/"
             - "../src/Entity"
             - "../src/Kernel.php"
+            - "../src/Dto"
+            - "../src/Exception"
 
+    App\Service\ProtocolAnalyzerInterface: '@App\Service\FakeProtocolAnalyzer'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
