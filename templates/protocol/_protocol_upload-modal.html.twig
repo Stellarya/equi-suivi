@@ -1,0 +1,41 @@
+<div id="protocol-upload-modal" class="app-modal" aria-hidden="true" data-modal>
+	<div class="app-modal__overlay" data-modal-close></div>
+
+	<div class="app-modal__dialog" role="dialog" aria-modal="true">
+		<div class="app-modal__header">
+			<h2>{{ 'protocol.upload'|trans }}</h2>
+			<button type="button" class="app-modal__close" aria-label="Fermer" data-modal-close>
+				<i class="fa-solid fa-xmark"></i>
+			</button>
+		</div>
+
+		{{ form_start(protocolUploadForm, {
+			attr: { class: 'app-modal__form js-protocol-upload-form' }
+		}) }}
+
+		<div class="app-modal__body">
+			<div class="app-modal__field">
+				{{ form_label(protocolUploadForm.file) }}
+				{{ form_widget(protocolUploadForm.file) }}
+				{{ form_errors(protocolUploadForm.file) }}
+			</div>
+
+			<div class="app-modal__field">
+				{{ form_label(protocolUploadForm.judgePosition) }}
+				{{ form_widget(protocolUploadForm.judgePosition) }}
+				{{ form_errors(protocolUploadForm.judgePosition) }}
+			</div>
+		</div>
+
+		<div class="app-modal__footer">
+			<button type="button" class="app-modal__button app-modal__button--secondary" data-modal-close>
+				{{ 'actions.cancel'|trans }}
+			</button>
+			<button type="submit" class="app-modal__button app-modal__button--primary">
+				{{ 'actions.save'|trans }}
+			</button>
+		</div>
+
+		{{ form_end(protocolUploadForm) }}
+	</div>
+</div>

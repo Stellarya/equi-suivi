@@ -97,6 +97,7 @@
 				<th>{{ 'competition.entry'|trans }}</th>
 				<th>{{ 'competition.rank'|trans }}</th>
 				<th>{{ 'competition.score'|trans }}</th>
+				<th>{{ 'protocol.title'|trans}}</th>
 			</tr>
 		</thead>
 
@@ -157,6 +158,18 @@
 								{{ 'rider.no_info'|trans }}
 							{% endif %}
 						</td>
+
+						<td>
+							{% for protocol in entry.protocols %}
+								<a href="{{ path('app_protocol_file', {'id': protocol.id}) }}" target="_blank" class="btn btn-sm btn-outline-secondary" title="{{ ('protocol.status.' ~ protocol.status)|trans }}">
+									{{ protocol.judgePosition }}
+								</a>
+							{% endfor %}
+
+							<button type="button" class="btn btn-sm btn-outline-primary" data-modal-open="protocol-upload-modal" data-upload-url="{{ path('app_protocol_upload', {'id': entry.id}) }}" title="{{ 'protocol.upload'|trans }}">
+								<i class="fa-solid fa-upload"></i>
+							</button>
+						</td>
 					</tr>
 				{% else %}
 					<tr class="rider-profile-table__row">
@@ -172,14 +185,14 @@
 							{{ registration.horse.name }}
 						</td>
 
-						<td colspan="3">
+						<td colspan="4">
 							{{ 'competition.no_entry'|trans }}
 						</td>
 					</tr>
 				{% endfor %}
 			{% else %}
 				<tr>
-					<td colspan="6" class="text-center p-4 text-muted">
+					<td colspan="7" class="text-center p-4 text-muted">
 						{{ 'competition.no_history'|trans }}
 					</td>
 				</tr>
@@ -187,3 +200,19 @@
 		</tbody>
 	</table>
 </div>
+{% include "protocol/_protocol_upload-modal.html.twig" %}
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+const form = document.querySelector('.js-protocol-upload-form');
+if (! form) 
+return;
+
+
+
+document.querySelectorAll('[data-upload-url]').forEach(button => {
+button.addEventListener('click', () => {
+form.setAttribute('action', button.dataset.uploadUrl);
+});
+});
+});
+</script>

@@ -36,8 +36,16 @@ final class ProtocolController extends AppController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->protocolService->createFromUpload($entry, $form->get('file')->getData());
-            $this->addFlash('success', 'Protocole importé avec succès');
+            try {
+                $this->protocolService->createFromUpload(
+                    $entry,
+                    $form->get('file')->getData(),
+                    $form->get('judgePosition')->getData());
+                $this->addFlash('success', 'Protocole importé avec succès');
+            } catch (\DomainException $e) {
+                $this->addFlash('danger', $e->getMessage());
+            }
+            
         } else {
             $this->addFlash('danger', 'Import impossible : vérifiez le format du ficiher');
         }

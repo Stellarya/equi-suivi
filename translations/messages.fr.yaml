@@ -160,4 +160,11 @@ locationSelection:
     department: "Département"
     ranch: "Ecurie"
 protocol:
-    file: ""
+    title: "Protocole"
+    file: "Protocole scanné"
+    upload: "Importer le protocole"
+    status:
+        uploaded: "Importé"
+        analyzing: "Analyse en cours"
+        analyzed: "Analysé"
+        failed: "Analyse échouée"

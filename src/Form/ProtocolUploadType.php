@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Protocol;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -31,6 +32,13 @@ class ProtocolUploadType extends AbstractType
                         mimeTypesMessage: 'Formats acceptés : PDF, JPG ou PNG.',
                     ),
                 ],
+            ])
+            ->add('judgePosition', ChoiceType::class, [
+                'label' => 'protocol.judge_position',
+                'mapped' => false,
+                'placeholder' => 'Sélectionner la position du juge',
+                'choices' => Protocol::JUDGE_POSITION_CHOICES,
+                'constraints' => [new NotNull(message: 'Indiquez la position du juge')]
             ])
         ;
     }

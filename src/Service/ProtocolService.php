@@ -23,7 +23,7 @@ final class ProtocolService {
         $registration = $entry->getCompetitionRegistration();
         $rider = $user->getRider();
 
-        if($rider != null && $registration->getRider() === $rider) {
+        if($rider !== null && $registration->getRider() === $rider) {
             return;
         }
 
@@ -31,10 +31,21 @@ final class ProtocolService {
             return;
         }
 
-        throw new AccessDeniedHttpException("vous n'avez pas accès à cette participation");
+        if ($registration === null) {
+            throw new AccessDeniedHttpException("vous n'avez pas accès à cette participation");
+        }
+        
     }
 
-    public function createFromUpload(CompetitionEntry $entry, UploadedFile $file): Protocol {
+    public function createFromUpload(CompetitionEntry $entry, UploadedFile $file, string $judgePosition): Protocol {
+
+        foreach($entry->getProtocols() as $existing) {
+            if ($existing->getJudgePosition() === $judgePosition) {
+                throw new \DomainException(
+                    sprintf('Un protocole du juge en %s existe dejà pour cette épreuve.', $judgePosition)
+                );
+            }
+        }
         $originalFileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
 
         $newFileName = sprintf(
@@ -49,6 +60,7 @@ final class ProtocolService {
         $protocol = new Protocol();
         $protocol->setCompetitionEntry($entry);
         $protocol->setFilePath($newFileName);
+        $protocol->setJudgePosition($judgePosition);
         $protocol->setStatus(Protocol::STATUS_UPLOADED);
 
         $this->em->persist($protocol);

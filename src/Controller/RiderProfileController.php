@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Rider;
+use App\Form\ProtocolUploadType;
 use App\Form\RiderGalopType;
 use App\Form\RiderType;
 use App\Service\RiderGalopService;
@@ -39,6 +40,7 @@ final class RiderProfileController extends AppController
             $profileData['riderGalopForm'] = $this->createRiderGalopFormView($rider);
             $profileData['riderGalopEditForms'] = $this->createRiderGalopEditFormViews($rider);
             $profileData['openRiderGalopEditModalId'] = null;
+            $profileData['protocolUploadForm'] = $this->createForm(ProtocolUploadType::class)->createView();
         }
 
         return $this->render('rider_profile/index.html.twig', $profileData);
@@ -71,6 +73,7 @@ final class RiderProfileController extends AppController
         $profileData['riderGalopForm'] = $this->createRiderGalopFormView($rider);
         $profileData['isProfileModalOpen'] = true;
         $profileData['isRiderGalopModalOpen'] = false;
+        $profileData['protocolUploadForm'] = $this->createForm(ProtocolUploadType::class)->createView();
 
         return $this->render('rider_profile/index.html.twig', $profileData);
     }

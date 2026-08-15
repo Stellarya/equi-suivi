@@ -9,12 +9,21 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProtocolRepository::class)]
+#[ORM\UniqueConstraint(name: 'uniq_protocol_entry_judge', columns: ['competition_entry_id', 'judge_position'])]
 class Protocol
 {
     public const STATUS_UPLOADED  = 'uploaded';
     public const STATUS_ANALYZING = 'analyzing';
     public const STATUS_ANALYZED  = 'analyzed';
     public const STATUS_FAILED    = 'failed';
+
+    public const JUDGE_C = 'C';
+    public const JUDGE_H = 'H';
+
+    public const JUDGE_POSITION_CHOICES = [
+        'Juge en C' => self::JUDGE_C,
+        'Juge en H' => self::JUDGE_H
+    ];
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy:'IDENTITY')]
@@ -42,6 +51,9 @@ class Protocol
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $generalComment = null;
+
+    #[ORM\Column(length: 2)]
+    private ?string $judgePosition = null;
 
     #[ORM\Column(length: 20, options: ['default' => self::STATUS_UPLOADED])]
     private string $status = self::STATUS_UPLOADED;
@@ -81,6 +93,18 @@ class Protocol
     public function setFilePath(?string $filePath): static
     {
         $this->filePath = $filePath;
+
+        return $this;
+    }
+
+    public function getJudgePosition(): ?string
+    {
+        return $this->judgePosition;
+    }
+
+    public function setJudgePosition(?string $judgePosition): static
+    {
+        $this->judgePosition = $judgePosition;
 
         return $this;
     }
