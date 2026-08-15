@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Service;
 
 use App\Entity\Competition;
 use App\Entity\StatusCompetition;
 use App\Repository\CompetitionRepository;
+use App\Repository\RiderRepository;
 use App\Service\CompetitionService;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +18,7 @@ class CompetitionServiceTest extends TestCase
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $repository = $this->createMock(CompetitionRepository::class);
+        $riderRepository = $this->createMock(RiderRepository::class);
 
         $entityManager
             ->expects($this->once())
@@ -29,7 +31,8 @@ class CompetitionServiceTest extends TestCase
 
         $service = new CompetitionService(
             $entityManager,
-            $repository
+            $repository,
+            $riderRepository
         );
 
         $service->saveCompetition($competition);
@@ -56,6 +59,7 @@ class CompetitionServiceTest extends TestCase
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $repository = $this->createMock(CompetitionRepository::class);
+        $riderRepository = $this->createMock(RiderRepository::class);
 
         $entityManager
             ->expects($this->once())
@@ -67,7 +71,8 @@ class CompetitionServiceTest extends TestCase
 
         $service = new CompetitionService(
             $entityManager,
-            $repository
+            $repository,
+            $riderRepository
         );
 
         $service->saveCompetition($competition);
@@ -89,6 +94,8 @@ class CompetitionServiceTest extends TestCase
 
         $repository = $this->createMock(CompetitionRepository::class);
 
+        $riderRepository = $this->createMock(RiderRepository::class);
+
         $repository
             ->expects($this->once())
             ->method('findBy')
@@ -97,7 +104,8 @@ class CompetitionServiceTest extends TestCase
 
         $service = new CompetitionService(
             $entityManager,
-            $repository
+            $repository,
+            $riderRepository
         );
 
         $result = $service->getAllCompetitions();

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ProtocolFigureScoreRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProtocolFigureScoreRepository::class)]
@@ -21,14 +22,14 @@ class ProtocolFigureScore
     #[ORM\JoinColumn(nullable: false)]
     private ?ProtocolFigure $protocolFigure = null;
 
-    #[ORM\Column]
-    private ?int $score = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: 2)]
+    private ?string $score = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $comment = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $finalScore = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2, nullable: true)]
+    private ?string $finalScore = null;
 
     public function getId(): ?int
     {
@@ -59,12 +60,12 @@ class ProtocolFigureScore
         return $this;
     }
 
-    public function getScore(): ?int
+    public function getScore(): ?string
     {
         return $this->score;
     }
 
-    public function setScore(int $score): static
+    public function setScore(string $score): static
     {
         $this->score = $score;
 
@@ -83,12 +84,12 @@ class ProtocolFigureScore
         return $this;
     }
 
-    public function getFinalScore(): ?int
+    public function getFinalScore(): ?string
     {
         return $this->finalScore;
     }
 
-    public function setFinalScore(?int $finalScore): static
+    public function setFinalScore(?string $finalScore): static
     {
         $this->finalScore = $finalScore;
 

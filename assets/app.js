@@ -46,6 +46,24 @@ document.addEventListener('DOMContentLoaded', () => {
             order: [[1, 'desc']]
         })
     }
-
     
+});
+document.querySelectorAll('.details-tabs__button').forEach(button => {
+    button.addEventListener('click', () => {
+        const targetId = button.dataset.tab;
+
+        document.querySelectorAll('.details-tabs__button').forEach(tabButton => {
+            tabButton.classList.remove('details-tabs__button--active');
+        });
+
+        document.querySelectorAll('.details-tab-content').forEach(content => {
+            content.classList.remove('details-tab-content--active');
+        });
+
+        button.classList.add('details-tabs__button--active');
+
+        document
+            .getElementById(targetId)
+            .classList.add('details-tab-content--active');
+    });
 });

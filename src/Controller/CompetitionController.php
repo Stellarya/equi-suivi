@@ -26,7 +26,13 @@ final class CompetitionController extends AppController
     #[Route('/', name: 'index', methods: ['GET', 'POST'])]
     public function index(): Response
     {
-        $competitions = $this->competitionService->getAllCompetitions();
+        if($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_ECURIE')) {
+            $competitions = $this->competitionService->getAllCompetitions();
+        } else {
+            $competitions = $this->competitionService->getCompetitionsForUser(
+                $this->getUser()
+            );
+        }
         
         $competitionEditForms = [];
         $openCompetitionEditModalId = null;

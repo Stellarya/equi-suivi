@@ -1,0 +1,218 @@
+{% import "macros/macros.html.twig" as macros %}
+
+<div class="rider-profile-panel__toolbar d-flex justify-content-between align-items-end">
+	<h2>{{ 'competition.upcoming' | trans }}</h2>
+</div>
+
+<div class="rider-profile-table-wrapper">
+	<table id="rider-competitions-upcoming-table" class="rider-profile-table">
+		<thead>
+			<tr>
+				<th>{{ 'competition.name' | trans }}</th>
+				<th>{{ 'competition.date' | trans }}</th>
+				<th>{{ 'competition.location' | trans }}</th>
+				<th>{{ 'competition.horse.name' | trans }}</th>
+				<th>{{ 'competition.registration_status' | trans }}</th>
+				<th>{{ 'competition.entries' | trans }}</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for registration in registrationsToGo %}
+				{% set competition = registration.competition %}
+				<tr class="rider-profile-table__row">
+					<td>
+						<strong>{{competition.name }}</strong>
+					</td>
+					<td>
+						{% if competition.startDate == competition.endDate %}
+							{{ competition.startDate|date('d/m/Y') }}
+						{% else %}
+							{{ competition.startDate|date('d/m/Y') }}
+							-
+							{{ competition.endDate|date('d/m/Y') }}
+						{% endif %}
+					</td>
+					<td>
+						{{ competition.location.name }}
+					</td>
+
+					<td>
+						{{ registration.horse.name }}
+					</td>
+
+					<td>
+						{% if registration.statusRegistration %}
+							<span class="badge bg-secondary">
+								{{ registration.statusRegistration.libelle }}
+							</span>
+						{% else %}
+							{{ 'rider.no_info'|trans }}
+						{% endif %}
+					</td>
+
+					<td>
+						{% for entry in registration.competitionEntries %}
+							<div>
+								{% if entry.discipline %}
+									{{ entry.discipline.libelle }}
+								{% endif %}
+
+								{% if entry.category %}
+									-
+									{{ entry.category.libelle }}
+								{% endif %}
+
+								{% if entry.level %}
+									-
+									{{ entry.level.libelle }}
+								{% endif %}
+							</div>
+						{% else %}
+							{{ 'competition.no_entry'|trans }}
+						{% endfor %}
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="6" class="text-center p-4 text-muted">
+						{{ 'competition.no_upcoming_competition'|trans }}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+<div class="rider-profile-panel__toolbar d-flex justify-content-between align-items-end mt-5">
+	<h2>{{ 'competition.history'|trans }}</h2>
+</div>
+
+<div class="rider-profile-table-wrapper">
+	<table id="rider-competitions-history-table" class="rider-profile-table">
+		<thead>
+			<tr>
+				<th>{{ 'competition.name'|trans }}</th>
+				<th>{{ 'competition.date'|trans }}</th>
+				<th>{{ 'competition.horse.name'|trans }}</th>
+				<th>{{ 'competition.entry'|trans }}</th>
+				<th>{{ 'competition.rank'|trans }}</th>
+				<th>{{ 'competition.score'|trans }}</th>
+				<th>{{ 'protocol.title'|trans}}</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for registration in registrationsHistory %}
+				{% set competition = registration.competition %}
+
+				{% for entry in registration.competitionEntries %}
+					<tr class="rider-profile-table__row">
+						<td>
+							<strong>{{ competition.name }}</strong>
+						</td>
+
+						<td>
+							{{ competition.startDate|date('d/m/Y') }}
+						</td>
+
+						<td>
+							{{ registration.horse.name }}
+						</td>
+
+						<td>
+							{% if entry.discipline %}
+								{{ entry.discipline.libelle }}
+							{% endif %}
+
+							{% if entry.level %}
+								-
+								{{ entry.level.libelle }}
+							{% endif %}
+
+							{% if entry.typeTest %}
+								-
+								{{ entry.typeTest.libelle }}
+							{% endif %}
+						</td>
+
+						<td>
+							{% if entry.rank is not null %}
+								{{ entry.rank }}
+
+								{% if entry.numberParticipant is not null %}
+									/
+									{{ entry.numberParticipant }}
+								{% endif %}
+							{% else %}
+								{{ 'rider.no_info'|trans }}
+							{% endif %}
+						</td>
+
+						<td>
+							{% if entry.scorePercent is not null %}
+								{{ entry.scorePercent }}
+								%
+							{% elseif entry.score is not null %}
+								{{ entry.score }}
+							{% else %}
+								{{ 'rider.no_info'|trans }}
+							{% endif %}
+						</td>
+
+						<td>
+							{% for protocol in entry.protocols %}
+								<a href="{{ path('app_protocol_file', {'id': protocol.id}) }}" target="_blank" class="btn btn-sm btn-outline-secondary" title="{{ ('protocol.status.' ~ protocol.status)|trans }}">
+									{{ protocol.judgePosition }}
+								</a>
+							{% endfor %}
+
+							<button type="button" class="btn btn-sm btn-outline-primary" data-modal-open="protocol-upload-modal" data-upload-url="{{ path('app_protocol_upload', {'id': entry.id}) }}" title="{{ 'protocol.upload'|trans }}">
+								<i class="fa-solid fa-upload"></i>
+							</button>
+						</td>
+					</tr>
+				{% else %}
+					<tr class="rider-profile-table__row">
+						<td>
+							<strong>{{ competition.name }}</strong>
+						</td>
+
+						<td>
+							{{ competition.startDate|date('d/m/Y') }}
+						</td>
+
+						<td>
+							{{ registration.horse.name }}
+						</td>
+
+						<td colspan="4">
+							{{ 'competition.no_entry'|trans }}
+						</td>
+					</tr>
+				{% endfor %}
+			{% else %}
+				<tr>
+					<td colspan="7" class="text-center p-4 text-muted">
+						{{ 'competition.no_history'|trans }}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% include "protocol/_protocol_upload-modal.html.twig" %}
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+const form = document.querySelector('.js-protocol-upload-form');
+if (! form) 
+return;
+
+
+
+document.querySelectorAll('[data-upload-url]').forEach(button => {
+button.addEventListener('click', () => {
+form.setAttribute('action', button.dataset.uploadUrl);
+});
+});
+});
+</script>

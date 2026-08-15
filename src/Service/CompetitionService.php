@@ -2,9 +2,11 @@
 
 namespace App\Service;
 
+use App\Entity\AppUser;
 use App\Entity\Competition;
 use App\Entity\StatusCompetition;
 use App\Repository\CompetitionRepository;
+use App\Repository\RiderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class CompetitionService
@@ -12,7 +14,8 @@ class CompetitionService
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly CompetitionRepository $competitionRepository
+        private readonly CompetitionRepository $competitionRepository,
+        private readonly RiderRepository $riderRepository
     ){}
 
     /**
@@ -27,6 +30,19 @@ class CompetitionService
 
         $this->entityManager->persist($competition);
         $this->entityManager->flush();
+    }
+
+    public function getCompetitionsForUser(AppUser $user): array {
+        $rider = $this->riderRepository->findOneBy([
+            'appUser' => $user,
+        ]);
+
+        if (!$rider) {
+            return [];
+        }
+
+        return $this->competitionRepository->findByRider($rider);
+
     }
 
     /**

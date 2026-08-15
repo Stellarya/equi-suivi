@@ -9,8 +9,22 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProtocolRepository::class)]
+#[ORM\UniqueConstraint(name: 'uniq_protocol_entry_judge', columns: ['competition_entry_id', 'judge_position'])]
 class Protocol
 {
+    public const STATUS_UPLOADED  = 'uploaded';
+    public const STATUS_ANALYZING = 'analyzing';
+    public const STATUS_ANALYZED  = 'analyzed';
+    public const STATUS_FAILED    = 'failed';
+
+    public const JUDGE_C = 'C';
+    public const JUDGE_H = 'H';
+
+    public const JUDGE_POSITION_CHOICES = [
+        'Juge en C' => self::JUDGE_C,
+        'Juge en H' => self::JUDGE_H
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy:'IDENTITY')]
     #[ORM\Column]
@@ -23,21 +37,26 @@ class Protocol
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $filePath = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $rawText = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $totalPoints = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2, nullable: true)]
+    private ?string $totalPoints = null;
 
-    #[ORM\Column]
-    private ?int $maxPoints = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2, nullable: true)]
+    private ?string $maxPoints = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $percentage = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 3, nullable: true)]
+    private ?string $percentage = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $generalComment = null;
 
+    #[ORM\Column(length: 2)]
+    private ?string $judgePosition = null;
+
+    #[ORM\Column(length: 20, options: ['default' => self::STATUS_UPLOADED])]
+    private string $status = self::STATUS_UPLOADED;
     /**
      * @var Collection<int, ProtocolFigureScore>
      */
@@ -78,48 +97,60 @@ class Protocol
         return $this;
     }
 
+    public function getJudgePosition(): ?string
+    {
+        return $this->judgePosition;
+    }
+
+    public function setJudgePosition(?string $judgePosition): static
+    {
+        $this->judgePosition = $judgePosition;
+
+        return $this;
+    }
+
     public function getRawText(): ?string
     {
         return $this->rawText;
     }
 
-    public function setRawText(string $rawText): static
+    public function setRawText(?string $rawText): static
     {
         $this->rawText = $rawText;
 
         return $this;
     }
 
-    public function getTotalPoints(): ?int
+    public function getTotalPoints(): ?string
     {
         return $this->totalPoints;
     }
 
-    public function setTotalPoints(?int $totalPoints): static
+    public function setTotalPoints(?string $totalPoints): static
     {
         $this->totalPoints = $totalPoints;
 
         return $this;
     }
 
-    public function getMaxPoints(): ?int
+    public function getMaxPoints(): ?string
     {
         return $this->maxPoints;
     }
 
-    public function setMaxPoints(int $maxPoints): static
+    public function setMaxPoints(?string $maxPoints): static
     {
         $this->maxPoints = $maxPoints;
 
         return $this;
     }
 
-    public function getPercentage(): ?int
+    public function getPercentage(): ?string
     {
         return $this->percentage;
     }
 
-    public function setPercentage(?int $percentage): static
+    public function setPercentage(?string $percentage): static
     {
         $this->percentage = $percentage;
 
@@ -134,6 +165,18 @@ class Protocol
     public function setGeneralComment(?string $generalComment): static
     {
         $this->generalComment = $generalComment;
+
+        return $this;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

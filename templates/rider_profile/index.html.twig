@@ -31,6 +31,14 @@
 								riderGalopEditForms: riderGalopEditForms,
 								openRiderGalopEditModalId: openRiderGalopEditModalId|default(null)
 							} %}
+
+						</div>
+						<div class="details-tab-content" id="tab-competitions">
+							{% include "rider_profile/_tab-competitions.html.twig" with {
+								registrationsHistory: registrationsHistory,
+								registrationsToGo: registrationsToGo,
+								protocolUploadForm: protocolUploadForm
+							} %}
 						</div>
 					</div>
 				</section>
@@ -49,4 +57,37 @@
 			} %}
 		{% endif %}
 	</section>
+	<script>
+		document.querySelectorAll('.details-tabs__item').forEach((tab) => {
+tab.addEventListener('click', () => {
+const targetId = tab.dataset.target;
+
+document.querySelectorAll('.details-tabs__item').forEach((item) => {
+item.classList.remove('details-tabs__item--active');
+});
+
+document.querySelectorAll('.details-tab-content').forEach((content) => {
+content.classList.remove('details-tab-content--active');
+});
+
+tab.classList.add('details-tabs__item--active');
+
+const target = document.getElementById(targetId);
+
+if (target) {
+target.classList.add('details-tab-content--active');
+}
+});
+});
+
+const requestedTab = window.location.hash.replace('#', '');
+
+if (requestedTab) {
+const tabToOpen = document.querySelector (`.details-tabs__item[data-target="${requestedTab}"]`);
+
+if (tabToOpen) {
+tabToOpen.click();
+}
+}
+	</script>
 {% endblock %}
