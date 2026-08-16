@@ -4,8 +4,11 @@ namespace App\Controller;
 
 use App\Entity\CompetitionEntry;
 use App\Entity\Protocol;
+use App\Form\ProtocolReviewType;
 use App\Service\ProtocolService;
 use App\Form\ProtocolUploadType;
+use App\Service\ProtocolAnalysisApplier;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +22,8 @@ final class ProtocolController extends AppController
 {
     public function __construct(
         private readonly ProtocolService $protocolService,
+        private readonly ProtocolAnalysisApplier $applier,
+        private readonly EntityManagerInterface $em
     ) {
     }
 
@@ -70,6 +75,48 @@ final class ProtocolController extends AppController
             $protocol->getFilePath(),
             ResponseHeaderBag::DISPOSITION_INLINE,
         );
+    }
+
+    #[Route('/{id}', name: 'show', methods: ['GET', 'POST'])]
+    public function show(Request $request, Protocol $protocol): Response
+    {
+        $user = $this->getCurrentAppUser();
+        $entry = $protocol->getCompetitionEntry();
+
+        if ($entry === null) {
+            throw $this->createNotFoundException('Protocole sans participation associée.');
+        }
+
+        $this->protocolService->assertCanManageProtocol($entry, $user);
+
+        $form = $this->createForm(ProtocolReviewType::class, $protocol);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $complete = $this->applier->recalculate($protocol);
+
+            $protocol->setStatus(
+                $complete ? Protocol::STATUS_ANALYZED : Protocol::STATUS_NEEDS_REVIEW
+            );
+
+            $this->applier->updateEntryScore($entry);
+            $this->em->flush();
+
+            if ($complete) {
+                $this->addFlash('success', 'Protocole complété et recalculé.');
+
+                return $this->redirectToRoute('app_rider_profile', ['_fragment' => 'tab-competitions']);
+            }
+
+            $this->addFlash('warning', 'Notes enregistrées, il en manque encore.');
+
+            return $this->redirectToRoute('app_protocol_show', ['id' => $protocol->getId()]);
+        }
+
+        return $this->render('protocol/show.html.twig', [
+            'protocol' => $protocol,
+            'form' => $form,
+        ]);
     }
 
 }

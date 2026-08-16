@@ -1,0 +1,137 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+	{{ 'protocol.title'|trans }}
+{% endblock %}
+
+{% block body %}
+	<section class="details-page">
+		<div class="details-page__header">
+			<h1>{{ 'protocol.title'|trans }}
+				—
+				{{ 'protocol.judge'|trans }}
+				{{ protocol.judgePosition }}</h1>
+		</div>
+
+		<div class="rider-profile-panel__toolbar d-flex justify-content-between align-items-center">
+			<div>
+				<span class="badge bg-secondary">{{ ('protocol.status.' ~ protocol.status)|trans }}</span>
+
+				{% if protocol.percentage is not null %}
+					<strong class="ms-3">{{ protocol.percentage|number_format(3, ',', ' ') }}
+						%</strong>
+					<span class="text-muted ms-2">
+						({{ protocol.totalPoints|number_format(2, ',', ' ') }}
+						/
+						{{ protocol.maxPoints|number_format(2, ',', ' ') }})
+					</span>
+				{% endif %}
+
+				{% if protocol.declaredPercentage is not null %}
+					<span class="text-muted ms-3">
+						{{ 'protocol.declared'|trans }}
+						:
+						{{ protocol.declaredPercentage|number_format(3, ',', ' ') }}
+						%
+					</span>
+				{% endif %}
+			</div>
+
+			<a href="{{ path('app_protocol_file', {'id': protocol.id}) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+				<i class="fa-solid fa-file-pdf"></i>
+				{{ 'protocol.see_scan'|trans }}
+			</a>
+		</div>
+
+		{{ form_start(form) }}
+
+		<div class="rider-profile-table-wrapper">
+			<table class="rider-profile-table">
+				<thead>
+					<tr>
+						<th>{{ 'protocol.figure'|trans }}</th>
+						<th>{{ 'protocol.section'|trans }}</th>
+						<th>{{ 'protocol.label'|trans}}</th>
+						<th>{{ 'protocol.note'|trans }}</th>
+						<th>{{ 'protocol.coefficient'|trans }}</th>
+						<th>{{ 'protocol.weighted'|trans }}</th>
+						<th>{{ 'protocol.comment'|trans }}</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					{% set rows = [] %}
+
+					{% for scoreForm in form.protocolFigureScores %}
+						{% set figureScore = scoreForm.vars.data %}
+						{% set figure = figureScore.protocolFigure %}
+						{% set rows = rows|merge([{
+                            form: scoreForm,
+                            data: figureScore,
+                            figure: figure,
+                            rank: (figure.section == constant('App\\Entity\\ProtocolFigure::SECTION_TECHNICAL') ? 0 : 100) + figure.number
+                        }]) %}
+					{% endfor %}
+
+					{% for row in rows|sort((a, b) => a.rank - b.rank) %}
+						<tr class="rider-profile-table__row {{ row.data.score is null ? 'table-warning' : '' }}">
+							<td>
+								<strong>{{ row.figure.number }}</strong>
+							</td>
+
+							<td>
+								<span class="badge bg-secondary">
+									{{ ('protocol.section.' ~ row.figure.section)|trans }}
+								</span>
+							</td>
+
+							<td>
+								{% if row.figure.label %}
+									{{ row.figure.label }}
+								{% elseif row.figure.directiveIdeas %}
+									{% set ideas = row.figure.directiveIdeas %}
+									<span class="text-muted">
+										{{ ideas|slice(0, 70) }}{{ ideas|length > 70 ? '…' : '' }}
+									</span>
+								{% endif %}
+							</td>
+
+							<td>
+								{{ form_widget(row.form.score) }}
+								{{ form_errors(row.form.score) }}
+							</td>
+
+							<td>{{ row.figure.coefficient|number_format(2, ',', ' ') }}</td>
+
+							<td>
+								{% if row.data.finalScore is not null %}
+									{{ row.data.finalScore|number_format(2, ',', ' ') }}
+								{% else %}
+									—
+								{% endif %}
+							</td>
+
+							<td>{{ row.data.comment ?? '' }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+		{% if protocol.generalComment %}
+			<p class="mt-3">
+				<strong>{{ 'protocol.general_comment'|trans }}
+					:</strong>
+				{{ protocol.generalComment }}</p>
+		{% endif %}
+
+		<div class="mt-3">
+			<button type="submit" class="btn btn-primary">{{ 'actions.save'|trans }}</button>
+			<a href="{{ path('app_rider_profile', {'_fragment': 'tab-competitions'}) }}" class="btn btn-outline-secondary">
+				{{ 'actions.cancel'|trans }}
+			</a>
+		</div>
+
+		{{ form_end(form) }}
+	</section>
+{% endblock %}

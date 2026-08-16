@@ -65,7 +65,7 @@ class ProtocolFigureScore
         return $this->score;
     }
 
-    public function setScore(string $score): static
+    public function setScore(?string $score): static
     {
         $this->score = $score;
 

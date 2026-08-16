@@ -97,6 +97,7 @@ final class AnalyzeProtocolHandler
         }
 
         $protocol->setStatus($complete ? Protocol::STATUS_ANALYZED : Protocol::STATUS_NEEDS_REVIEW);
+        $this->applier->updateEntryScore($protocol->getCompetitionEntry());
         $this->em->flush();
     }
 

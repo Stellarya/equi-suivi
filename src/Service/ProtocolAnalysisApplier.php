@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\AnalysisResult;
+use App\Entity\CompetitionEntry;
 use App\Entity\Protocol;
 use App\Entity\ProtocolFigure;
 use App\Entity\ProtocolFigureScore;
@@ -137,6 +138,89 @@ final class ProtocolAnalysisApplier
         }
 
         return true;
+    }
+
+    /**
+     * Recalcule les totaux à partir des notes présentes en base.
+     *
+     * @return bool true si toutes les notes sont renseignées
+     */
+    public function recalculate(Protocol $protocol): bool
+    {
+        $total = 0.0;
+        $max = 0.0;
+        $complete = true;
+
+        foreach ($protocol->getProtocolFigureScores() as $figureScore) {
+            $figure = $figureScore->getProtocolFigure();
+
+            if ($figure === null || $figure->getMaxPoints() === null) {
+                continue;
+            }
+
+            $coefficient = (float) $figure->getCoefficient();
+            $max += (float) $figure->getMaxPoints() * $coefficient;
+
+            $score = $figureScore->getScore();
+
+            if ($score === null) {
+                $complete = false;
+                $figureScore->setFinalScore(null);
+                continue;
+            }
+
+            $final = (float) $score * $coefficient;
+            $figureScore->setFinalScore(number_format($final, 2, '.', ''));
+            $total += $final;
+        }
+
+        $protocol->setMaxPoints(number_format($max, 2, '.', ''));
+
+        if (!$complete) {
+            $protocol->setTotalPoints(null);
+            $protocol->setPercentage(null);
+
+            return false;
+        }
+
+        $protocol->setTotalPoints(number_format($total, 2, '.', ''));
+        $protocol->setPercentage(number_format($total / $max * 100, 3, '.', ''));
+
+        return true;
+    }
+
+    /**
+     * Moyenne des pourcentages des juges, uniquement si tous les
+     * protocoles de l'épreuve sont complets.
+     */
+    public function updateEntryScore(CompetitionEntry $entry): void
+    {
+        $protocols = $entry->getProtocols();
+
+        if ($protocols->isEmpty()) {
+            $entry->setScorePercent(null);
+
+            return;
+        }
+
+        $sum = 0.0;
+        $count = 0;
+
+        foreach ($protocols as $protocol) {
+            if ($protocol->getStatus() !== Protocol::STATUS_ANALYZED
+                || $protocol->getPercentage() === null
+            ) {
+                // Un juge incomplet : pas de moyenne, sinon elle serait fausse.
+                $entry->setScorePercent(null);
+
+                return;
+            }
+
+            $sum += (float) $protocol->getPercentage();
+            $count++;
+        }
+
+        $entry->setScorePercent(number_format($sum / $count, 3, '.', ''));
     }
 
     private function clearExistingScores(Protocol $protocol): void

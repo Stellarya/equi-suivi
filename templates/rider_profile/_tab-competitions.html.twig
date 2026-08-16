@@ -161,8 +161,15 @@
 
 						<td>
 							{% for protocol in entry.protocols %}
-								<a href="{{ path('app_protocol_file', {'id': protocol.id}) }}" target="_blank" class="btn btn-sm btn-outline-secondary" title="{{ ('protocol.status.' ~ protocol.status)|trans }}">
+								<a href="{{ path('app_protocol_show', {'id': protocol.id}) }}" class="btn btn-sm {{ protocol.status == 'analyzed' ? 'btn-outline-success' : 'btn-outline-warning' }}" title="{{ ('protocol.status.' ~ protocol.status)|trans }}">
 									{{ protocol.judgePosition }}
+									{% if protocol.percentage is not null %}
+										—
+										{{ protocol.percentage|number_format(1, ',', ' ') }}
+										%
+									{% elseif protocol.status == 'needs_review' %}
+										<i class="fa-solid fa-pen"></i>
+									{% endif %}
 								</a>
 							{% endfor %}
 
