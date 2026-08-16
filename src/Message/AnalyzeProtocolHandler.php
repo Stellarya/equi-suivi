@@ -68,11 +68,11 @@ final class AnalyzeProtocolHandler
             throw new UnrecoverableMessageHandlingException('Position du juge manquante.');
         }
 
-        $expectedFigureNumbers = [];
+        $expectedFigures = [];
         $activeFigures = [];
         foreach ($dressageTest->getProtocolFigures() as $figure) {
             if ($figure->isEstActif()) {
-                $expectedFigureNumbers[] = $figure->getNumber();
+                $expectedFigures[$figure->getSection()][] = $figure->getNumber();
                 $activeFigures[] = $figure;
             }
         }
@@ -81,7 +81,7 @@ final class AnalyzeProtocolHandler
 
         $result = $this->analyzer->analyze(
             $this->protocolService->getAbsolutePath($protocol),
-            $expectedFigureNumbers,
+            $expectedFigures,
             $judgePosition
         );
 

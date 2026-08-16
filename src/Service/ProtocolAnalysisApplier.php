@@ -26,27 +26,32 @@ final class ProtocolAnalysisApplier
      */
     public function apply(Protocol $protocol, AnalysisResult $result, array $activeFigures): bool
     {
-        $figuresByNumber = [];
+        $figuresByKey = [];
+
         foreach ($activeFigures as $figure) {
             if ($figure->getMaxPoints() === null) {
                 throw new ProtocolAnalysisException(
-                    sprintf('La figure %d n\'a pas de barème (maxPoints).', $figure->getNumber())
+                    sprintf('La figure %s %d n\'a pas de barème.', $figure->getSection(), $figure->getNumber())
                 );
             }
-            $figuresByNumber[$figure->getNumber()] = $figure;
+
+            $figuresByKey[$figure->getSection() . ':' . $figure->getNumber()] = $figure;
         }
 
-        $readingsByNumber = [];
+        $readingsByKey = [];
+
         foreach ($result->figures as $reading) {
-            if (!isset($figuresByNumber[$reading->number])) {
-                throw new ProtocolAnalysisException(
-                    sprintf('Figure %d inconnue dans cette reprise.', $reading->number)
-                );
+            $key = $reading->section . ':' . $reading->number;
+
+            if (!isset($figuresByKey[$key])) {
+                throw new ProtocolAnalysisException(sprintf('Figure %s inconnue dans cette reprise.', $key));
             }
-            $readingsByNumber[$reading->number] = $reading;
+
+            $readingsByKey[$key] = $reading;
         }
 
-        $missing = array_diff(array_keys($figuresByNumber), array_keys($readingsByNumber));
+        $missing = array_diff(array_keys($figuresByKey), array_keys($readingsByKey));
+
         if ($missing !== []) {
             throw new ProtocolAnalysisException(
                 sprintf('Figures absentes de la lecture : %s.', implode(', ', $missing))
@@ -59,8 +64,8 @@ final class ProtocolAnalysisApplier
         $max = 0.0;
         $needsReview = false;
 
-        foreach ($figuresByNumber as $number => $figure) {
-            $reading = $readingsByNumber[$number];
+        foreach ($figuresByKey as $key => $figure) {
+            $reading = $readingsByKey[$key];
             $coefficient = (float) $figure->getCoefficient();
             $figureMax = (float) $figure->getMaxPoints();
 
@@ -71,27 +76,33 @@ final class ProtocolAnalysisApplier
             $figureScore->setProtocolFigure($figure);
             $figureScore->setComment($reading->comment);
 
-            if ($reading->score === null || $reading->confidence < self::CONFIDENCE_THRESHOLD) {
+            $score = $reading->score;
+
+            // Rien de lu : ligne créée sans note, à saisir manuellement.
+            if ($score === null) {
                 $needsReview = true;
                 $this->em->persist($figureScore);
                 continue;
             }
 
-            if ($reading->score < 0.0 || $reading->score > $figureMax) {
-                throw new ProtocolAnalysisException(
-                    sprintf('Note %s hors barème pour la figure %d.', $reading->score, $number)
-                );
+            // Note aberrante : défaut de lecture, pas une erreur technique.
+            if ($score < 0.0 || $score > $figureMax || fmod($score, self::SCORE_STEP) !== 0.0) {
+                $needsReview = true;
+                $this->em->persist($figureScore);
+                continue;
             }
 
-            if (fmod($reading->score, self::SCORE_STEP) !== 0.0) {
-                throw new ProtocolAnalysisException(
-                    sprintf('Note %s non conforme au pas de %s.', $reading->score, self::SCORE_STEP)
-                );
+            // Note plausible : on la conserve dans tous les cas.
+            $figureScore->setScore(number_format($score, 2, '.', ''));
+
+            // Lecture peu sûre : note gardée, mais à confirmer avant de compter.
+            if ($reading->confidence < self::CONFIDENCE_THRESHOLD) {
+                $needsReview = true;
+                $this->em->persist($figureScore);
+                continue;
             }
 
-            $final = $reading->score * $coefficient;
-
-            $figureScore->setScore(number_format($reading->score, 2, '.', ''));
+            $final = $score * $coefficient;
             $figureScore->setFinalScore(number_format($final, 2, '.', ''));
 
             $total += $final;
@@ -105,8 +116,21 @@ final class ProtocolAnalysisApplier
             return false;
         }
 
+        $percentage = $total / $max * 100;
+
         $protocol->setTotalPoints(number_format($total, 2, '.', ''));
-        $protocol->setPercentage(number_format($total / $max * 100, 3, '.', ''));
+        $protocol->setPercentage(number_format($percentage, 3, '.', ''));
+
+        $totalMatches = $result->declaredTotal !== null
+            && abs($result->declaredTotal - $total) < 0.01;
+
+        $percentageMatches = $result->declaredPercentage !== null
+            && abs($result->declaredPercentage - $percentage) < 0.05;
+
+        // Aucun témoin ne confirme : lecture douteuse, on fait relire.
+        if (!$totalMatches && !$percentageMatches) {
+            return false;
+        }
 
         return true;
     }
@@ -116,6 +140,7 @@ final class ProtocolAnalysisApplier
         foreach ($protocol->getProtocolFigureScores() as $existing) {
             $this->em->remove($existing);
         }
+
         $this->em->flush();
     }
 }

@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Dto\AnalysisResult;
 use App\Dto\FigureReading;
+use App\Entity\ProtocolFigure;
 use App\Exception\QuotaExceededException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -19,18 +20,18 @@ final class MistralProtocolAnalyzer implements ProtocolAnalyzerInterface
         private readonly string $mistralOcrModel,
     ) {}
 
-    public function analyze(
-        string $filePath,
-        array $expectedFigureNumbers,
-        string $judgePosition,
-    ): AnalysisResult {
+    /**
+     * @param array<string, int[]> $expectedFigures
+     */
+    public function analyze(string $filePath, array $expectedFigures, string $judgePosition): AnalysisResult
+    {
         $response = $this->httpClient->request('POST', self::ENDPOINT, [
             'auth_bearer' => $this->mistralApiKey,
             'timeout' => 120,
             'json' => [
                 'model' => $this->mistralOcrModel,
                 'document' => $this->buildDocumentChunk($filePath),
-                'document_annotation_prompt' => $this->buildPrompt($expectedFigureNumbers),
+                'document_annotation_prompt' => $this->buildPrompt($expectedFigures),
                 'document_annotation_format' => [
                     'type' => 'json_schema',
                     'json_schema' => [
@@ -56,13 +57,187 @@ final class MistralProtocolAnalyzer implements ProtocolAnalyzerInterface
 
         $payload = $response->toArray();
 
-        $annotation = json_decode(
-            $payload['document_annotation'] ?? '',
-            true,
-            flags: JSON_THROW_ON_ERROR,
-        );
+        $annotation = json_decode($payload['document_annotation'] ?? '{}', true) ?? [];
+        $parsed = $this->parseMarkdownTables($payload['pages'] ?? [], $expectedFigures);
 
-        return $this->toAnalysisResult($annotation, $judgePosition);
+        $figures = [];
+
+        foreach ($expectedFigures as $section => $numbers) {
+            foreach ($numbers as $number) {
+                $figures[] = $parsed['readings'][$section . ':' . $number]
+                    ?? new FigureReading($section, $number, null, null, 0.0);
+            }
+        }
+
+        return new AnalysisResult(
+            judgePosition: $judgePosition,
+            testLabel: $annotation['test_label'] ?? null,
+            generalComment: $annotation['general_comment'] ?? null,
+            figures: $figures,
+            declaredTotal: $parsed['declaredTotal'],
+            declaredPercentage: $parsed['declaredPercentage'],
+        );
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $pages
+     * @param array<string, int[]> $expectedFigures
+     * @return array{
+     *     readings: array<string, FigureReading>,
+     *     declaredTotal: float|null,
+     *     declaredPercentage: float|null
+     * }
+     */
+    private function parseMarkdownTables(array $pages, array $expectedFigures): array
+    {
+        $readings = [];
+        $declaredTotal = null;
+        $declaredPercentage = null;
+
+        $section = ProtocolFigure::SECTION_TECHNICAL;
+        $lastNumber = null;
+        $scoreIndex = null;
+        $commentIndex = null;
+
+        foreach ($pages as $page) {
+            foreach (preg_split('/\R/', (string) ($page['markdown'] ?? '')) as $line) {
+                $line = trim($line);
+
+                if ($line === '') {
+                    continue;
+                }
+
+                // Bascule vers les notes d'ensemble (tolérant aux variantes d'apostrophe).
+                if (preg_match('/notes\s*d.{0,3}\s*ensemble/iu', $line) === 1) {
+                    $section = ProtocolFigure::SECTION_COLLECTIVE;
+                    $lastNumber = null;
+                    continue;
+                }
+
+                // Total imprimé par le juge : "Total/300 ... 187,5 pts"
+                if (preg_match('#total\s*/\s*\d+#iu', $line) === 1
+                    && preg_match('/(\d+(?:[.,]\d+)?)\s*pts/iu', $line, $m) === 1
+                ) {
+                    $declaredTotal = (float) str_replace(',', '.', $m[1]);
+                    continue;
+                }
+
+                // Pourcentage imprimé : "Conversion en pourcentage soit 62,5 %"
+                if (preg_match('/conversion en pourcentage.*?(\d+(?:[.,]\d+)?)\s*%/iu', $line, $m) === 1) {
+                    $declaredPercentage = (float) str_replace(',', '.', $m[1]);
+                    continue;
+                }
+
+                if (!str_starts_with($line, '|')) {
+                    continue;
+                }
+
+                $cells = array_map(trim(...), explode('|', trim($line, '|')));
+
+                if ($this->isSeparatorRow($cells)) {
+                    continue;
+                }
+
+                $header = $this->detectHeader($cells);
+
+                if ($header !== null) {
+                    [$scoreIndex, $commentIndex] = $header;
+                    continue;
+                }
+
+                if ($scoreIndex === null) {
+                    continue;
+                }
+
+                $number = filter_var($cells[0] ?? '', FILTER_VALIDATE_INT);
+
+                if ($number === false) {
+                    continue;
+                }
+
+                // Filet de sécurité : le numéro repart en arrière => notes d'ensemble.
+                if ($section === ProtocolFigure::SECTION_TECHNICAL
+                    && $lastNumber !== null
+                    && $number <= $lastNumber
+                ) {
+                    $section = ProtocolFigure::SECTION_COLLECTIVE;
+                }
+
+                if (!in_array($number, $expectedFigures[$section] ?? [], true)) {
+                    continue;
+                }
+
+                $score = $this->parseScore($cells[$scoreIndex] ?? null);
+
+                if ($score === null) {
+                    continue;
+                }
+
+                $lastNumber = $number;
+                $comment = trim((string) ($cells[$commentIndex] ?? ''));
+
+                // Première lecture gagne : on perd une figure plutôt que d'en corrompre une.
+                $readings[$section . ':' . $number] ??= new FigureReading(
+                    section: $section,
+                    number: $number,
+                    score: $score,
+                    comment: $comment === '' ? null : $comment,
+                    confidence: 1.0,
+                );
+            }
+        }
+
+        return [
+            'readings' => $readings,
+            'declaredTotal' => $declaredTotal,
+            'declaredPercentage' => $declaredPercentage,
+        ];
+    }
+
+    /**
+     * @param string[] $cells
+     */
+    private function isSeparatorRow(array $cells): bool
+    {
+        if ($cells === []) {
+            return false;
+        }
+
+        foreach ($cells as $cell) {
+            if (preg_match('/^:?-{2,}:?$/', $cell) !== 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string[] $cells
+     * @return array{0: int, 1: int}|null
+     */
+    private function detectHeader(array $cells): ?array
+    {
+        $scoreIndex = null;
+        $commentIndex = null;
+
+        foreach ($cells as $index => $cell) {
+            if ($index === 0) {
+                continue;   // colonne du numéro, jamais une note
+            }
+
+            $normalized = mb_strtolower($cell);
+
+            if (str_contains($normalized, 'note') && preg_match('/\d/', $cell) === 1) {
+                $scoreIndex = $index;
+            }
+
+            if (str_contains($normalized, 'observation')) {
+                $commentIndex = $index;
+            }
+        }
+
+        return $scoreIndex === null ? null : [$scoreIndex, $commentIndex ?? count($cells) - 1];
     }
 
     /**
@@ -85,19 +260,24 @@ final class MistralProtocolAnalyzer implements ProtocolAnalyzerInterface
     }
 
     /**
-     * @param int[] $expectedFigureNumbers
+     * @param array<string, int[]> $expectedFigures
      */
-    private function buildPrompt(array $expectedFigureNumbers): string
+    private function buildPrompt(array $expectedFigures): string
     {
+        $technical = $expectedFigures[ProtocolFigure::SECTION_TECHNICAL] ?? [];
+        $collective = $expectedFigures[ProtocolFigure::SECTION_COLLECTIVE] ?? [];
+
         return sprintf(
-            'Ce document est un protocole de dressage équestre de la FFE, éventuellement sur plusieurs pages. '
-            . 'Extrais la note manuscrite et le commentaire manuscrit de chaque ligne du tableau. '
-            . 'Le document comporte exactement %d figures, numérotées : %s. '
-            . 'Retourne une entrée par figure, y compris celles que tu ne parviens pas à lire : '
-            . 'dans ce cas mets score à null et confidence à 0. '
-            . 'Les notes vont de 0 à 10 par pas de 0,5. N\'invente jamais une note.',
-            count($expectedFigureNumbers),
-            implode(', ', $expectedFigureNumbers),
+            'Protocole de dressage FFE sur plusieurs pages. '
+            . 'Le tableau principal contient %d figures techniques numérotées %s. '
+            . 'Le bloc "NOTES D\'ENSEMBLE" contient %d lignes dont la numérotation repart à 1 (%s). '
+            . 'Pour chaque ligne, extrais la note manuscrite et le commentaire manuscrit. '
+            . 'Ignore les lignes TOTAL, pénalités et pourcentages. '
+            . 'Mets score à null pour toute note que tu ne lis pas avec certitude. N\'invente jamais une note.',
+            count($technical),
+            implode(', ', $technical),
+            count($collective),
+            implode(', ', $collective),
         );
     }
 
@@ -109,50 +289,12 @@ final class MistralProtocolAnalyzer implements ProtocolAnalyzerInterface
         return [
             'type' => 'object',
             'additionalProperties' => false,
-            'required' => ['test_label', 'general_comment', 'figures'],
+            'required' => ['test_label', 'general_comment'],
             'properties' => [
                 'test_label' => ['type' => ['string', 'null']],
                 'general_comment' => ['type' => ['string', 'null']],
-                'figures' => [
-                    'type' => 'array',
-                    'items' => [
-                        'type' => 'object',
-                        'additionalProperties' => false,
-                        'required' => ['number', 'score', 'comment', 'confidence'],
-                        'properties' => [
-                            'number' => ['type' => 'integer'],
-                            'score' => ['type' => ['number', 'null']],
-                            'comment' => ['type' => ['string', 'null']],
-                            'confidence' => ['type' => 'number'],
-                        ],
-                    ],
-                ],
             ],
         ];
-    }
-
-    /**
-     * @param array<string, mixed> $annotation
-     */
-    private function toAnalysisResult(array $annotation, string $judgePosition): AnalysisResult
-    {
-        $figures = [];
-
-        foreach ($annotation['figures'] ?? [] as $row) {
-            $figures[] = new FigureReading(
-                number: (int) $row['number'],
-                score: $this->parseScore($row['score'] ?? null),
-                comment: $row['comment'] ?? null,
-                confidence: (float) ($row['confidence'] ?? 0.0),
-            );
-        }
-
-        return new AnalysisResult(
-            judgePosition: $judgePosition,
-            testLabel: $annotation['test_label'] ?? null,
-            generalComment: $annotation['general_comment'] ?? null,
-            figures: $figures,
-        );
     }
 
     private function parseScore(mixed $raw): ?float

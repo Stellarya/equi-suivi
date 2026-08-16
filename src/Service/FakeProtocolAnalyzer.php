@@ -11,17 +11,20 @@ use Override;
 final class FakeProtocolAnalyzer implements ProtocolAnalyzerInterface
 {
     #[Override]
-    public function analyze(string $filePath, array $expectedFigureNumbers, string $judgePosition): AnalysisResult
+    public function analyze(string $filePath, array $expectedFigures, string $judgePosition): AnalysisResult
     {
         $figures = [];
 
-        foreach ($expectedFigureNumbers as $number) {
-            $figures[] = new FigureReading(
-                number: $number,
-                score: 6.5,
-                comment: sprintf('Commentaire simulé pour la figue %d', $number),
-                confidence: 0.95
-            );
+        foreach ($expectedFigures as $section => $numbers) {
+            foreach ($numbers as $number) {
+                $figures[] = new FigureReading(
+                    section: $section,
+                    number: $number,
+                    score: 6.5,
+                    comment: sprintf('Commentaire simulé pour %s %d', $section, $number),
+                    confidence: 0.95,
+                );
+            }
         }
 
          return new AnalysisResult(

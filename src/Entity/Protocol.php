@@ -46,6 +46,12 @@ class Protocol
     private ?string $totalPoints = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2, nullable: true)]
+    private ?string $declaredTotalPoints = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 3, nullable: true)]
+    private ?string $declaredPercentage = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2, nullable: true)]
     private ?string $maxPoints = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 3, nullable: true)]
@@ -131,6 +137,30 @@ class Protocol
     public function setTotalPoints(?string $totalPoints): static
     {
         $this->totalPoints = $totalPoints;
+
+        return $this;
+    }
+
+    public function getDeclaredTotalPoints(): ?string
+    {
+        return $this->declaredTotalPoints;
+    }
+
+    public function setDeclaredTotalPoints(?string $declaredTotalPoints): static
+    {
+        $this->declaredTotalPoints = $declaredTotalPoints;
+
+        return $this;
+    }
+
+    public function getDeclaredPercentage(): ?string
+    {
+        return $this->declaredPercentage;
+    }
+
+    public function setDeclaredPercentage(?string $declaredPercentage): static
+    {
+        $this->declaredPercentage = $declaredPercentage;
 
         return $this;
     }

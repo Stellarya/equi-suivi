@@ -13,7 +13,9 @@ final readonly class AnalysisResult
         public string $judgePosition,
         public ?string $testLabel,
         public ?string $generalComment,
-        public array $figures
+        public array $figures,
+        public ?float $declaredTotal = null,
+        public ?float $declaredPercentage = null
     )
     {}
 }
