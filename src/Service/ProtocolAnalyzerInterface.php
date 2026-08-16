@@ -9,5 +9,5 @@ use App\Dto\AnalysisResult;
 interface ProtocolAnalyzerInterface
 {
 
-    public function analyze(string $filePath, array $expectedFigureNumbers): AnalysisResult;
+    public function analyze(string $filePath, array $expectedFigureNumbers, string $judgePosition): AnalysisResult;
 }

@@ -12,6 +12,7 @@ parameters:
     horse_photos_directory: "%kernel.project_dir%/var/uploads/horses"
     protocol_files_directory: "%kernel.project_dir%/var/uploads/protocols"
     ai_daily_call_limit: 50
+    mistral_ocr_model: "mistral-ocr-latest"
 
 services:
     # default configuration for services in *this* file
@@ -22,6 +23,8 @@ services:
             string $horsePhotosDirectory: "%horse_photos_directory%"
             string $protocolFilesDirectory: "%protocol_files_directory%"
             int $aiDailyCallLimit: "%ai_daily_call_limit%"
+            string $mistralApiKey: "%env(MISTRAL_API_KEY)%"
+            string $mistralOcrModel: "%mistral_ocr_model%"
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -34,6 +37,6 @@ services:
             - "../src/Dto"
             - "../src/Exception"
 
-    App\Service\ProtocolAnalyzerInterface: '@App\Service\FakeProtocolAnalyzer'
+    App\Service\ProtocolAnalyzerInterface: '@App\Service\MistralProtocolAnalyzer'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

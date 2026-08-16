@@ -51,8 +51,8 @@ class CompetitionEntry
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $numberParticipant = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $score = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: 2, nullable: true)]
+    private ?string $score = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 3,nullable: true)]
     private ?string $scorePercent = null;
@@ -199,12 +199,12 @@ class CompetitionEntry
         return $this;
     }
 
-    public function getScore(): ?int
+    public function getScore(): ?string
     {
         return $this->score;
     }
 
-    public function setScore(?int $score): static
+    public function setScore(?string $score): static
     {
         $this->score = $score;
 

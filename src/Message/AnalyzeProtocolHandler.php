@@ -59,6 +59,15 @@ final class AnalyzeProtocolHandler
             throw new UnrecoverableMessageHandlingException('Reprise introuvable pour ce protocole.');
         }
 
+        $judgePosition = $protocol->getJudgePosition();
+
+        if ($judgePosition === null) {
+            $protocol->setStatus(Protocol::STATUS_FAILED);
+            $this->em->flush();
+
+            throw new UnrecoverableMessageHandlingException('Position du juge manquante.');
+        }
+
         $expectedFigureNumbers = [];
         $activeFigures = [];
         foreach ($dressageTest->getProtocolFigures() as $figure) {
@@ -73,13 +82,16 @@ final class AnalyzeProtocolHandler
         $result = $this->analyzer->analyze(
             $this->protocolService->getAbsolutePath($protocol),
             $expectedFigureNumbers,
+            $judgePosition
         );
 
         try {
             $complete = $this->applier->apply($protocol, $result, $activeFigures);
-        } catch (ProtocolAnalysisException $e) {
-            $protocol->setStatus(Protocol::STATUS_FAILED);
-            $this->em->flush();
+        } catch (\Throwable $e) {
+            if ($this->em->isOpen()) {
+                $protocol->setStatus(Protocol::STATUS_FAILED);
+                $this->em->flush();
+            }
 
             throw new UnrecoverableMessageHandlingException($e->getMessage(), previous: $e);
         }

@@ -11,7 +11,7 @@ use Override;
 final class FakeProtocolAnalyzer implements ProtocolAnalyzerInterface
 {
     #[Override]
-    public function analyze(string $filePath, array $expectedFigureNumbers): AnalysisResult
+    public function analyze(string $filePath, array $expectedFigureNumbers, string $judgePosition): AnalysisResult
     {
         $figures = [];
 
@@ -25,7 +25,7 @@ final class FakeProtocolAnalyzer implements ProtocolAnalyzerInterface
         }
 
          return new AnalysisResult(
-            judgePosition: 'C',
+            judgePosition: $judgePosition,
             testLabel: 'Reprise simulée',
             generalComment: 'Analyse simulée, aucun appel réseau.',
             figures: $figures,
