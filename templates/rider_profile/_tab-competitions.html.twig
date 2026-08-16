@@ -150,7 +150,7 @@
 
 						<td>
 							{% if entry.scorePercent is not null %}
-								{{ entry.scorePercent }}
+								{{ entry.scorePercent|number_format(3, ',', ' ') }}
 								%
 							{% elseif entry.score is not null %}
 								{{ entry.score }}

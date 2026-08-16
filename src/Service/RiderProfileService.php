@@ -14,7 +14,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class RiderProfileService {
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ProtocolAnalysisApplier $applier
     ) {}
 
     public function getRiderForUser(AppUser $user): Rider {
@@ -65,9 +66,21 @@ class RiderProfileService {
                 $registrationsToGo[] = $registration;
             }
         }
+       $registrationsHistory = $this->sortCompetitionRegistrations($registrationsHistory, false);
+
+        // Recalcul de la moyenne des juges : elle a pu devenir obsolète
+        // depuis qu'un protocole a été complété manuellement.
+        foreach ($registrationsHistory as $registration) {
+            foreach ($registration->getCompetitionEntries() as $entry) {
+                $this->applier->updateEntryScore($entry);
+            }
+        }
+
+        $this->entityManager->flush();
+
         return [
             'registrationsToGo' => $this->sortCompetitionRegistrations($registrationsToGo),
-            'registrationsHistory' => $this->sortCompetitionRegistrations($registrationsHistory, false)
+            'registrationsHistory' => $registrationsHistory,
         ];
     }
 
