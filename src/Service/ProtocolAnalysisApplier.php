@@ -112,7 +112,7 @@ final class ProtocolAnalysisApplier
         $protocol->setGeneralComment($result->generalComment);
         $protocol->setMaxPoints(number_format($max, 2, '.', ''));
 
-        if ($needsReview) {
+         if ($needsReview) {
             return false;
         }
 
@@ -121,14 +121,18 @@ final class ProtocolAnalysisApplier
         $protocol->setTotalPoints(number_format($total, 2, '.', ''));
         $protocol->setPercentage(number_format($percentage, 3, '.', ''));
 
+        $hasWitness = $result->declaredTotal !== null
+            || $result->declaredPercentage !== null;
+
         $totalMatches = $result->declaredTotal !== null
             && abs($result->declaredTotal - $total) < 0.01;
 
         $percentageMatches = $result->declaredPercentage !== null
             && abs($result->declaredPercentage - $percentage) < 0.05;
 
-        // Aucun témoin ne confirme : lecture douteuse, on fait relire.
-        if (!$totalMatches && !$percentageMatches) {
+        // Un témoin existe et contredit le calcul : lecture douteuse.
+        // Aucun témoin lisible : on fait confiance au calcul.
+        if ($hasWitness && !$totalMatches && !$percentageMatches) {
             return false;
         }
 

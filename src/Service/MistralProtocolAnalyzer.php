@@ -57,6 +57,8 @@ final class MistralProtocolAnalyzer implements ProtocolAnalyzerInterface
 
         $payload = $response->toArray();
 
+        $pageCount = $payload['usage_info']['pages_processed'] ?? 0;
+
         $annotation = json_decode($payload['document_annotation'] ?? '{}', true) ?? [];
         $parsed = $this->parseMarkdownTables($payload['pages'] ?? [], $expectedFigures);
 
@@ -96,8 +98,6 @@ final class MistralProtocolAnalyzer implements ProtocolAnalyzerInterface
 
         $section = ProtocolFigure::SECTION_TECHNICAL;
         $lastNumber = null;
-        $scoreIndex = null;
-        $commentIndex = null;
 
         foreach ($pages as $page) {
             foreach (preg_split('/\R/', (string) ($page['markdown'] ?? '')) as $line) {
@@ -107,14 +107,12 @@ final class MistralProtocolAnalyzer implements ProtocolAnalyzerInterface
                     continue;
                 }
 
-                // Bascule vers les notes d'ensemble (tolérant aux variantes d'apostrophe).
                 if (preg_match('/notes\s*d.{0,3}\s*ensemble/iu', $line) === 1) {
                     $section = ProtocolFigure::SECTION_COLLECTIVE;
                     $lastNumber = null;
                     continue;
                 }
 
-                // Total imprimé par le juge : "Total/300 ... 187,5 pts"
                 if (preg_match('#total\s*/\s*\d+#iu', $line) === 1
                     && preg_match('/(\d+(?:[.,]\d+)?)\s*pts/iu', $line, $m) === 1
                 ) {
@@ -122,7 +120,6 @@ final class MistralProtocolAnalyzer implements ProtocolAnalyzerInterface
                     continue;
                 }
 
-                // Pourcentage imprimé : "Conversion en pourcentage soit 62,5 %"
                 if (preg_match('/conversion en pourcentage.*?(\d+(?:[.,]\d+)?)\s*%/iu', $line, $m) === 1) {
                     $declaredPercentage = (float) str_replace(',', '.', $m[1]);
                     continue;
@@ -138,24 +135,22 @@ final class MistralProtocolAnalyzer implements ProtocolAnalyzerInterface
                     continue;
                 }
 
-                $header = $this->detectHeader($cells);
+                // 1. Le numéro de figure : première cellule qui est un entier nu.
+                $numberIndex = null;
 
-                if ($header !== null) {
-                    [$scoreIndex, $commentIndex] = $header;
+                foreach ($cells as $index => $cell) {
+                    if (preg_match('/^\d{1,2}$/', $cell) === 1) {
+                        $numberIndex = $index;
+                        break;
+                    }
+                }
+
+                if ($numberIndex === null) {
                     continue;
                 }
 
-                if ($scoreIndex === null) {
-                    continue;
-                }
+                $number = (int) $cells[$numberIndex];
 
-                $number = filter_var($cells[0] ?? '', FILTER_VALIDATE_INT);
-
-                if ($number === false) {
-                    continue;
-                }
-
-                // Filet de sécurité : le numéro repart en arrière => notes d'ensemble.
                 if ($section === ProtocolFigure::SECTION_TECHNICAL
                     && $lastNumber !== null
                     && $number <= $lastNumber
@@ -167,21 +162,52 @@ final class MistralProtocolAnalyzer implements ProtocolAnalyzerInterface
                     continue;
                 }
 
-                $score = $this->parseScore($cells[$scoreIndex] ?? null);
+                // 2. La note : première cellule décimale après le numéro.
+                //    Sur les protocoles FFE la note s'écrit toujours 6,5 / 7,0,
+                //    alors que le coefficient est un entier nu : aucune confusion.
+                $score = null;
+                $scoreIndex = null;
+
+                for ($index = $numberIndex + 1, $count = count($cells); $index < $count; $index++) {
+                    if (preg_match('/^\d{1,2}[.,]\d$/', $cells[$index]) !== 1) {
+                        continue;
+                    }
+
+                    $candidate = $this->parseScore($cells[$index]);
+
+                    if ($candidate !== null && $candidate >= 0.0 && $candidate <= 10.0) {
+                        $score = $candidate;
+                        $scoreIndex = $index;
+                        break;
+                    }
+                }
 
                 if ($score === null) {
                     continue;
                 }
 
-                $lastNumber = $number;
-                $comment = trim((string) ($cells[$commentIndex] ?? ''));
+                // 3. Le commentaire : dernière cellule non vide APRÈS la note.
+                //    Avant elle se trouvent les colonnes imprimées (mouvements,
+                //    idées directrices) qu'il ne faut jamais confondre avec
+                //    l'annotation manuscrite du juge.
+                $comment = null;
 
-                // Première lecture gagne : on perd une figure plutôt que d'en corrompre une.
+                for ($index = count($cells) - 1; $index > $scoreIndex; $index--) {
+                    $cell = $cells[$index];
+
+                    if ($cell !== '' && preg_match('/^\d{1,2}([.,]\d)?$/', $cell) !== 1) {
+                        $comment = $cell;
+                        break;
+                    }
+                }
+
+                $lastNumber = $number;
+
                 $readings[$section . ':' . $number] ??= new FigureReading(
                     section: $section,
                     number: $number,
                     score: $score,
-                    comment: $comment === '' ? null : $comment,
+                    comment: $comment,
                     confidence: 1.0,
                 );
             }
@@ -210,34 +236,6 @@ final class MistralProtocolAnalyzer implements ProtocolAnalyzerInterface
         }
 
         return true;
-    }
-
-    /**
-     * @param string[] $cells
-     * @return array{0: int, 1: int}|null
-     */
-    private function detectHeader(array $cells): ?array
-    {
-        $scoreIndex = null;
-        $commentIndex = null;
-
-        foreach ($cells as $index => $cell) {
-            if ($index === 0) {
-                continue;   // colonne du numéro, jamais une note
-            }
-
-            $normalized = mb_strtolower($cell);
-
-            if (str_contains($normalized, 'note') && preg_match('/\d/', $cell) === 1) {
-                $scoreIndex = $index;
-            }
-
-            if (str_contains($normalized, 'observation')) {
-                $commentIndex = $index;
-            }
-        }
-
-        return $scoreIndex === null ? null : [$scoreIndex, $commentIndex ?? count($cells) - 1];
     }
 
     /**
