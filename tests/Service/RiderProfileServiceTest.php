@@ -5,6 +5,7 @@ namespace App\Tests\Service;
 use App\Entity\AppUser;
 use App\Entity\Rider;
 use App\Entity\RiderGalop;
+use App\Service\ProtocolAnalysisApplier;
 use App\Service\RiderProfileService;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -15,8 +16,7 @@ final class RiderProfileServiceTest extends TestCase
     public function testGetRiderForUserReturnsRider(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $service = new RiderProfileService($entityManager);
-
+        $service = $this->createService($entityManager);
         $user = new AppUser();
 
         $rider = new Rider();
@@ -32,7 +32,7 @@ final class RiderProfileServiceTest extends TestCase
     public function testGetRiderForUserThrowsExceptionWhenUserHasNoRider(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $service = new RiderProfileService($entityManager);
+        $service = $this->createService($entityManager);
 
         $user = new AppUser();
 
@@ -44,7 +44,7 @@ final class RiderProfileServiceTest extends TestCase
     public function testGetSortedGalopHistorySortsByObtainedYearDescending(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $service = new RiderProfileService($entityManager);
+        $service = $this->createService($entityManager);
 
         $rider = new Rider();
 
@@ -71,7 +71,7 @@ final class RiderProfileServiceTest extends TestCase
     public function testGetLastGalopReturnsMostRecentGalop(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $service = new RiderProfileService($entityManager);
+        $service = $this->createService($entityManager);
 
         $rider = new Rider();
 
@@ -90,7 +90,7 @@ final class RiderProfileServiceTest extends TestCase
     public function testGetLastGalopReturnsNullWhenHistoryIsEmpty(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $service = new RiderProfileService($entityManager);
+        $service = $this->createService($entityManager);
 
         $rider = new Rider();
 
@@ -100,7 +100,7 @@ final class RiderProfileServiceTest extends TestCase
     public function testBuildProfileViewDataReturnsEmptyDataWhenRiderIsNull(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $service = new RiderProfileService($entityManager);
+        $service = $this->createService($entityManager);
 
         $viewData = $service->buildProfileViewData(null);
 
@@ -116,7 +116,7 @@ final class RiderProfileServiceTest extends TestCase
     public function testBuildProfileViewDataReturnsRiderData(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $service = new RiderProfileService($entityManager);
+        $service = $this->createService($entityManager);
 
         $rider = new Rider();
 
@@ -144,8 +144,13 @@ final class RiderProfileServiceTest extends TestCase
             ->expects(self::once())
             ->method('flush');
 
-        $service = new RiderProfileService($entityManager);
+        $service = $this->createService($entityManager);
 
         $service->saveProfile();
+    }
+
+    private function createService(EntityManagerInterface $entityManager): RiderProfileService
+    {
+        return new RiderProfileService($entityManager, new ProtocolAnalysisApplier($entityManager));
     }
 }

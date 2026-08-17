@@ -5,9 +5,11 @@ namespace App\Service;
 use App\Entity\AppUser;
 use App\Entity\CompetitionEntry;
 use App\Entity\Protocol;
+use App\Message\AnalyzeProtocolMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 final class ProtocolService {
@@ -15,12 +17,18 @@ final class ProtocolService {
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly SluggerInterface $slugger,
+        private readonly MessageBusInterface $messageBus,
         private readonly string $protocolFilesDirectory,
     )
     {}
 
     public function assertCanManageProtocol(CompetitionEntry $entry, AppUser $user): void {
         $registration = $entry->getCompetitionRegistration();
+
+        if ($registration === null) {
+            throw new AccessDeniedHttpException("Participation introuvable");
+        }
+
         $rider = $user->getRider();
 
         if($rider !== null && $registration->getRider() === $rider) {
@@ -31,10 +39,8 @@ final class ProtocolService {
             return;
         }
 
-        if ($registration === null) {
-            throw new AccessDeniedHttpException("vous n'avez pas accès à cette participation");
-        }
-        
+         throw new AccessDeniedHttpException("Vous n'avez pas accès à cette participation.");
+       
     }
 
     public function createFromUpload(CompetitionEntry $entry, UploadedFile $file, string $judgePosition): Protocol {
@@ -65,6 +71,8 @@ final class ProtocolService {
 
         $this->em->persist($protocol);
         $this->em->flush();
+
+        $this->messageBus->dispatch(new AnalyzeProtocolMessage($protocol->getId()));
 
         return $protocol;
     }

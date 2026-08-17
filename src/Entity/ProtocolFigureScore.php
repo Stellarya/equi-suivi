@@ -22,7 +22,7 @@ class ProtocolFigureScore
     #[ORM\JoinColumn(nullable: false)]
     private ?ProtocolFigure $protocolFigure = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: 2)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: 2, nullable: true)]
     private ?string $score = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -65,7 +65,7 @@ class ProtocolFigureScore
         return $this->score;
     }
 
-    public function setScore(string $score): static
+    public function setScore(?string $score): static
     {
         $this->score = $score;
 
