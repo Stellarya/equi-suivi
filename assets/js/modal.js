@@ -42,7 +42,11 @@ export function initModals() {
     });
 }
 
+let lastFocusedElement = null; 
+
 function openModal(modal) {
+    lastFocusedElement = document.activeElement;
+
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('has-open-modal');
@@ -58,4 +62,37 @@ function closeModal(modal) {
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('has-open-modal');
+
+    if(lastFocusedElement !== null) {
+        lastFocusedElement.focus();
+        lastFocusedElement = null;
+    }
+}
+
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+function trapFocus(modal, event) {
+    if (event.key !== 'Tab') {
+        return;
+    }
+
+    const focusables = Array.from(modal.querySelectorAll(FOCUSABLE));
+
+    if (focusables.length === 0) {
+        return;
+    }
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+        return;
+    }
+
+    if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+    }
 }

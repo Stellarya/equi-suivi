@@ -20,11 +20,11 @@
 }
 
 .horse-status-badge--active {
-    background-color: $success-50;
+    background-color: $success-70;
 }
 
 .horse-status-badge--retired {
-    background-color: $info-50;
+    background-color: $info-80;
 }
 
 .horse-status-badge--deceased {
@@ -32,9 +32,9 @@
 }
 
 .horse-status-badge--sold {
-    background-color: $warning-50;
+    background-color: $warning-80;
 }
 
 .horse-status-badge--resting {
-    background-color: $neutral-50;
+    background-color: $neutral-70;
 }

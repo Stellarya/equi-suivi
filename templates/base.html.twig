@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ app.request.locale|default('fr') }}">
 	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta charset="UTF-8">
 		<title>
 			{% block title %}
@@ -24,6 +25,7 @@
 		{% endif %}
 	</head>
 	<body>
+		<a class="skip-link" href="#main-content">Aller au contenu principal</a>
 		<div class="page d-flex">
 			<div id="sidebar">
 				<div class="sticky">
@@ -33,17 +35,19 @@
 			<div id="content">
 				{% include "partials/topbar.html.twig" %}
 
-				<div class="content-inner">
+				<main id="main-content" class="content-inner" tabindex="-1">
 					{% for label, messages in app.flashes %}
 						{% for message in messages %}
-							<div class="alert alert-{{ label }}">
+							<div class="alert alert-{{ label }}" role="{{ label == 'danger' ? 'alert' : 'status' }}">
+								<span class="visually-hidden">{{ ('flash.' ~ label)|trans }}
+									:</span>
 								{{ message }}
 							</div>
 						{% endfor %}
 
 					{% endfor %}
 					{% block body %}{% endblock %}
-				</div>
+				</main>
 			</div>
 
 		</div>

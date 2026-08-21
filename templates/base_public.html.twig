@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ app.request.locale|default('fr') }}">
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>
 			{% block title %}Login
 			{% endblock %}
@@ -16,6 +17,8 @@
 		{% endblock %}
 	</head>
 	<body>
-		{% block body %}{% endblock %}
+		<main>
+			{% block body %}{% endblock %}
+		</main>
 	</body>
 </html>

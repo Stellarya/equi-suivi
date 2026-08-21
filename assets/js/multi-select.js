@@ -15,10 +15,10 @@ export function initMultiselect() {
                 if (option.selected) {
                     const tag = document.createElement('span');
                     tag.className = 'discipline-tag';
-                    tag.innerHTML = `
+                    tag.textContent = `
                         ${option.text}
-                        <button type="button" class="remove-tag" data-id="${option.value}">
-                            <i class="fa-solid fa-xmark"></i>
+                        <button type="button" class="remove-tag" data-id="${option.value}" aria-label="Retirer ${option.text}">
+                            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                         </button>
                     `;
                     tagContainer.appendChild(tag);

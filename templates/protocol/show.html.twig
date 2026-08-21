@@ -38,7 +38,7 @@
 			</div>
 
 			<a href="{{ path('app_protocol_file', {'id': protocol.id}) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
-				<i class="fa-solid fa-file-pdf"></i>
+				<i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
 				{{ 'protocol.see_scan'|trans }}
 			</a>
 		</div>
@@ -47,15 +47,16 @@
 
 		<div class="rider-profile-table-wrapper">
 			<table class="rider-profile-table">
+				<caption class="visually-hidden">{{ 'protocol.table_caption'|trans }}</caption>
 				<thead>
 					<tr>
-						<th>{{ 'protocol.figure'|trans }}</th>
-						<th>{{ 'protocol.section'|trans }}</th>
-						<th>{{ 'protocol.label'|trans}}</th>
-						<th>{{ 'protocol.note'|trans }}</th>
-						<th>{{ 'protocol.coefficient'|trans }}</th>
-						<th>{{ 'protocol.weighted'|trans }}</th>
-						<th>{{ 'protocol.comment'|trans }}</th>
+						<th scope="col">{{ 'protocol.figure'|trans }}</th>
+						<th scope="col">{{ 'protocol.section'|trans }}</th>
+						<th scope="col">{{ 'protocol.label'|trans}}</th>
+						<th scope="col">{{ 'protocol.note'|trans }}</th>
+						<th scope="col">{{ 'protocol.coefficient'|trans }}</th>
+						<th scope="col">{{ 'protocol.weighted'|trans }}</th>
+						<th scope="col">{{ 'protocol.comment'|trans }}</th>
 					</tr>
 				</thead>
 
@@ -99,6 +100,9 @@
 							<td>
 								{{ form_widget(row.form.score) }}
 								{{ form_errors(row.form.score) }}
+								{% if row.data.score is null %}
+									<span class="visually-hidden">{{ 'protocol.score_missing'|trans }}</span>
+								{% endif %}
 							</td>
 
 							<td>{{ row.figure.coefficient|number_format(2, ',', ' ') }}</td>

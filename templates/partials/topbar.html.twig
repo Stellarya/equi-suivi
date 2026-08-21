@@ -17,14 +17,14 @@
 	<div class="topbar__actions">
 		{% if app.user %}
 			<button class="topbar__notification" type="button" aria-label="Notifications">
-				<i class="fa-solid fa-bell"></i>
+				<i class="fa-solid fa-bell" aria-hidden="true"></i>
 				<span class="topbar__notification-badge">6</span>
 			</button>
 
 			<div class="topbar__profile-wrapper" data-dropdown="user-menu">
 				<button class="topbar__profile" type="button" aria-label="Menu utilisateur" aria-expanded="false" aria-controls="topbar-user-menu" data-dropdown-trigger>
 					<span class="topbar__avatar">
-						<i class="fa-solid fa-user"></i>
+						<i class="fa-solid fa-user" aria-hidden="true"></i>
 					</span>
 
 					<span class="topbar__identity">
@@ -41,17 +41,17 @@
 						</span>
 					</span>
 
-					<i class="fa-solid fa-chevron-down topbar__chevron"></i>
+					<i class="fa-solid fa-chevron-down topbar__chevron" aria-hidden="true"></i>
 				</button>
 
 				<div id="topbar-user-menu" class="topbar__dropdown" data-dropdown-menu>
 					<a href="{{ path('app_rider_profile') }}" class="topbar__dropdown-link">
-						<i class="fa-solid fa-id-card"></i>
+						<i class="fa-solid fa-id-card" aria-hidden="true"></i>
 						<span>{{ 'general.topbar.profile' | trans }}</span>
 					</a>
 
 					<a href="{{ path('app_logout') }}" class="topbar__dropdown-link topbar__dropdown-link--danger">
-						<i class="fa-solid fa-right-from-bracket"></i>
+						<i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
 						<span>{{ 'general.topbar.logout' | trans }}</span>
 					</a>
 				</div>

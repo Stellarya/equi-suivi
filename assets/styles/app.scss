@@ -38,4 +38,9 @@ body {
     h3 {
         font-size: $h3;
     }
+
+    :focus-visible {
+        outline: 2px solid $primary-50;
+        outline-offset: 2px;
+    }
 }

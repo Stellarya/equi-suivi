@@ -45,13 +45,14 @@
 
 		<div class="rider-profile-table-wrapper">
 			<table id="competitions-table" class="rider-profile-table">
+				<caption class="visually-hidden">{{ 'competition.table_caption'|trans }}</caption>
 				<thead>
 					<tr>
-						<th>{{ 'competition.name' | trans }}</th>
-						<th>{{ 'competition.location' | trans }}</th>
-						<th>{{ 'competition.startDate' | trans }}</th>
-						<th>{{ 'competition.endDate' | trans }}</th>
-						<th>{{ 'competition.statusCompetition' | trans }}</th>
+						<th scope="col">{{ 'competition.name' | trans }}</th>
+						<th scope="col">{{ 'competition.location' | trans }}</th>
+						<th scope="col">{{ 'competition.startDate' | trans }}</th>
+						<th scope="col">{{ 'competition.endDate' | trans }}</th>
+						<th scope="col">{{ 'competition.statusCompetition' | trans }}</th>
 					</tr>
 				</thead>
 
@@ -64,8 +65,8 @@
 
 
 						<tr class="rider-profile-table__row
-													{{ is_granted('ROLE_ADMIN') or is_granted('ROLE_ECURIE') ? 'rider-profile-table__row--clickable' }}
-													{{ is_past ? 'rider-profile-table__row--past text-muted bg-light' }}" {% if is_granted('ROLE_ADMIN') %} data-modal-open="competition-edit-modal-{{ competition.id }}" {% elseif is_granted('ROLE_ECURIE')%} data-url="{{ path('app_competition_register', {'id': competition.id}) }}" {% endif %} {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_ECURIE') %} role="button" tabindex="0" {% endif %} {% if is_past %} style="opacity: 0.65;" {% endif %}>
+																																												{{ is_granted('ROLE_ADMIN') or is_granted('ROLE_ECURIE') ? 'rider-profile-table__row--clickable' }}
+																																												{{ is_past ? 'rider-profile-table__row--past text-muted bg-light' }}" {% if is_granted('ROLE_ADMIN') %} data-modal-open="competition-edit-modal-{{ competition.id }}" {% elseif is_granted('ROLE_ECURIE')%} data-url="{{ path('app_competition_register', {'id': competition.id}) }}" {% endif %} {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_ECURIE') %} role="button" tabindex="0" {% endif %} {% if is_past %} style="opacity: 0.65;" {% endif %}>
 
 							<td>
 								<strong>{{ competition.name }}</strong>

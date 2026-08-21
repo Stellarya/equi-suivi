@@ -9,7 +9,7 @@
 parameters:
     locale: "fr"
     version_equi_stats: "0.0.1"
-    horse_photos_directory: "%kernel.project_dir%/var/uploads/horses"
+    horse_photos_directory: "%kernel.project_dir%/public/uploads/horses"
     protocol_files_directory: "%kernel.project_dir%/var/uploads/protocols"
     ai_daily_call_limit: 50
     mistral_ocr_model: "mistral-ocr-latest"

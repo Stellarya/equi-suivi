@@ -8,7 +8,7 @@
 			</h2>
 
 			<button type="button" class="app-modal__close" aria-label="Fermer" data-modal-close>
-				<i class="fa-solid fa-xmark"></i>
+				<i class="fa-solid fa-xmark" aria-hidden="true"></i>
 			</button>
 		</div>
 
@@ -66,18 +66,16 @@
 							{{ form_label(form.disciplines) }}
 
 							<div class="custom-tag-select" data-tag-select>
-								{{ form_widget(form.disciplines, { 'attr': {'class': 'd-none', 'data-tag-select-input': 'true'} }) }}
+								{{ form_label(form.disciplines, null, { label_attr: { for: 'horse-disciplines-selector' } }) }}
 
-								<select class="form-control" data-tag-select-selector>
+								<select id="horse-disciplines-selector" class="form-control" data-tag-select-selector>
 									<option value="">{{ 'horse.select_discipline' | trans }}</option>
 									{% for choice in form.disciplines.vars.choices %}
 										<option value="{{ choice.value }}">{{ choice.label }}</option>
 									{% endfor %}
 								</select>
 
-								<div
-									class="tag-container  mt-2" data-tag-container><!-- Les tags sélectionnés apparaîtront ici via JS -->
-								</div>
+								<div class="tag-container  mt-2" data-tag-container aria-live="polite"></div>
 							</div>
 
 							{{ form_errors(form.disciplines) }}
