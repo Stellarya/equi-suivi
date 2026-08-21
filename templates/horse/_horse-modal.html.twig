@@ -7,7 +7,7 @@
 				{{ modalTitle | trans }}
 			</h2>
 
-			<button type="button" class="app-modal__close" aria-label="Fermer" data-modal-close>
+			<button type="button" class="app-modal__close" aria-label="{{ 'actions.close' | trans }}" data-modal-close>
 				<i class="fa-solid fa-xmark" aria-hidden="true"></i>
 			</button>
 		</div>
@@ -27,7 +27,6 @@
 							{{ form_widget(form.name) }}
 							{{ form_errors(form.name) }}
 						</div>
-
 
 						<div class="app-modal__field col-6">
 							{{ form_label(form.affix) }}
@@ -62,11 +61,15 @@
 						</div>
 					</div>
 					<div class="d-flex row mt-1">
-						<div class="app-modal__field col-12">
-							{{ form_label(form.disciplines) }}
+						<div
+							class="app-modal__field col-12">
+							{# Une seule étiquette, rattachée au select réellement manipulé.
+														   Le widget natif reste dans le DOM (masqué) : c'est lui qui porte
+														   la valeur envoyée au serveur et que le JS lit. #}
+							{{ form_label(form.disciplines, null, { label_attr: { for: 'horse-disciplines-selector' } }) }}
 
 							<div class="custom-tag-select" data-tag-select>
-								{{ form_label(form.disciplines, null, { label_attr: { for: 'horse-disciplines-selector' } }) }}
+								{{ form_widget(form.disciplines, { 'attr': {'class': 'd-none', 'data-tag-select-input': 'true'} }) }}
 
 								<select id="horse-disciplines-selector" class="form-control" data-tag-select-selector>
 									<option value="">{{ 'horse.select_discipline' | trans }}</option>
@@ -75,7 +78,7 @@
 									{% endfor %}
 								</select>
 
-								<div class="tag-container  mt-2" data-tag-container aria-live="polite"></div>
+								<div class="tag-container mt-2" data-tag-container data-remove-label="{{ 'horse.remove_discipline' | trans({'%name%': '%name%'}) }}" aria-live="polite"></div>
 							</div>
 
 							{{ form_errors(form.disciplines) }}

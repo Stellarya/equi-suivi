@@ -2,6 +2,8 @@
 
 {% block title %}
 	{{ 'general.login.title'|trans }}
+	—
+	{{ 'general.equi_suivi' | trans }}
 {% endblock %}
 
 {% block body %}
@@ -10,18 +12,22 @@
 
 		<div class="text-side">
 			<div class="box">
-				<form method="post">
+				<form
+					method="post">
+					{# role="alert" : le message doit être porté à la connaissance de
+										   l'utilisateur, pas seulement affiché en rouge. #}
 					{% if error %}
-						<div class="alert alert-danger">
+						<div class="alert alert-danger" role="alert">
+							<span class="visually-hidden">{{ 'general.login.error_title'|trans }}
+								:</span>
 							{{ error.messageKey|trans(error.messageData, 'security') }}
 						</div>
 					{% endif %}
 
 					{% if app.user %}
 						<div class="mb-3">
-							You are logged in as
-							{{ app.user.userIdentifier }},
-							<a href="{{ logout_path() }}">Logout</a>
+							{{ 'general.login.already_logged_in'|trans({'%identifier%': app.user.userIdentifier}) }}
+							<a href="{{ logout_path() }}">{{ 'general.topbar.logout'|trans }}</a>
 						</div>
 					{% endif %}
 

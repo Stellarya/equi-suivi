@@ -4,6 +4,8 @@
 {% set horsesLabel = is_granted('ROLE_ECURIE') ? 'general.sidebar.horses' | trans : 'general.sidebar.my_horses' | trans %}
 {% block title %}
 	{{ horsesLabel }}
+	—
+	{{ 'general.equi_suivi' | trans }}
 {% endblock %}
 
 {% block body %}
@@ -34,6 +36,10 @@
 						{{ 'horse.active_only' | trans }}
 					</span>
 				</label>
+
+				{# Le filtre masque des cartes sans rien annoncer : cette région
+								   live porte le nombre de résultats après chaque bascule. #}
+				<p class="visually-hidden" role="status" data-horse-count data-count-label="{{ 'horse.count_displayed'|trans({'%count%': '%count%'}) }}"></p>
 			</div>
 		{% endif %}
 
@@ -54,7 +60,9 @@
 
 
 								{% if horse.photoFilename %}
-									<img class="app-card__image" src="{{ asset('uploads/horses/' ~ horse.photoFilename) }}" alt="{{ horse.name }}">
+									{# Photo illustrative : le nom est déjà dans le <h2> juste
+																		   en dessous, une alternative le répéterait. #}
+									<img class="app-card__image" src="{{ asset('uploads/horses/' ~ horse.photoFilename) }}" alt="">
 								{% else %}
 									<div class="app-card__image-placeholder">
 										<i class="fa-solid fa-horse-head" aria-hidden="true"></i>
@@ -90,8 +98,12 @@
 										{% endif %}
 									</span>
 								</div>
+								{# Sans le suffixe, la liste des liens du lecteur d'écran
+																   affiche N fois « Voir le cheval » sans distinction. #}
 								<a href="{{ path('app_horse_show', { id: horse.id }) }}" class="btn btn-secondary app-card__link">
 									{{ 'horse.view_horse' | trans }}
+									<span class="visually-hidden">—
+										{{ horse.name }}</span>
 								</a>
 							</div>
 						</article>

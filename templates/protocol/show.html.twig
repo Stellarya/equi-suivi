@@ -37,9 +37,10 @@
 				{% endif %}
 			</div>
 
-			<a href="{{ path('app_protocol_file', {'id': protocol.id}) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+			<a href="{{ path('app_protocol_file', {'id': protocol.id}) }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">
 				<i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
 				{{ 'protocol.see_scan'|trans }}
+				<span class="visually-hidden">({{ 'general.new_window'|trans }})</span>
 			</a>
 		</div>
 
@@ -51,7 +52,7 @@
 				<thead>
 					<tr>
 						<th scope="col">{{ 'protocol.figure'|trans }}</th>
-						<th scope="col">{{ 'protocol.section'|trans }}</th>
+						<th scope="col">{{ 'protocol.section_title'|trans }}</th>
 						<th scope="col">{{ 'protocol.label'|trans}}</th>
 						<th scope="col">{{ 'protocol.note'|trans }}</th>
 						<th scope="col">{{ 'protocol.coefficient'|trans }}</th>
@@ -98,7 +99,13 @@
 							</td>
 
 							<td>
-								{{ form_widget(row.form.score) }}
+								{# 'label' => false dans ProtocolFigureScoreType : le nom accessible
+																   doit venir d'ici, seul endroit qui connaît le numéro de figure. #}
+								{{ form_widget(row.form.score, {
+									attr: {
+										'aria-label': 'protocol.score_for_figure'|trans({'%number%': row.figure.number})
+									}
+								}) }}
 								{{ form_errors(row.form.score) }}
 								{% if row.data.score is null %}
 									<span class="visually-hidden">{{ 'protocol.score_missing'|trans }}</span>
