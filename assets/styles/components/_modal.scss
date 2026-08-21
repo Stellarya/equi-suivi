@@ -97,7 +97,6 @@ body.has-open-modal {
             background-color: $white;
 
             &:focus {
-                outline: none;
                 border-color: $primary-50;
                 box-shadow: 0 0 0 3px $primary-10;
             }

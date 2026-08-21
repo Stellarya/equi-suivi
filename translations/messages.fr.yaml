@@ -1,11 +1,26 @@
 general:
     equi_suivi: "Equi-Suivi"
+    skip_to_content: "Aller au contenu principal"
+    new_window: "nouvelle fenêtre"
+    notifications: "Notifications"
+    notifications_unread: "Notifications, %count% non lues"
+    user_menu: "Menu utilisateur"
+    nav:
+        main: "Navigation principale"
+        horse_details: "Sections de la fiche cheval"
+        rider_profile: "Sections du profil cavalier"
+    home:
+        title: "Accueil"
+        welcome: "Bienvenue sur Equi-Suivi"
+        intro: "Retrouvez vos chevaux, vos compétitions et vos protocoles depuis le menu latéral."
     login:
         title: "Se connecter"
         subtitle: "Entrez votre email et votre mot de passe pour vous connecter."
         email: "Email"
         password: "Mot de passe"
         connection_button: "Se connecter"
+        already_logged_in: "Vous êtes connecté en tant que %identifier%."
+        error_title: "Erreur de connexion"
     sign-in:
         title: "S'inscrire"
         subtitle: "Créer un compte Equi-Suivi"
@@ -38,12 +53,21 @@ general:
     topbar:
         profile: "Mon profil"
         logout: "Se déconnecter"
+
+flash:
+    success: "Succès"
+    danger: "Erreur"
+    warning: "Avertissement"
+    info: "Information"
+
 actions:
     add: "Ajouter"
     edit: "Modifier"
     delete: "Supprimer"
     cancel: "Annuler"
     save: "Enregistrer"
+    close: "Fermer"
+
 rider:
     profile: "Mon profil"
     no_rider: "Aucun profil cavalier n'est encore rattaché à ce compte."
@@ -63,17 +87,22 @@ rider:
     add_galop: "Ajouter un galop"
     edit_galop: "Modifier le galop"
     choose_galop: "Choisir un galop"
+
 horse:
     horse: "Cheval"
     my_horses: "Mes chevaux"
     add: "Ajouter un cheval"
     edit: "Modifier le cheval"
+    details: "Fiche du cheval"
     view_horse: "Voir le cheval"
     no_horse: "Aucun cheval rattaché à votre profil."
+    no_info: "Non renseigné"
+    no_rider: "Aucun cavalier rattaché"
     unknown_breed: "Race non renseignée"
     unknown_coat: "Robe non renseignée"
     years_old: "ans"
     photo: "Photo"
+    photo_of: "Photo de %name%"
     name: "Nom"
     affix: "Affixe"
     birth_date: "Date de naissance"
@@ -83,12 +112,13 @@ horse:
     coat: "Robe"
     disciplines: "Disciplines"
     select_discipline: "Sélection de discipline(s)"
+    remove_discipline: "Retirer la discipline %name%"
     owner: "Propriétaire"
     riders: "Cavaliers"
     status_label: "Statut"
     archive: "Archiver le cheval"
     delete: "Supprimer le cheval"
-    statut: "Status"
+    statut: "Statut"
     status:
         active: "Actif"
         retired: "Retraité"
@@ -108,16 +138,18 @@ horse:
     archive_confirm_title: "Archiver ce cheval ?"
     archive_confirm_message: "Ce cheval sera retiré de la liste principale, mais ses données seront conservées."
     archive_confirm: "Archiver"
-
     delete_confirm_title: "Supprimer ce cheval ?"
     delete_confirm_message: "Cette action supprimera définitivement le cheval. Cette opération est irréversible."
     delete_confirm: "Supprimer définitivement"
     active_only: "Chevaux actifs uniquement"
+    count_displayed: "%count% cheval affiché|%count% chevaux affichés"
+
 pension:
     ranch: "Ecurie"
     type: "Type de pension"
     entry_date: "Date de début"
     end_date: "Date de fin"
+
 ranch:
     name: "Nom de l'écurie"
     address: "Adresse"
@@ -126,6 +158,7 @@ ranch:
     department: "Département"
     zipcode: "Code postal"
     city: "Ville"
+
 competition:
     upcoming: "Compétitions à venir"
     history: "Compétitions passées"
@@ -134,31 +167,53 @@ competition:
     endDate: "Date de fin"
     date: "Date"
     location: "Lieu / Ecurie"
-    registration_status: "Status"
+    registration_status: "Statut"
     entries: "Entrées"
     entry: "Entrée"
     no_entry: "Aucune entrée"
     rank: "Rang"
     score: "Score"
-    statusCompetition: "Status du concours"
+    statusCompetition: "Statut du concours"
     no_data: "Pas de compétitions"
+    no_history: "Aucune compétition passée"
     all_competitions: "Les compétitions"
+    all_competition: "Les compétitions"
     my_competitions: "Mes compétitions"
+    details: "Détail de la compétition"
     edit: "Modifier une compétition"
     add: "Ajouter une compétition"
     no_upcoming_competition: "Aucune compétitions à venir"
     no_history_competition: "Aucune compétitions passées"
+    table_caption: "Liste des compétitions : nom, lieu, dates et statut"
     horse:
         name: "Cheval"
+
+competition_registration:
+    rider: "Cavalier"
+    horse: "Cheval"
+    status: "Statut"
+    table_caption: "Couples engagés sur la compétition : cavalier, cheval et statut d'inscription"
+
 competitionRegistration:
     rider: "Cavalier"
     horse: "Cheval"
     note: "Note"
     register_couple: "Inscrire un couple"
+
+rider-competition-upcoming:
+    table_caption: "Compétitions à venir : nom, date, lieu, cheval, statut d'inscription et entrées"
+
+rider-competition-history:
+    table_caption: "Compétitions passées : nom, date, cheval, entrée, rang, score et protocole"
+
+rider-galops:
+    table_caption: "Galops obtenus et année d'obtention"
+
 locationSelection:
     region: "Région"
     department: "Département"
     ranch: "Ecurie"
+
 protocol:
     title: "Protocole"
     file: "Protocole scanné"
@@ -179,6 +234,11 @@ protocol:
     declared: "Protocole papier"
     see_scan: "Voir le scan"
     label: "Intitulé"
+    section_title: "Section"
+    score_missing: "Note manquante"
+    score_for_figure: "Note de la figure %number%"
+    table_caption: "Notes du protocole par figure : section, intitulé, note, coefficient, note pondérée et commentaire"
     section:
         technical: "Technique"
         collective: "Note d'ensemble"
+        artistic: "Note artistique"

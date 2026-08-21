@@ -15,6 +15,7 @@ import { initModals } from './js/modal.js';
 import { initHorseListFilter } from './js/horse-list-filter.js';
 import { initMultiselect } from './js/multi-select.js';
 import { initCascadingSelects } from './js/cascading-select.js';
+import { initTabs } from './js/initTabs.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     //Topbar
@@ -30,10 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
     initMultiselect();
     initCascadingSelects();
 
+    //Tabs (pattern ARIA : flèches, aria-selected, tabindex roving)
+    initTabs();
+
     //Rider
     const riderGalopsTable = document.querySelector('#rider-galops-table');
 
-    if(riderGalopsTable !== null) {
+    if (riderGalopsTable !== null) {
         new DataTable(riderGalopsTable, {
             searching: false,
             paging: false,
@@ -46,24 +50,4 @@ document.addEventListener('DOMContentLoaded', () => {
             order: [[1, 'desc']]
         })
     }
-    
-});
-document.querySelectorAll('.details-tabs__button').forEach(button => {
-    button.addEventListener('click', () => {
-        const targetId = button.dataset.tab;
-
-        document.querySelectorAll('.details-tabs__button').forEach(tabButton => {
-            tabButton.classList.remove('details-tabs__button--active');
-        });
-
-        document.querySelectorAll('.details-tab-content').forEach(content => {
-            content.classList.remove('details-tab-content--active');
-        });
-
-        button.classList.add('details-tabs__button--active');
-
-        document
-            .getElementById(targetId)
-            .classList.add('details-tab-content--active');
-    });
 });

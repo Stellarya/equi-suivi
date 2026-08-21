@@ -35,7 +35,7 @@
 		{% endif %}
 
 		{% if horse.photoFilename %}
-			<img class="details-info-card__image" src="{{ asset('uploads/horses/' ~ horse.photoFilename) }}" alt="{{ horse.name }}">
+			<img class="details-info-card__image" src="{{ asset('uploads/horses/' ~ horse.photoFilename) }}" alt="{{ 'horse.photo_of'|trans({'%name%': horse.name}) }}">
 		{% else %}
 			<div class="details-info-card__placeholder">
 				<i class="fa-solid fa-horse" aria-hidden="true"></i>

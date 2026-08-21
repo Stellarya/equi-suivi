@@ -1,6 +1,6 @@
 {% import "macros/macros.html.twig" as macros %}
 
-<nav class="details-tabs" aria-label="Navigation du profil cavalier">
+<div class="details-tabs" role="tablist" aria-label="{{ 'general.nav.horse_details'|trans }}">
 	{{ macros.tab(
         'fa-solid fa-medal',
         'rider.galop_history',
@@ -19,4 +19,4 @@
         'rider.horses',
         'tab-horses'
     ) }}
-</nav>
+</div>

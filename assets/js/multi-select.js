@@ -7,63 +7,88 @@ export function initMultiselect() {
         const visualSelector = container.querySelector('[data-tag-select-selector]');
         const tagContainer = container.querySelector('[data-tag-container]');
 
-        // Function to refresh the display of tags based on the selected options
-        function updateTags() {
-            tagContainer.innerHTML = '';
-            
-            Array.from(nativeSelect.options).forEach(option => {
-                if (option.selected) {
-                    const tag = document.createElement('span');
-                    tag.className = 'discipline-tag';
-                    tag.innerHTML = `
-                        ${option.text}
-                        <button type="button" class="remove-tag" data-id="${option.value}">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    `;
-                    tagContainer.appendChild(tag);
-                }
-            });
+        if (nativeSelect === null || visualSelector === null || tagContainer === null) {
+            return;
         }
 
-        // Add event from the visual selector
-        visualSelector.addEventListener('change', (e) => {
-            const val = e.target.value;
-            if (!val) return;
+        // Gabarit du libellé du bouton de retrait, fourni par Twig via data-remove-label.
+        // Ex. : "Retirer la discipline %name%"
+        const removeLabelTemplate = tagContainer.dataset.removeLabel || 'Retirer %name%';
 
-            const optionToSelect = nativeSelect.querySelector(`option[value="${val}"]`);
-            if (optionToSelect) {
-                // FORCE l'état sélectionné à "true" sans toucher aux autres options
+        function buildTag(option) {
+            const tag = document.createElement('span');
+            tag.className = 'discipline-tag';
+
+            // textContent uniquement sur le libellé : pas d'injection HTML possible.
+            const labelNode = document.createElement('span');
+            labelNode.className = 'discipline-tag__label';
+            labelNode.textContent = option.text;
+
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'remove-tag';
+            removeButton.dataset.id = option.value;
+            removeButton.setAttribute('aria-label', removeLabelTemplate.replace('%name%', option.text));
+
+            const icon = document.createElement('i');
+            icon.className = 'fa-solid fa-xmark';
+            icon.setAttribute('aria-hidden', 'true');
+
+            removeButton.appendChild(icon);
+            tag.appendChild(labelNode);
+            tag.appendChild(removeButton);
+
+            return tag;
+        }
+
+        function updateTags() {
+            tagContainer.replaceChildren();
+
+            Array.from(nativeSelect.options)
+                .filter(option => option.selected)
+                .forEach(option => tagContainer.appendChild(buildTag(option)));
+        }
+
+        visualSelector.addEventListener('change', (event) => {
+            const value = event.target.value;
+
+            if (!value) {
+                return;
+            }
+
+            const optionToSelect = Array.from(nativeSelect.options)
+                .find(option => option.value === value);
+
+            if (optionToSelect !== undefined) {
                 optionToSelect.selected = true;
-                
-                // Optionnel : Déclenche l'événement change sur le select natif pour Symfony/les autres scripts
                 nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
-                
                 updateTags();
             }
-            
-            // Reset the visual selector on the placeholder
+
             visualSelector.value = '';
         });
 
-        // Delete event when the small cross of a tag is clicked
-        tagContainer.addEventListener('click', (e) => {
-            const removeBtn = e.target.closest('.remove-tag');
-            if (!removeBtn) return;
+        tagContainer.addEventListener('click', (event) => {
+            const removeButton = event.target.closest('.remove-tag');
 
-            const idToRemove = removeBtn.getAttribute('data-id');
-            const optionToDeselect = nativeSelect.querySelector(`option[value="${idToRemove}"]`);
-            if (optionToDeselect) {
+            if (removeButton === null) {
+                return;
+            }
+
+            const idToRemove = removeButton.dataset.id;
+            const optionToDeselect = Array.from(nativeSelect.options)
+                .find(option => option.value === idToRemove);
+
+            if (optionToDeselect !== undefined) {
                 optionToDeselect.selected = false;
-                
-                // Déclenche l'événement change ici aussi
                 nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
-                
                 updateTags();
+
+                // Le bouton cliqué vient d'être détruit : sans ça le focus repart sur <body>.
+                visualSelector.focus();
             }
         });
 
-        // Initialization on load (Useful when modifying an existing horse)
         updateTags();
     });
 }

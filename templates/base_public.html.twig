@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ app.request.locale|default('fr') }}">
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>
-			{% block title %}Login
+			{% block title %}
+				{{ 'general.equi_suivi' | trans }}
 			{% endblock %}
 		</title>
 
@@ -16,6 +18,8 @@
 		{% endblock %}
 	</head>
 	<body>
-		{% block body %}{% endblock %}
+		<main>
+			{% block body %}{% endblock %}
+		</main>
 	</body>
 </html>

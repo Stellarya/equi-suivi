@@ -1,5 +1,17 @@
 @use './variables' as *;
+.skip-link {
+    position: absolute;
+    left: -9999px;
 
+    &:focus {
+        left: 8px;
+        top: 8px;
+        z-index: 1000;
+        padding: 8px 16px;
+        background-color: $white;
+        color: $primary-60;
+    }
+}
 .page {
     height: 100%;
     overflow: hidden;
@@ -128,7 +140,7 @@
                 height: 16px;
                 padding: 0 4px;
                 border-radius: 999px;
-                background-color: $error-40;
+                background-color: $error-50;
                 color: $white;
                 font-size: $notifications;
                 font-weight: 700;
@@ -194,12 +206,12 @@
             &__role {
                 margin-top: 2px;
                 font-size: $caption;
-                color: $neutral-50;
+                color: $neutral-70;
             }
 
             &__chevron {
                 font-size: $caption;
-                color: $neutral-50;
+                color: $neutral-70;
                 transition: transform 0.2s ease;
             }
 
