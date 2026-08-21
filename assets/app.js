@@ -15,7 +15,7 @@ import { initModals } from './js/modal.js';
 import { initHorseListFilter } from './js/horse-list-filter.js';
 import { initMultiselect } from './js/multi-select.js';
 import { initCascadingSelects } from './js/cascading-select.js';
-import { initTabs } from './js/tabs.js';
+import { initTabs } from './js/initTabs.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     //Topbar

@@ -32,12 +32,14 @@
         font-size: 0.95em;
     }
 
-    &:hover {
+    // Le survol doit exclure l'onglet actif : `:hover` (0,2,0) l'emporte sur
+    // `--active` (0,1,0), le fond clair repassait donc sous le texte blanc.
+    &:not(&--active):hover {
         background-color: $tertiary-10;
     }
 
     &--active {
-        background-color: $tertiary-50;
+        background-color: $tertiary-60;
         color: $white;
     }
 }
